@@ -1,13 +1,24 @@
+import MobileCheckout from './MobileCheckout';
 import { useState, useEffect } from 'react';
 import './App.css';
 import Shop, { MASTER_PRODUCTS } from './Shop';
 import Collections from './Collections';
 import CheckoutModal from './CheckoutModal';
+import MobileProductDetail from './MobileProductDetail';
+import MobileBag from './MobileBag';
 import ProductDetail from './ProductDetail';
 import About from './About';
 import Community from './Community';
 import Account from './Account';
 import AdminDashboard from './AdminDashboard';
+import MobileHeaderNav from './MobileHeaderNav'; // Path check kar lena agar component folder mein ho
+import MobileHeroBanner from './MobileHeroBanner';
+import MobileAnnouncementStrip from './MobileAnnouncementStrip';
+import ShopByCategory from './ShopByCategory';
+import CategoryPLP from './CategoryPLP';
+import CampaignCarousel from './CampaignCarousel';
+import ShopYourSize from './ShopYourSize';
+import MobileAuthModal from './MobileAuthModal';
 
 const DROPS_DATA = [
   { id: 1, slug: "linen-shirt-top", name: "Floral Shirt Top", price: "₹149", image: "/dress1.png" },
@@ -21,6 +32,13 @@ const DROPS_DATA = [
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home'); 
+  const [historyStack, setHistoryStack] = useState(['home']); // Pages yaad rakhne ke liye
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sourceBackPage, setSourceBackPage] = useState('shop');
   const [selectedCollectionSlug, setSelectedCollectionSlug] = useState(null);
@@ -28,9 +46,33 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  // 🚀 NAYA: Backend se kapde (products) laane ka state aur API call
+  const [dbProducts, setDbProducts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5001/api/products')
+      .then((response) => response.json())
+      .then((data) => {
+        setDbProducts(data);
+        console.log("🔥 Backend se yeh kapde aaye hain:", data);
+      })
+      .catch((error) => console.log("Backend se connect nahi hua:", error));
+  }, []);
   
   // Toast Notification State
   const [toastMessage, setToastMessage] = useState(null);
+  const [user, setUser] = useState(() => {
+  const saved = localStorage.getItem('user');
+  return saved ? JSON.parse(saved) : null;
+});
+const [showAuthModal, setShowAuthModal] = useState(false);
+const handleProceedToAddress = () => {
+  if (user && user.isLoggedIn) {
+    setShowCheckout(true);
+  } else {
+    setShowAuthModal(true);
+  }
+};
 
   // ==========================================================================
   // PERSISTENT STATE USING LOCALSTORAGE (Prevents Data Loss on Refresh)
@@ -94,6 +136,16 @@ function App() {
     localStorage.setItem('satrashe60_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
+  const handleGoBack = () => {
+    if (historyStack.length > 1) {
+      const newHistory = [...historyStack];
+      newHistory.pop(); // Current page ko delete karo
+      const previousPage = newHistory[newHistory.length - 1]; // Pichle page ka naam nikalo
+      setHistoryStack(newHistory);
+      setCurrentPage(previousPage);
+      window.scrollTo(0, 0);
+    }
+  };
   // Trigger floating Toast Notification helper
   const triggerToast = (msg) => {
     setToastMessage(msg);
@@ -107,6 +159,7 @@ function App() {
       ? (MASTER_PRODUCTS || []).find(p => p.slug === productOrSlug || p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug)
       : productOrSlug;
 
+
     if (!foundProduct && typeof productOrSlug === 'string') {
       foundProduct = (MASTER_PRODUCTS || []).find(p => p.name.toLowerCase().includes(productOrSlug.toLowerCase()));
     }
@@ -114,6 +167,7 @@ function App() {
     setSelectedProduct(foundProduct || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
     setSourceBackPage(source);
     setCurrentPage('product-detail');
+    setHistoryStack(prev => [...prev, 'product-detail']);
     window.scrollTo(0, 0);
   };
 
@@ -123,6 +177,8 @@ function App() {
   };
 
   const navigateTo = (pageName, category = "ALL") => {
+    if (pageName === currentPage) return; // NAYA: Agar same page par hai toh kuch mat karo
+    
     if (pageName.startsWith('/product/')) {
       const slug = pageName.replace('/product/', '');
       handleOpenProduct(slug, currentPage);
@@ -130,6 +186,7 @@ function App() {
     }
     setCurrentPage(pageName);
     setSelectedCategory(category);
+    setHistoryStack(prev => [...prev, pageName]);
     window.scrollTo(0, 0);
   };
 
@@ -153,9 +210,18 @@ function App() {
     setShowCheckout(true);
   };
 
-  const handleRemoveFromCart = (indexToRemove) => {
+  const  handleRemoveFromCart = (indexToRemove) => {
     setCartItems(cartItems.filter((_, idx) => idx !== indexToRemove));
     triggerToast("Item removed from Bag");
+  };
+
+  // NAYA FUNCTION YAHAN ADD KIYA HAI 👇
+  const handleUpdateCartQuantity = (itemId, selectedSize, newQuantity) => {
+    setCartItems(prev => prev.map(item => 
+      (item.id === itemId && item.selectedSize === selectedSize) 
+        ? { ...item, quantity: newQuantity } 
+        : item
+    ));
   };
 
   // Called when customer successfully checks out (Also deducts inventory stock)
@@ -228,7 +294,8 @@ function App() {
       )}
 
       {/* TOP ANNOUNCEMENT BAR */}
-      <div className="announcement">
+      {/* TOP ANNOUNCEMENT BAR */}
+      <div className="announcement desktop-only-header">
         <span>🔥 <strong className="accent">126</strong> NEW STYLES DROPPED TODAY</span>
         <span>|</span>
         <span>🚚 FREE SHIPPING ABOVE ₹500</span>
@@ -239,7 +306,7 @@ function App() {
       </div>
 
       {/* HEADER */}
-      <header className="header">
+      <header className="header desktop-only-header">
         <div className="logo-brand" onClick={() => navigateTo('home')}>
           <img src="/logo.png" alt="1760 SATRASHE60" className="logo-image" />
         </div>
@@ -314,7 +381,16 @@ function App() {
           </button>
         </div>
       </header>
-
+     {/* MOBILE HEADER & NAVIGATION (Naya wala) */}
+     <MobileHeaderNav 
+        cartCount={cartItems.length} 
+        wishlistCount={wishlist.length} 
+        isLoggedIn={!!currentUser} 
+        currentPage={currentPage} 
+        navigateTo={navigateTo} 
+        goBack={handleGoBack}              
+        historyLength={historyStack.length} 
+      />
       {/* ROUTING: PAGES SWITCHER */}
       {currentPage === 'account' ? (
         <Account 
@@ -332,26 +408,49 @@ function App() {
         />
       ) : currentPage === 'about' ? (
         <About onNavigateToShop={() => navigateTo('shop')} />
-      ) : currentPage === 'product-detail' ? (
-        <ProductDetail 
-          product={selectedProduct}
-          onBack={() => setCurrentPage(sourceBackPage)}
-          onAddToCart={handleAddToCart}
-          onBuyNow={handleBuyNow}
+     ) : currentPage === 'product-detail' ? (
+        isMobile ? (
+          /* NAYA MOBILE PRODUCT PAGE (Sirf phone par dikhega) */
+          <MobileProductDetail 
+            product={selectedProduct}
+            onBack={handleGoBack}
+            onAddToCart={handleAddToCart}
+            onNavigateToBag={() => navigateTo('cart')}
+          />
+        ) : (
+          /* PURANA DESKTOP PRODUCT PAGE (Sirf Laptop par dikhega) */
+          <ProductDetail 
+            product={selectedProduct}
+            onBack={() => setCurrentPage(sourceBackPage)}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+            wishlist={wishlist}
+            onToggleWishlist={handleToggleWishlist}
+            sourceTitle={sourceBackPage.toUpperCase()}
+          />
+          )
+    ) : currentPage === 'category-plp' ? (
+        <CategoryPLP 
+          categoryName={selectedCategory || "ALL"}
+          products={MASTER_PRODUCTS}
+          onBack={() => navigateTo('home')}
+          onProductClick={(prod) => handleOpenProduct(prod, 'category-plp')}
           wishlist={wishlist}
           onToggleWishlist={handleToggleWishlist}
-          sourceTitle={sourceBackPage.toUpperCase()}
+          navigateTo={navigateTo}
+        />
+      ) : currentPage === 'size-filter' ? (
+        /* 🚀 YAHAN SE SIZE FILTER WALA MAGIC HOGA */
+        <Shop 
+          products={dbProducts} 
+          initialCategory="ALL"
+          initialSizes={Array.isArray(selectedCategory) ? selectedCategory : []} 
+          onNavigate={navigateTo} 
+          wishlist={wishlist} 
+          onToggleWishlist={handleToggleWishlist} 
+          onAddToCart={handleAddToCart} 
         />
       ) : currentPage === 'shop' ? (
-        <Shop 
-          initialCategory={selectedCategory}
-          initialSearchQuery={searchQuery}
-          onNavigate={(page) => navigateTo(page)}
-          wishlist={wishlist}
-          onToggleWishlist={handleToggleWishlist}
-          onAddToCart={handleAddToCart}
-        />
-      ) : currentPage === 'collections' ? (
         <Collections 
           selectedCollectionSlug={selectedCollectionSlug}
           onSelectCollection={(slug) => setSelectedCollectionSlug(slug)}
@@ -381,49 +480,62 @@ function App() {
             </div>
           )}
         </div>
-      ) : currentPage === 'cart' ? (
-        /* CART PAGE WITH DIRECT CHECKOUT TRIGGER */
-        <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: '#FAFAFA' }}>
-          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '800', textAlign: 'center', marginBottom: '20px' }}>YOUR BAG</h2>
-          {cartItems.length === 0 ? (
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: '#666666', marginBottom: '20px' }}>YOUR BAG IS EMPTY</p>
-              <button onClick={() => navigateTo('shop')} style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', padding: '12px 28px', border: 'none', fontWeight: '800', cursor: 'pointer', borderRadius: '4px' }}>SHOP NOW</button>
-            </div>
-          ) : (
-            <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '24px', border: '1px solid #E5E5E5', borderRadius: '6px' }}>
-              {cartItems.map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #EEEEEE', padding: '14px 0', alignItems: 'center' }}>
-                  <img src={item.image} alt={item.name} style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '4px' }} />
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: '14px' }}>{item.name}</h4>
-                    <div style={{ fontSize: '12px', color: '#666666' }}>Size: {item.selectedSize || 'Free Size'} | Qty: {item.quantity || 1}</div>
-                    <div style={{ fontWeight: '800', fontSize: '14px', marginTop: '4px' }}>₹{item.price}</div>
-                  </div>
-                  <button onClick={() => handleRemoveFromCart(idx)} style={{ background: 'none', border: 'none', color: '#999999', cursor: 'pointer', fontSize: '16px' }}>✕</button>
-                </div>
-              ))}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', fontWeight: '800', fontSize: '16px' }}>
-                <span>Subtotal:</span>
-                <span>₹{cartItems.reduce((acc, i) => acc + (Number(i.price) * (i.quantity || 1)), 0)}</span>
+   ) : currentPage === 'cart' ? (
+        isMobile ? (
+          <MobileBag 
+            cartItems={cartItems}
+            onBack={handleGoBack}
+            onUpdateQuantity={handleUpdateCartQuantity}
+            onRemoveItem={handleRemoveFromCart}
+            onProceedToAddress={handleProceedToAddress} /* 👈 YAHAN CHANGE HUA HAI */
+          />
+        ) : (
+          /* PURANA DESKTOP BAG (Sirf Laptop par dikhega) */
+          <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: '#FAFAFA' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '800', textAlign: 'center', marginBottom: '20px' }}>YOUR BAG</h2>
+            {cartItems.length === 0 ? (
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ color: '#666666', marginBottom: '20px' }}>YOUR BAG IS EMPTY</p>
+                <button onClick={() => navigateTo('shop')} style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', padding: '12px 28px', border: 'none', fontWeight: '800', cursor: 'pointer', borderRadius: '4px' }}>SHOP NOW</button>
               </div>
+            ) : (
+              <div style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '24px', border: '1px solid #E5E5E5', borderRadius: '6px' }}>
+                {cartItems.map((item, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #EEEEEE', padding: '14px 0', alignItems: 'center' }}>
+                    <img src={item.image} alt={item.name} style={{ width: '70px', height: '70px', objectFit: 'cover', borderRadius: '4px' }} />
+                    <div style={{ flex: 1 }}>
+                      <h4 style={{ margin: 0, fontSize: '14px' }}>{item.name}</h4>
+                      <div style={{ fontSize: '12px', color: '#666666' }}>Size: {item.selectedSize || 'Free Size'} | Qty: {item.quantity || 1}</div>
+                      <div style={{ fontWeight: '800', fontSize: '14px', marginTop: '4px' }}>₹{item.price}</div>
+                    </div>
+                    <button onClick={() => handleRemoveFromCart(idx)} style={{ background: 'none', border: 'none', color: '#999999', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+                  </div>
+                )
+                )
+                }
 
-              {/* CHECKOUT BUTTON */}
-              <button 
-                onClick={() => setShowCheckout(true)}
-                style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', width: '100%', padding: '16px', border: 'none', marginTop: '20px', fontWeight: '800', cursor: 'pointer', borderRadius: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}
-              >
-                PROCEED TO CHECKOUT →
-              </button>
-            </div>
-          )}
-        </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', fontWeight: '800', fontSize: '16px' }}>
+                  <span>Subtotal:</span>
+                  <span>₹{cartItems.reduce((acc, i) => acc + (Number(i.price) * (i.quantity || 1)), 0)}</span>
+                </div>
+
+                {/* CHECKOUT BUTTON */}
+                <button 
+                  onClick={() => setShowCheckout(true)}
+                  style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', width: '100%', padding: '16px', border: 'none', marginTop: '20px', fontWeight: '800', cursor: 'pointer', borderRadius: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}
+                >
+                  PROCEED TO CHECKOUT →
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      
       ) : (
         /* HOMEPAGE COMPLETE CODE */
         <>
           {/* HERO SECTION */}
-          <section className="hero-exact">
+          <section className="hero-exact desktop-only-hero">
             <div className="hero-left-content">
               <p className="hero-subhead">STREET FASHION DELIVERED ACROSS INDIA</p>
               <h1 className="hero-main-title">SATRASHE<span>60</span></h1>
@@ -454,42 +566,64 @@ function App() {
               </div>
             </div>
           </section>
+          
+{/* ========================================== */}
+          {/* MOBILE NAYA LAYOUT (Bina Hero Image ke) */}
+          {/* ========================================== */}
 
-          {/* TRUST BADGES BAR */}
-          <div className="trust-badges-bar">
+          {/* 1. SABSE UPAR: SHOP YOUR SIZE (Logo ke theek niche) */}
+          <div style={{ paddingTop: '10px' }}>
+            <ShopYourSize navigateTo={navigateTo} />
+          </div>
+
+          {/* 2. CHALTI HUI LINE (Announcement Strip) */}
+          <MobileAnnouncementStrip />
+
+          {/* 3. SHOP BY CATEGORY */}
+          <ShopByCategory navigateTo={navigateTo} />
+
+          {/* TRUST BADGES BAR (Sirf Desktop ke liye) */}
+          <div className="trust-badges-bar desktop-only-header">
             <div className="trust-item"><span className="trust-icon">🚚</span><div><div className="trust-text-title">PAN INDIA DELIVERY</div></div></div>
             <div className="trust-item"><span className="trust-icon">⚙️</span><div><div className="trust-text-title">UNIQUE PRODUCTS</div><div className="trust-text-sub">NO RESTOCK</div></div></div>
             <div className="trust-item"><span className="trust-icon">🏷️</span><div><div className="trust-text-title">BEST PRICES</div><div className="trust-text-sub">EVERY DAY</div></div></div>
             <div className="trust-item"><span className="trust-icon">🛡️</span><div><div className="trust-text-title">PREMIUM QUALITY</div><div className="trust-text-sub">ASSURED</div></div></div>
           </div>
 
-          {/* TODAY'S DROP */}
+          {/* NEW: CAMPAIGN CAROUSEL */}
+          <CampaignCarousel navigateTo={navigateTo} />
+         {/* COMBINED TRENDING PRODUCTS SECTION */}
           <section className="section" style={{ padding: '40px 4%' }}>
             <div className="section-header-row">
-              <h2 className="section-title-exact">TODAY'S DROP ⚡</h2>
+              <h2 className="section-title-exact">TODAY'S DROP & ONLY ONE LEFT ⚡</h2>
               <a href="#shop" className="view-all-link" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>VIEW ALL ›</a>
             </div>
 
-            <div className="products-exact-grid">
+            {/* Yeh scrollable grid mobile ke liye perfect hai */}
+            <div className="products-exact-grid-mobile">
               {DROPS_DATA.map(item => (
                 <div key={item.id} className="product-card-exact" onClick={() => handleOpenProduct(item.slug || item.name, 'home')}>
                   <div className="card-image-box">
-                    <span className="badge-new-black">NEW</span>
+                    <span className="badge-new-black">{item.id % 2 === 0 ? "NEW" : "ONLY 1 LEFT"}</span>
                     <button className="wishlist-heart-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(item.id); }}>♡</button>
                     <img src={item.image} alt={item.name} />
                   </div>
                   <div className="card-meta">
                     <div className="card-product-title">{item.name}</div>
                     <div className="card-product-price">{item.price}</div>
-                    <div className="scarcity-tag-red">Only 1 Left</div>
                   </div>
                 </div>
               ))}
             </div>
           </section>
+          <div className="mobile-only-minimal-footer" onClick={() => navigateTo('home')}>
+            <img src="/logo.png" alt="SATRASHE60" className="minimal-footer-logo" />
+            <p className="minimal-footer-copy">© 2026 SATRASHE60. All Rights Reserved.</p>
+          </div>
 
-          {/* SHOP BY CATEGORY */}
-          <section className="section" style={{ padding: '20px 4% 40px 4%' }}>
+
+          {/* SHOP BY CATEGORY (Purana Desktop wala) */}
+          <section className="section desktop-only-hero" style={{ padding: '20px 4% 40px 4%' }}>
             <div className="section-header-row">
               <h2 className="section-title-exact">SHOP BY CATEGORY</h2>
               <a href="#shop" className="view-all-link" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>VIEW ALL ›</a>
@@ -535,30 +669,6 @@ function App() {
                   <div className="category-tile-sub">SHOP NOW →</div>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* ONLY ONE LEFT (DARK THEME) */}
-          <section className="dark-section-bg">
-            <div className="section-header-row">
-              <h2 className="section-title-exact">ONLY ONE LEFT <span style={{ fontSize: '11px', color: '#FF6B00', marginLeft: '10px' }}>GRAB BEFORE IT'S GONE</span></h2>
-              <a href="#shop" className="view-all-link" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>VIEW ALL ›</a>
-            </div>
-
-            <div className="products-exact-grid">
-              {DROPS_DATA.slice(0, 6).map(item => (
-                <div key={item.id} className="product-card-exact" style={{ background: '#121212', color: '#FFFFFF' }} onClick={() => handleOpenProduct(item.slug || item.name, 'home')}>
-                  <div className="card-image-box">
-                    <span className="badge-only-one">ONLY 1 LEFT</span>
-                    <button className="wishlist-heart-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(item.id); }}>♡</button>
-                    <img src={item.image} alt={item.name} />
-                  </div>
-                  <div className="card-meta">
-                    <div className="card-product-title" style={{ color: '#FFFFFF' }}>{item.name}</div>
-                    <div className="card-product-price" style={{ color: '#FFFFFF' }}>{item.price}</div>
-                  </div>
-                </div>
-              ))}
             </div>
           </section>
 
@@ -763,7 +873,35 @@ function App() {
           </footer>
         </>
       )}
-
+      {/* MOBILE AUTH (OTP) MODAL */}
+      <MobileAuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onLoginSuccess={(userData) => {
+          setUser(userData);
+          setShowAuthModal(false);
+          setShowCheckout(true); // Login hote hi seedha address page
+        }}
+      />
+{/* MOBILE BOTTOM NAVIGATION BAR */}
+      <div className="mobile-bottom-nav-bar">
+        <button onClick={() => navigateTo('home')}>
+          🏠
+        </button>
+        <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>
+          🔍
+        </button>
+        <button onClick={() => navigateTo('home')} className="nav-new-text">
+          NEW
+        </button>
+        <button onClick={() => navigateTo('cart')} style={{ position: 'relative' }}>
+          🛍️
+          {cartItems.length > 0 && <span className="bottom-nav-badge">{cartItems.length}</span>}
+        </button>
+        <button onClick={() => navigateTo('account')}>
+          👤
+        </button>
+      </div>
       {/* CHECKOUT MODAL OVERLAY */}
       {showCheckout && (
         <CheckoutModal 

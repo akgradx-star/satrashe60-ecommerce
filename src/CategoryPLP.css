@@ -1,0 +1,110 @@
+/* =========================================================
+   CATEGORY PRODUCT LISTING PAGE (Minimal Fashion UI)
+========================================================= */
+.plp-container {
+  background-color: #FFFFFF;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* 1. HEADER */
+.plp-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px; border-bottom: 1px solid #F0F0F0;
+  position: sticky; top: 0; background: #FFFFFF; z-index: 100;
+}
+.plp-back-btn, .plp-search-btn {
+  background: none; border: none; font-size: 20px; color: #111; cursor: pointer; padding: 0;
+}
+.plp-title {
+  font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 900;
+  margin: 0; text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* 2. HORIZONTAL SCROLL TABS */
+.plp-tabs-wrapper {
+  display: flex; gap: 10px; padding: 12px 16px;
+  overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+  border-bottom: 1px solid #F0F0F0;
+}
+.plp-tabs-wrapper::-webkit-scrollbar { display: none; }
+.plp-tab {
+  background: #FFFFFF; border: 1px solid #DDDDDD; color: #111111;
+  padding: 6px 16px; border-radius: 20px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s ease;
+}
+.plp-tab.active { background: #111111; color: #FFFFFF; border-color: #111111; }
+
+/* 3. CONTROLS BAR */
+.plp-controls-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+}
+.plp-view-icons { display: flex; gap: 12px; color: #CCCCCC; font-size: 18px; }
+.plp-icon.active { color: #111111; }
+.plp-filter-trigger {
+  background: none; border: none; color: #111111; font-size: 11px;
+  font-weight: 800; cursor: pointer; display: flex; align-items: center; letter-spacing: 1px;
+}
+
+/* 4. PRODUCT GRID (2 Col Mobile, 4 Col Desktop) */
+.plp-product-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; /* Very tight gap for modern look */
+  padding: 0 2px;
+}
+@media (min-width: 768px) {
+  .plp-product-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 16px; }
+}
+.plp-product-card {
+  cursor: pointer; display: flex; flex-direction: column; padding-bottom: 16px;
+}
+.plp-image-box {
+  position: relative; aspect-ratio: 3/4; background: #F9F9F9; overflow: hidden;
+}
+.plp-image-box img { width: 100%; height: 100%; object-fit: cover; }
+.plp-wishlist-btn {
+  position: absolute; top: 10px; right: 10px; background: none; border: none;
+  font-size: 20px; color: #111; cursor: pointer; text-shadow: 0 1px 4px rgba(255,255,255,0.8);
+}
+.plp-wishlist-btn.active { color: #FF6B00; }
+.plp-discount-tag {
+  position: absolute; bottom: 10px; left: 10px; background: #FF6B00; color: #FFF;
+  font-size: 9px; font-weight: 800; padding: 4px 6px; letter-spacing: 1px;
+}
+.plp-info-box { padding: 12px 8px 0 8px; }
+.plp-prod-name { font-size: 11px; font-weight: 600; color: #111; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plp-price-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
+.plp-curr-price { font-size: 13px; font-weight: 800; color: #111; }
+.plp-old-price { font-size: 10px; font-weight: 500; color: #888; text-decoration: line-through; }
+.plp-colors-row { display: flex; gap: 4px; }
+.plp-color-dot { width: 8px; height: 8px; border-radius: 50%; background: #CCC; border: 1px solid #E5E5E5; }
+
+/* 5. FILTER BOTTOM SHEET */
+.plp-filter-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
+  display: flex; align-items: flex-end;
+}
+.plp-filter-sheet {
+  background: #FFF; width: 100%; height: 80vh; border-radius: 16px 16px 0 0;
+  display: flex; flex-direction: column;
+}
+.plp-sheet-header {
+  display: flex; justify-content: space-between; padding: 20px; border-bottom: 1px solid #E5E5E5;
+}
+.plp-sheet-header h3 { margin: 0; font-size: 14px; font-weight: 900; letter-spacing: 1px; }
+.plp-sheet-header button { background: none; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
+.plp-sheet-content { flex: 1; overflow-y: auto; padding: 20px; }
+.plp-filter-group { margin-bottom: 24px; }
+.plp-filter-group h4 { font-size: 11px; font-weight: 800; margin-bottom: 12px; color: #888; }
+.plp-radio { display: flex; gap: 10px; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+.plp-size-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.plp-size-btn { padding: 10px; border: 1px solid #CCC; background: #FFF; font-weight: 700; font-size: 12px; border-radius: 4px; }
+.plp-sheet-footer { display: flex; padding: 16px; border-top: 1px solid #E5E5E5; gap: 12px; }
+.plp-clear-btn { flex: 1; padding: 14px; border: 1px solid #111; background: #FFF; font-weight: 800; font-size: 12px; }
+.plp-apply-btn { flex: 1; padding: 14px; border: none; background: #111; color: #FFF; font-weight: 800; font-size: 12px; }
+/* Sirf Mobile par TABS chupane ke liye */
+@media (max-width: 768px) {
+  .plp-tabs-wrapper {
+    display: none !important;
+  }
+}

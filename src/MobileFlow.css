@@ -1,0 +1,89 @@
+/* BASE MOBILE WRAPPER */
+.mobile-page-container {
+  width: 100%;
+  max-width: 480px; /* Locks it to mobile dimensions */
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding-bottom: 160px; /* 👈 Yahan 90px ko 160px kar diya taaki scroll theek se ho */
+  font-family: 'Inter', sans-serif;
+}
+
+.bg-light { background-color: #f9f9f9; }
+.text-center { text-align: center; }
+.uppercase { text-transform: uppercase; }
+
+/* HEADERS */
+.mobile-product-header, .mobile-header-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: transparent;
+}
+.mobile-header-premium.sticky-top {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  z-index: 100;
+}
+.header-title { font-size: 16px; font-weight: 800; letter-spacing: 1px; }
+
+/* PRODUCT IMAGE & INFO */
+.product-main-image { width: 100%; height: auto; object-fit: cover; }
+.mobile-product-info { padding: 20px 16px; }
+.product-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; color: #111; }
+.price-row { display: flex; align-items: center; gap: 8px; }
+.current-price { font-size: 20px; font-weight: 700; }
+.old-price { font-size: 14px; color: #888; text-decoration: line-through; }
+.discount-badge { background: #FF6B00; color: #fff; font-size: 10px; padding: 2px 6px; font-weight: 700; }
+
+/* SIZE GRID */
+.size-section { padding: 10px 16px; }
+.size-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 15px;}
+.size-btn { 
+  border: 1px solid #ddd; background: #fff; padding: 12px 0; width: calc(33% - 10px); 
+  font-size: 14px; cursor: pointer; transition: 0.2s;
+}
+.size-btn.selected { border: 2px solid #000; font-weight: 700; }
+.size-btn.disabled { color: #ccc; background: #f5f5f5; text-decoration: line-through; border-color: #eee;}
+
+/* ACCORDIONS */
+.accordions-container { padding: 0 16px; }
+.accordion-header {
+  width: 100%; display: flex; justify-content: space-between;
+  padding: 18px 0; background: none; border: none; border-bottom: 1px solid #eee;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.accordion-content { padding: 16px 0; font-size: 13px; color: #444; line-height: 1.6; border-bottom: 1px solid #eee;}
+
+/* PINCODE & POLICY */
+.pincode-checker { display: flex; gap: 10px; margin-bottom: 10px; }
+.pincode-input { flex: 1; border: 1px solid #ccc; padding: 10px; font-size: 14px; outline: none; }
+.pincode-btn { background: #000; color: #fff; padding: 10px 20px; font-weight: 600; border: none; }
+
+/* STICKY FOOTER CTA */
+.sticky-bottom-cta {
+  position: fixed; bottom: 65px; left: 0; right: 0; /* 👈 Bas yahan 0 ko 65px kiya hai */
+  padding: 16px; background: #fff; border-top: 1px solid #eee; z-index: 100;
+}
+.black-btn { background: #000; color: #fff; border: none; padding: 16px; font-size: 14px; font-weight: 700; cursor: pointer;}
+.full-width { width: 100%; }
+.disabled-cta { background: #aaa; cursor: not-allowed; }
+.added-confirmation { display: flex; justify-content: space-between; align-items: center; }
+.success-text { font-size: 14px; font-weight: 600; }
+.view-bag-btn { padding: 12px 24px; }
+
+/* BAG CARD UI */
+.bag-item-card { display: flex; gap: 16px; padding: 16px; background: #fff; margin-bottom: 8px; }
+.bag-item-img { width: 90px; height: 120px; object-fit: cover; }
+.bag-item-details { flex: 1; display: flex; flex-direction: column; }
+.item-controls { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+.qty-dropdown { border: none; font-weight: 600; outline: none; background: transparent;}
+.item-price { font-weight: 700; font-size: 16px; }
+
+/* PRICE DETAILS */
+.price-details-card { background: #fff; padding: 24px 16px; margin: 16px 0; }
+.price-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #444; }
+.grand-total { font-weight: 800; font-size: 16px; color: #000; margin-top: 10px; }
+.free-text { color: #2E7D32; font-weight: 700; }

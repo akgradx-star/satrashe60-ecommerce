@@ -4,6 +4,8 @@ const cors = require('cors'); // Frontend aur Backend ko jodne wala gate
 const connectDB = require('./src/config/database');
 const bcrypt = require('bcryptjs'); 
 const User = require('./src/models/User'); 
+const Order = require('./src/models/Order');
+const Product = require('./src/models/Product'); // 👕 Naya Product model import kiya
 
 const app = express();
 
@@ -78,6 +80,33 @@ app.post('/api/login', async (req, res) => {
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Server mein kuch gadbad hai." });
+  }
+});
+
+// ==========================================
+// 🛒 NEW ORDER ROUTE (Naya order save karna)
+// ==========================================
+app.post('/api/orders', async (req, res) => {
+  try {
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+    res.status(201).json({ message: "Order successfully save ho gaya!", order: newOrder });
+  } catch (error) {
+    console.error("Order Save Error:", error);
+    res.status(500).json({ message: "Order save karne mein error aayi." });
+  }
+});
+
+// ==========================================
+// 👕 PRODUCTS ROUTE (Saare kapde frontend ko bhejna)
+// ==========================================
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find(); // DB se saare kapde nikalega
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Products Fetch Error:", error);
+    res.status(500).json({ message: "Products laane mein error aayi." });
   }
 });
 

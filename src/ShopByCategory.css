@@ -1,0 +1,100 @@
+/* =========================================================
+   SECTION 04: SHOP BY CATEGORY (Responsive)
+========================================================= */
+.sbc-section {
+  padding: 40px 4%;
+  background-color: #FFFFFF;
+}
+
+.sbc-heading {
+  font-family: 'Inter', sans-serif; /* Clean modern font */
+  font-size: 16px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 24px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #111111;
+}
+
+/* MOBILE FIRST: 2-COLUMN GRID */
+.sbc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.sbc-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.sbc-image-wrapper {
+  background: linear-gradient(to bottom, #F9F9F9, #EFEFEF); /* Clean minimal background */
+  aspect-ratio: 3/4; /* Consistent fashion proportion */
+  overflow: hidden;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.sbc-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.sbc-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #111111;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sbc-arrow {
+  color: #888888;
+  font-size: 12px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* HOVER EFFECTS (Desktop) */
+@media (hover: hover) {
+  .sbc-card:hover .sbc-image {
+    transform: scale(1.05);
+  }
+  .sbc-card:hover .sbc-arrow {
+    transform: translateX(4px);
+    color: #FF6B00; /* SATRASHE60 Orange */
+  }
+}
+
+/* DESKTOP RESPONSIVENESS */
+@media (min-width: 768px) {
+  .sbc-heading {
+    font-size: 20px;
+    margin-bottom: 32px;
+  }
+  .sbc-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sbc-section {
+    padding: 60px 5%;
+  }
+  .sbc-heading {
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
+  .sbc-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+  }
+}

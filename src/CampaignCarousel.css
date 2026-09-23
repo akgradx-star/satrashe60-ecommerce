@@ -1,0 +1,66 @@
+.campaign-section {
+  padding: 20px 0; /* Left-Right padding hata di taaki cards screen ke edge tak jayein */
+  background: #FFFFFF;
+}
+
+.campaign-scroll-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-padding: 0 16px; /* Side cards ko dikhane ke liye */
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0 16px; /* Container ke start aur end mein space */
+}
+
+.campaign-scroll-container::-webkit-scrollbar { display: none; }
+
+.campaign-card {
+  min-width: 80%; /* Width thodi badha di taaki beech wala bada dikhe */
+  scroll-snap-align: center; /* Beech wala card center mein rukega */
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Jab hum side wale card ko thoda bada dikhana chahte hain */
+.campaign-img {
+  width: 100%;
+  aspect-ratio: 3/4; /* Thoda aur lamba/premium proportion */
+  object-fit: cover;
+}
+
+.campaign-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.3); /* Halka sa dark overlay */
+}
+
+.camp-title { 
+  color: #FFF; font-size: 20px; font-weight: 900; letter-spacing: 2px; margin: 0; 
+}
+.camp-subtitle { 
+  color: #FF6B00; font-size: 14px; font-weight: 800; letter-spacing: 1px; margin-top: 4px; 
+}
+/* Mobile screen par hero image chhota dikhane ke liye */
+@media (max-width: 768px) {
+  .carousel-container, 
+  .campaign-carousel, 
+  .hero-banner {
+    height: 220px !important; /* height ko chhota kar diya */
+    min-height: 220px !important;
+  }
+  
+  .carousel-container img, 
+  .campaign-carousel img, 
+  .hero-banner img {
+    height: 100% !important;
+    object-fit: cover;
+  }
+}

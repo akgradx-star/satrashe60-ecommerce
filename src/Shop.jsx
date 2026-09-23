@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import './Shop.css';
 
-// ==========================================================================
-// MASTER PRODUCT DATABASE WITH EXPANDED PDP ATTRIBUTES & REVIEWS
-// ==========================================================================
 export const MASTER_PRODUCTS = [
   {
     id: 1,
@@ -353,15 +351,20 @@ const COLOR_MAP = {
 };
 
 export default function Shop({ 
+  products = [], // 🚀 NAYA: Ab kapde database se yahan aayenge
   initialCategory = "ALL", 
   initialSearchQuery = "", 
+  initialSizes = [], 
   onNavigate, 
   wishlist = [], 
   onToggleWishlist, 
   onAddToCart 
 }) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  
+  // 🚀 YAHAN initialSizes ko default value banaya hai
+  const [selectedSizes, setSelectedSizes] = useState(initialSizes);
+  
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedFabrics, setSelectedFabrics] = useState([]);
@@ -373,6 +376,8 @@ export default function Shop({
   const [viewMode, setViewMode] = useState("grid");
   const [currentPageNum, setCurrentPageNum] = useState(1);
   const itemsPerPage = 12;
+
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   const [openAccordions, setOpenAccordions] = useState({
     category: true,
@@ -394,11 +399,19 @@ export default function Shop({
     if (initialCategory) setSelectedCategory(initialCategory);
   }, [initialCategory]);
 
+  // 🚀 JAB BHI initialSizes AAYEGA, YEH FILTER KO UPDATE KAR DEGA
+  useEffect(() => {
+    if (initialSizes && initialSizes.length > 0) {
+      setSelectedSizes(initialSizes);
+    }
+  }, [initialSizes]);
+
   const toggleAccordion = (section) => {
     setOpenAccordions(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const filteredProducts = MASTER_PRODUCTS.filter(product => {
+  // 🚀 NAYA: Agar database se kapde aaye hain toh wo dikhao, warna purane wale dikhao
+  const filteredProducts = (products.length > 0 ? products : MASTER_PRODUCTS).filter(product => {
     if (initialSearchQuery) {
       const q = initialSearchQuery.toLowerCase();
       const matchesName = product.name.toLowerCase().includes(q);
@@ -412,6 +425,7 @@ export default function Shop({
       if (product.category.toLowerCase() !== selectedCategory.toLowerCase()) return false;
     }
 
+    // YAHI WO JADOO HAI JO SELECTED SIZES WALE KAPDE DIKHAYEGA
     if (selectedSizes.length > 0) {
       const hasSize = product.sizes.some(s => selectedSizes.includes(s));
       if (!hasSize) return false;
@@ -512,20 +526,26 @@ export default function Shop({
   };
 
   return (
-    <div style={{ backgroundColor: '#FAFAFA', color: '#111111', fontFamily: "'Inter', sans-serif", width: '100%', minHeight: '100vh' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', minHeight: '100vh' }}>
+    <div className="shop-container">
+      
+      <button className="mobile-filter-toggle" onClick={() => setShowMobileFilter(true)}>
+        Filters & Categories 🔽
+      </button>
+
+      <div className="shop-main-layout">
         
-        {/* LEFT DEEP BLACK SIDEBAR */}
-        <aside style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', padding: '28px 20px', display: 'flex', flexDirection: 'column', gap: '20px', borderRight: '1px solid #1F1F1F' }}>
+        <aside className={`sidebar-filter ${showMobileFilter ? 'mobile-open' : ''}`}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid #222222' }}>
             <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>FILTERS</span>
-            <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#888888', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}>
-              Reset All ↻
-            </button>
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+              <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#888888', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}>
+                Reset All ↻
+              </button>
+              <button className="close-filter-btn" onClick={() => setShowMobileFilter(false)}>✕</button>
+            </div>
           </div>
 
-          {/* CATEGORY ACCORDION */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '16px' }}>
             <div onClick={() => toggleAccordion('category')} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: openAccordions.category ? '14px' : '0', cursor: 'pointer', textTransform: 'uppercase' }}>
               CATEGORY <span>{openAccordions.category ? '—' : '+'}</span>
             </div>
@@ -553,8 +573,7 @@ export default function Shop({
             )}
           </div>
 
-          {/* SIZE ACCORDION */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
             <div onClick={() => toggleAccordion('size')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
               SIZE <span>{openAccordions.size ? '—' : '+'}</span>
             </div>
@@ -579,8 +598,7 @@ export default function Shop({
             )}
           </div>
 
-          {/* PRICE ACCORDION */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
             <div onClick={() => toggleAccordion('price')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
               PRICE <span>{openAccordions.price ? '—' : '+'}</span>
             </div>
@@ -604,8 +622,7 @@ export default function Shop({
             )}
           </div>
 
-          {/* COLOR SWATCHES */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
             <div onClick={() => toggleAccordion('color')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '12px', color: '#DDDDDD', cursor: 'pointer' }}>
               COLOR <span>{openAccordions.color ? '—' : '+'}</span>
             </div>
@@ -629,8 +646,7 @@ export default function Shop({
             )}
           </div>
 
-          {/* FABRIC ACCORDION */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
             <div onClick={() => toggleAccordion('fabric')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
               FABRIC <span>{openAccordions.fabric ? '—' : '+'}</span>
             </div>
@@ -654,8 +670,7 @@ export default function Shop({
             )}
           </div>
 
-          {/* NEW ARRIVALS */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
             <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '10px', color: '#DDDDDD' }}>NEW ARRIVALS</div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
               <input 
@@ -668,8 +683,7 @@ export default function Shop({
             </label>
           </div>
 
-          {/* ONLY 1 LEFT */}
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px' }}>
+          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
             <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '10px', color: '#DDDDDD' }}>ONLY 1 LEFT</div>
             <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
               <input 
@@ -682,7 +696,6 @@ export default function Shop({
             </label>
           </div>
 
-          {/* EXCLUSIVE DROP ALERTS BOX */}
           <div style={{ marginTop: 'auto', backgroundColor: '#121212', border: '1px solid #222222', borderRadius: '8px', padding: '18px 14px', textAlign: 'center' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #333333', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px auto', fontSize: '16px' }}>
               🎁
@@ -699,13 +712,12 @@ export default function Shop({
           </div>
         </aside>
 
-        {/* RIGHT MAIN SHOP CONTENT AREA */}
         <main style={{ padding: '30px 40px', backgroundColor: '#FAFAFA' }}>
-          <div style={{ fontSize: '12px', color: '#888888', marginBottom: '14px' }}>
+          <div className="breadcrumb">
             <span onClick={() => onNavigate('/')} style={{ color: '#888888', cursor: 'pointer' }}>Home</span> › <span style={{ color: '#111111', fontWeight: '600' }}>Shop</span>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+          <div className="shop-header-bar">
             <div>
               <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '900', letterSpacing: '-0.5px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
                 SHOP ALL
@@ -769,29 +781,17 @@ export default function Shop({
               </button>
             </div>
           ) : (
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: viewMode === 'grid' ? 'repeat(6, 1fr)' : '1fr', 
-              gap: '16px', 
-              marginBottom: '40px' 
-            }}>
+            
+            <div className={`products-display-grid ${viewMode === 'list' ? 'list-view' : ''}`}>
               {paginatedProducts.map(product => {
                 const isWishlisted = wishlist.includes(product.id);
                 return (
                   <div 
                     key={product.id} 
                     onClick={() => onNavigate(`/product/${product.slug}`)}
-                    style={{ 
-                      backgroundColor: '#FFFFFF', 
-                      borderRadius: '4px', 
-                      overflow: 'hidden', 
-                      display: 'flex', 
-                      flexDirection: viewMode === 'grid' ? 'column' : 'row',
-                      border: '1px solid #E5E5E5',
-                      cursor: 'pointer'
-                    }}
+                    className="product-card-shop"
                   >
-                    <div style={{ position: 'relative', width: viewMode === 'grid' ? '100%' : '180px', height: '220px', backgroundColor: '#F0F0F0', overflow: 'hidden' }}>
+                    <div className="card-media">
                       {product.isNew && (
                         <span style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: '#0A0A0A', color: '#FFFFFF', fontSize: '9px', fontWeight: '800', padding: '3px 6px', borderRadius: '2px', letterSpacing: '1px', zIndex: 2 }}>
                           NEW
@@ -827,7 +827,7 @@ export default function Shop({
                       )}
                     </div>
 
-                    <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
+                    <div className="card-info">
                       <h3 style={{ fontSize: '12px', fontWeight: '700', color: '#111111', margin: '0 0 4px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {product.name}
                       </h3>

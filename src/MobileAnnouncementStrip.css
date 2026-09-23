@@ -1,0 +1,66 @@
+/* =========================================================
+   HIDE ON DESKTOP - MOBILE ONLY COMPONENT
+========================================================= */
+@media (min-width: 769px) {
+  .mobile-announcement-strip {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   MOBILE ANNOUNCEMENT STRIP STYLES (SATRASHE60)
+========================================================= */
+@media (max-width: 768px) {
+  .mobile-announcement-strip {
+    width: 100%;
+    background-color: #0A0A0A; /* Deep Black */
+    border-top: 1px solid #1F1F1F;
+    border-bottom: 1px solid #1F1F1F;
+    height: 36px; /* Thin and clean */
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+  }
+
+  .marquee-wrapper {
+    display: flex;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .marquee-content {
+    display: flex;
+    align-items: center;
+    /* The animation moves the content left by 50% (since we duplicated the array) */
+    animation: scroll-marquee 25s linear infinite;
+  }
+
+  .marquee-text {
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 10px;
+  }
+
+  .marquee-separator {
+    color: #FF6B00; /* SATRASHE60 Orange/Gold */
+    font-size: 10px;
+    font-weight: 900;
+    padding: 0 5px;
+  }
+
+  /* Seamless Infinite Scroll Animation */
+  @keyframes scroll-marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+}

@@ -37,24 +37,45 @@ export default function CheckoutModal({ cartItems = [], onClose, onOrderSuccess 
     }
   };
 
-  const handleFinalSubmit = (e) => {
+  const handleFinalSubmit = async (e) => {
     e.preventDefault();
     if (!name || !phone || !address) {
       alert("Please fill in all delivery details.");
       return;
     }
 
-    // Trigger Success Order Creation
-    if (onOrderSuccess) {
-      onOrderSuccess({
+    try {
+      const orderData = {
         customerName: name,
         customerPhone: phone,
         shippingAddress: address,
         totalAmount: grandTotal,
-        paymentMethod: paymentMethod === 'COD' ? 'Cash On Delivery (COD)' : 'Online Payment (UPI/Card)'
+        paymentMethod: paymentMethod === 'COD' ? 'Cash On Delivery (COD)' : 'Online Payment (UPI/Card)',
+        items: cartItems
+      };
+
+      // Yahan humne aapka WiFi wala IP aur sahi Port (5001) daala hai
+      // Isse mobile aur laptop dono se order direct aapke Database mein jayega!
+      const response = await fetch('http://localhost:5001/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
       });
+
+      if (response.ok) {
+        if (onOrderSuccess) {
+          onOrderSuccess(orderData);
+        }
+        setStep(3); // Success screen dikhayega
+      } else {
+        alert("Failed to save order in database. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error saving order:", error);
+      alert("Error connecting to server. Is your backend running?");
     }
-    setStep(3);
   };
 
   return (

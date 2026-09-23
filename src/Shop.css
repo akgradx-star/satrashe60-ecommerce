@@ -541,3 +541,58 @@
     gap: 16px;
   }
 }
+/* --- YEH NAYA CODE FILE KE SABSE NEECHE PASTE KAREIN --- */
+.mobile-filter-toggle {
+  display: none;
+}
+.close-filter-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-filter-toggle {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #0A0A0A;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  
+  .sidebar-filter {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 85% !important;
+    max-width: 320px !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+    transition: left 0.3s ease-in-out !important;
+    border-radius: 0 !important;
+  }
+
+  .sidebar-filter.mobile-open {
+    left: 0 !important;
+  }
+
+  .close-filter-btn {
+    display: block;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .shop-main-layout {
+    display: block !important;
+  }
+}
