@@ -58,6 +58,22 @@ function App() {
       })
       .catch((error) => console.log("Backend se connect nahi hua:", error));
   }, []);
+  // 🚀 YAHAN SE NAYA CODE START HOTA HAI (Orders ke liye)
+  const [dbOrders, setDbOrders] = useState([]);
+
+  useEffect(() => {
+    // Sirf tabhi orders fetch karo jab admin page khula ho
+    if (currentPage === 'admin') {
+      fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
+        .then((response) => response.json())
+        .then((data) => {
+          setDbOrders(data);
+          console.log("📦 Backend se yeh ORDERS aaye hain:", data);
+        })
+        .catch((error) => console.log("Orders laane mein error:", error));
+    }
+  }, [currentPage]); 
+  // 🚀 YAHAN NAYA CODE KHATAM HOTA HAI
   
   // Toast Notification State
   const [toastMessage, setToastMessage] = useState(null);
@@ -253,15 +269,13 @@ const handleProceedToAddress = () => {
     setShowCheckout(false);
     triggerToast(`🎉 Order Placed Successfully! Ref: ${createdOrder.id}`);
   };
-
-  // Dedicated View for Admin Dashboard with Real-time Status Updates
+// Dedicated View for Admin Dashboard with Real-time Status Updates
   if (currentPage === 'admin') {
     return (
       <AdminDashboard 
-        orders={placedOrders}
+        orders={dbOrders}
         onUpdateOrderStatus={(orderId, nextStatus) => {
-          setPlacedOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: nextStatus } : o));
-          triggerToast(`Order ${orderId} updated to ${nextStatus}`);
+          triggerToast(`Order status update abhi DB ke liye connect karna baaki hai.`);
         }}
         onLogout={() => navigateTo('home')} 
         onNavigateToWebsite={() => navigateTo('home')} 
