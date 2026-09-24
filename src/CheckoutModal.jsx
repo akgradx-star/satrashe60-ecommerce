@@ -53,7 +53,8 @@ export default function CheckoutModal({ cartItems = [], onClose, onOrderSuccess 
         paymentMethod: paymentMethod === 'COD' ? 'Cash On Delivery (COD)' : 'Online Payment (UPI/Card)',
         items: cartItems
       };
-const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/orders', {
+
+      const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,17 +62,21 @@ const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/orde
         body: JSON.stringify(orderData)
       });
 
-      if (response.ok) {
+      // NAYA CODE: Backend ka asli jawaab padhne ke liye
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && (!data || !data.error)) {
         if (onOrderSuccess) {
           onOrderSuccess(orderData);
         }
-        setStep(3); // Success screen dikhayega
+        setStep(3); // Asli Success
       } else {
-        alert("Failed to save order in database. Please try again.");
+        // Agar DB mein nahi gaya, toh mobile screen par sidha error phatega!
+        alert("Backend ne order reject kiya! Reason: " + JSON.stringify(data));
       }
     } catch (error) {
       console.error("Error saving order:", error);
-      alert("Error connecting to server. Is your backend running?");
+      alert("Internet/Network Error: " + error.message);
     }
   };
 
