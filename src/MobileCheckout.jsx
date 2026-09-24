@@ -4,6 +4,7 @@ import './MobileFlow.css';
 export default function MobileCheckout({ cartItems, onBack, onPlaceOrder }) {
   const [address, setAddress] = useState({ name: '', phone: '', address: '', pincode: '' });
   const [paymentMethod, setPaymentMethod] = useState('UPI');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Total calculate karne ka logic
   const bagTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -15,12 +16,53 @@ export default function MobileCheckout({ cartItems, onBack, onPlaceOrder }) {
     border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px', outline: 'none'
   };
 
-  const handleOrderSubmit = () => {
+  const handleOrderSubmit = async () => {
     if (!address.name || !address.phone || !address.address || !address.pincode) {
       alert("Please fill all address details!");
       return;
     }
-    onPlaceOrder(address, paymentMethod, grandTotal);
+
+    if (cartItems.length === 0) {
+      alert("Your bag is empty! Please add some products.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Backend ke schema ke hisaab se data taiyar karna
+      const orderData = {
+        customerName: address.name,
+        customerPhone: address.phone,
+        shippingAddress: `${address.address}, Pincode: ${address.pincode}`,
+        totalAmount: grandTotal,
+        paymentMethod: paymentMethod === 'COD' ? 'Cash On Delivery (COD)' : 'Online Payment (UPI/Card)',
+        items: cartItems
+      };
+
+      // Naya Render backend link (CCTV Strict Check ke sath)
+      const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (response.ok && (!data || !data.error)) {
+        // Asli success hone par hi UI ko aage badhne ka signal milega
+        onPlaceOrder(address, paymentMethod, grandTotal);
+      } else {
+        alert("Backend ne order reject kiya! Reason: " + JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error("Error saving order:", error);
+      alert("Internet/Network Error: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -77,10 +119,11 @@ export default function MobileCheckout({ cartItems, onBack, onPlaceOrder }) {
         </div>
         <button 
           className="black-btn" 
-          style={{ padding: '14px 30px', borderRadius: '4px', whiteSpace: 'nowrap' }}
+          style={{ padding: '14px 30px', borderRadius: '4px', whiteSpace: 'nowrap', opacity: isSubmitting ? 0.7 : 1 }}
           onClick={handleOrderSubmit}
+          disabled={isSubmitting}
         >
-          PLACE ORDER
+          {isSubmitting ? "PROCESSING..." : "PLACE ORDER"}
         </button>
       </div>
     </div>
