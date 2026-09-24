@@ -17,6 +17,7 @@ export default function MobileCheckout({ cartItems, onBack, onPlaceOrder }) {
   };
 
   const handleOrderSubmit = async () => {
+    alert("Naya Code Chal Raha Hai! Total amount: " + grandTotal);
     if (!address.name || !address.phone || !address.address || !address.pincode) {
       alert("Please fill all address details!");
       return;
