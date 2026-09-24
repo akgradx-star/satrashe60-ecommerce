@@ -53,10 +53,7 @@ export default function CheckoutModal({ cartItems = [], onClose, onOrderSuccess 
         paymentMethod: paymentMethod === 'COD' ? 'Cash On Delivery (COD)' : 'Online Payment (UPI/Card)',
         items: cartItems
       };
-
-      // Yahan humne aapka WiFi wala IP aur sahi Port (5001) daala hai
-      // Isse mobile aur laptop dono se order direct aapke Database mein jayega!
-      const response = await fetch('https://satrashe60-ecommerce.onrender.com](https://satrashe60-ecommerce.onrender.com/api/orders', {
+const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

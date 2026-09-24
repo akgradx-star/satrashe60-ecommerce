@@ -50,7 +50,7 @@ function App() {
   const [dbProducts, setDbProducts] = useState([]);
 
   useEffect(() => {
-    fetch('https://satrashe60-ecommerce.onrender.com](https://satrashe60-ecommerce.onrender.com/api/products')
+    fetch('https://satrashe60-ecommerce.onrender.com/api/products')
       .then((response) => response.json())
       .then((data) => {
         setDbProducts(data);
