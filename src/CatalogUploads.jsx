@@ -1,22 +1,18 @@
-// src/CatalogUploads.jsx
 import React, { useState, useMemo } from 'react';
 import { CATALOG_TAXONOMY } from './catalogTaxonomy';
 import { MASTER_PRODUCTS } from './Shop';
 
 export default function CatalogUploads({ onPublishProductToStore, onBackToDashboard }) {
-  // Global View States: 'list' | 'select-category' | 'single-form' | 'bulk-wizard'
   const [viewMode, setViewMode] = useState('list');
-  const [activeUploadTypeTab, setActiveUploadTypeTab] = useState('SINGLE'); // 'SINGLE' | 'BULK'
-  const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'ACTION REQUIRED' | 'DRAFT' | 'PUBLISHED'
+  const [activeUploadTypeTab, setActiveUploadTypeTab] = useState('SINGLE'); 
+  const [statusFilter, setStatusFilter] = useState('ALL'); 
 
-  // Hierarchy Selection State (Focused Step Flow)
   const [targetFlowType, setTargetFlowType] = useState('SINGLE');
   const [selectedDepartment, setSelectedDepartment] = useState('WOMEN');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [selectedProductType, setSelectedProductType] = useState(null);
 
-  // Catalog State Stores
   const [catalogs, setCatalogs] = useState([
     {
       id: "CAT-101",
@@ -38,27 +34,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
       status: "PUBLISHED",
       missingFields: [],
       createdAt: "10 Aug 2026"
-    },
-    {
-      id: "CAT-102",
-      uploadType: "BULK",
-      name: "Black Ribbed Kurti Top",
-      sku: "SKU-BLK-RIB-02",
-      price: 129,
-      mrp: 399,
-      discount: 68,
-      stock: 1,
-      department: "WOMEN",
-      category: "Ethnic Wear",
-      subcategory: "Kurtis, Sets & Fabrics",
-      productType: "Kurti With Bottomwear",
-      images: ["/dress2.png"],
-      sizes: ["S", "M"],
-      color: "Solid Black",
-      fabric: "Ribbed Cotton",
-      status: "PUBLISHED",
-      missingFields: [],
-      createdAt: "11 Aug 2026"
     },
     {
       id: "CAT-103",
@@ -83,9 +58,9 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
     }
   ]);
 
-  // Single Product Form State (Crystal Clear Light Theme Inputs)
   const [activeEditingCatalogId, setActiveEditingCatalogId] = useState(null);
- const [formImages, setFormImages] = useState([]);
+  // Mummy friendly start: Empty images array
+  const [formImages, setFormImages] = useState([]); 
   const [formName, setFormName] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formBrand, setFormBrand] = useState("SATRASHE60");
@@ -107,11 +82,9 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
   const [formValidationErrors, setFormValidationErrors] = useState([]);
   const [showLivePreviewModal, setShowLivePreviewModal] = useState(false);
 
-  // Bulk Upload Wizard State
   const [bulkStep, setBulkStep] = useState(1);
   const [bulkValidationReport, setBulkValidationReport] = useState(null);
 
-  // Computed Overview Metrics
   const metrics = useMemo(() => {
     return {
       totalUploads: catalogs.length,
@@ -150,7 +123,7 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
     setSelectedProductType(prodType);
     if (targetFlowType === 'SINGLE') {
       setActiveEditingCatalogId(null);
-      setFormImages(["/dress1.png"]);
+      setFormImages([]);
       setFormName("");
       setFormDescription("");
       setFormSku(`SKU-SATRA-${Math.floor(1000 + Math.random() * 9000)}`);
@@ -175,7 +148,7 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
     setSelectedCategory(catalog.category || 'Ethnic Wear');
     setSelectedSubcategory(catalog.subcategory || 'Kurtis, Sets & Fabrics');
     setSelectedProductType(catalog.productType || 'Kurtis');
-    setFormImages(catalog.images && catalog.images.length > 0 ? catalog.images : ["/dress1.png"]);
+    setFormImages(catalog.images && catalog.images.length > 0 ? catalog.images : []);
     setFormName(catalog.name || "");
     setFormDescription(catalog.description || "");
     setFormSku(catalog.sku || `SKU-SATRA-${Math.floor(1000 + Math.random() * 9000)}`);
@@ -190,12 +163,10 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
   };
 
   const handleImageAdd = (e) => {
-    // Check karein ki pehle se 6 photo toh nahi ho gaye
     if (formImages.length >= 6) {
       alert("Aap maximum 6 photos hi daal sakte hain!");
       return;
     }
-
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -330,9 +301,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
   return (
     <div style={{ padding: '24px 30px', display: 'flex', flexDirection: 'column', gap: '22px', maxWidth: '1400px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
       
-      {/* =====================================================================
-          VIEW 1: LIST / DASHBOARD
-         ===================================================================== */}
       {viewMode === 'list' && (
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
@@ -361,7 +329,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           </div>
 
-          {/* OVERVIEW CARDS */}
           <div>
             <div style={{ fontSize: '12px', fontWeight: '800', color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '10px' }}>
               OVERVIEW
@@ -382,7 +349,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           </div>
 
-          {/* UPLOAD TYPE TABS */}
           <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid #E5E7EB', paddingBottom: '8px' }}>
             {['SINGLE', 'BULK'].map(tab => (
               <button
@@ -404,7 +370,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             ))}
           </div>
 
-          {/* STATUS FILTERS */}
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {['ALL', 'ACTION REQUIRED', 'DRAFT', 'PUBLISHED'].map(st => (
               <button
@@ -426,7 +391,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             ))}
           </div>
 
-          {/* TABLE */}
           <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', overflow: 'hidden' }}>
             {filteredCatalogs.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '50px 20px', color: '#6B7280' }}>
@@ -484,9 +448,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
         </>
       )}
 
-      {/* =====================================================================
-          VIEW 2: FOCUSED HIERARCHY SELECTOR (CLEAN STEP-BY-STEP)
-         ===================================================================== */}
       {viewMode === 'select-category' && (
         <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
           
@@ -498,7 +459,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             <button onClick={() => setViewMode('list')} style={{ background: 'none', border: '1px solid #CCC', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: '700', fontSize: '11px' }}>✕ Close</button>
           </div>
 
-          {/* STEP A: DEPARTMENT */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ fontSize: '11px', fontWeight: '800', color: '#6B7280', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>1. Department</label>
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -518,7 +478,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           </div>
 
-          {/* STEP B: CATEGORY (ONLY SHOWS SELECTED DEPARTMENT) */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ fontSize: '11px', fontWeight: '800', color: '#6B7280', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>2. Category</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '8px' }}>
@@ -539,7 +498,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           </div>
 
-          {/* STEP C: SUBCATEGORY (ONLY SHOWS IF CATEGORY SELECTED) */}
           {selectedCategory && (
             <div style={{ marginBottom: '20px' }}>
               <label style={{ fontSize: '11px', fontWeight: '800', color: '#6B7280', textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>3. Subcategory</label>
@@ -562,7 +520,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           )}
 
-          {/* STEP D: PRODUCT TYPE (TERMINAL NODE) */}
           {selectedSubcategory && (
             <div style={{ backgroundColor: '#F9FAFB', padding: '16px', borderRadius: '6px', border: '1px solid #E5E7EB' }}>
               <label style={{ fontSize: '11px', fontWeight: '800', color: '#374151', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>4. Select Product Type to Open Form</label>
@@ -585,13 +542,9 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
         </div>
       )}
 
-      {/* =====================================================================
-          VIEW 3: SINGLE CATALOG FORM (CRYSTAL CLEAR LIGHT THEME INPUTS)
-         ===================================================================== */}
       {viewMode === 'single-form' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', backgroundColor: '#F8FAFC', padding: '10px', borderRadius: '8px' }}>
           
-          {/* TOP BAR */}
           <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <div>
               <div style={{ fontSize: '11px', color: '#6B7280' }}>
@@ -634,22 +587,16 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
             </div>
           </div>
 
-          {/* VALIDATION ERRORS */}
           {formValidationErrors.length > 0 && (
             <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', padding: '12px 18px', borderRadius: '6px', color: '#991B1B', fontSize: '12px', fontWeight: '700' }}>
               ⚠️ Missing Required Fields for Publishing: {formValidationErrors.join(', ')}
             </div>
           )}
 
-          {/* =========================================================
-              MUMMY-FRIENDLY SIMPLE FORM FIELDS 
-             ========================================================= */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
             
-            {/* LEFT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* IMAGES */}
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: '0 0 10px 0', color: '#111827' }}>1. Kapde ki Photo Daalein *</h3>
                 <p style={{ fontSize: '11px', color: '#6B7280', marginTop: '-6px', marginBottom: '10px' }}>(Kam se kam 1, zyada se zyada 6)</p>
@@ -662,7 +609,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
                     </div>
                   ))}
                   
-                  {/* Plus Icon sirf tab dikhega jab 6 se kam photos hon */}
                   {formImages.length < 6 && (
                     <label style={{ width: '70px', height: '70px', borderRadius: '6px', border: '2px dashed #CBD5E1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backgroundColor: '#F8FAFC' }}>
                       <span style={{ fontSize: '20px' }}>📸</span>
@@ -673,7 +619,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
                 </div>
               </div>
 
-              {/* IDENTITY & CATEGORY */}
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: 0, color: '#111827' }}>2. Product ki Jaankaari</h3>
                 
@@ -697,10 +642,8 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
               </div>
             </div>
 
-            {/* RIGHT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* PRICING & STOCK */}
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: 0, color: '#111827' }}>3. Daam Aur Stock</h3>
                 
@@ -721,7 +664,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
                 </div>
               </div>
 
-              {/* DETAILS */}
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: '0 0 4px 0', color: '#111827' }}>4. Baki Details</h3>
                 
@@ -751,10 +693,9 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
 
             </div>
           </div>
+        </div>
+      )}
 
-      {/* =====================================================================
-          VIEW 4: BULK WIZARD
-         ===================================================================== */}
       {viewMode === 'bulk-wizard' && (
         <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -770,7 +711,6 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
         </div>
       )}
 
-      {/* PREVIEW MODAL */}
       {showLivePreviewModal && (
         <div onClick={() => setShowLivePreviewModal(false)} style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: '#FFF', borderRadius: '8px', maxWidth: '600px', width: '100%', padding: '24px' }}>
