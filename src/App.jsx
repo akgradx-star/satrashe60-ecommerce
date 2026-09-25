@@ -378,7 +378,7 @@ const handleProceedToAddress = () => {
             style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', border: 'none', padding: '6px 12px', fontSize: '11px', fontWeight: '800', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
             title="Open Admin Supplier Panel"
           >
-            🛡️ 🛡️ ADMIN ({dbOrders.filter(order => !order.status || order.status.toLowerCase() === 'pending').length})
+            🛡️  ADMIN ({dbOrders.filter(order => !order.orderStatus || order.orderStatus.toLowerCase() === 'pending').length})
           </button>
 
           {/* SEARCH INPUT TOGGLE */}
