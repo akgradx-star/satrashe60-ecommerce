@@ -126,6 +126,31 @@ app.get('/api/orders', async (req, res) => {
 });
 // 🚀 YAHAN NAYA CODE KHATAM HOTA HAI
 // ==========================================
+// 🔄 UPDATE ORDER STATUS (Admin Panel ke buttons ke liye)
+// ==========================================
+app.put('/api/orders/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Database mein order dhoondho aur uska status update karo
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id, 
+      { orderStatus: status },
+      { new: true } // Update hone ke baad naya data return karega
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order nahi mila!" });
+    }
+
+    res.status(200).json({ message: "Status update ho gaya!", order: updatedOrder });
+  } catch (error) {
+    console.error("Status Update Error:", error);
+    res.status(500).json({ message: "Status update karne mein error aayi." });
+  }
+});
+// ==========================================
 // 👕 PRODUCTS ROUTE (Saare kapde frontend ko bhejna)
 // ==========================================
 app.get('/api/products', async (req, res) => {

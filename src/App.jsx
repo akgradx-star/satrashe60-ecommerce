@@ -274,7 +274,26 @@ const handleProceedToAddress = () => {
       <AdminDashboard 
         orders={dbOrders}
         onUpdateOrderStatus={(orderId, nextStatus) => {
-          triggerToast(`Order status update abhi DB ke liye connect karna baaki hai.`);
+          // 1. Backend ko naya status bhejo
+          fetch(`https://satrashe60-ecommerce.onrender.com/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: nextStatus }) // Jaise: 'Ready to Ship' ya 'Cancelled'
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            if(data.order) {
+              // 2. Agar DB mein update ho gaya, toh website par bhi turant change kar do (bina refresh kiye)
+              setDbOrders(prev => prev.map(o => (o._id === orderId || o.id === orderId) ? { ...o, orderStatus: nextStatus } : o));
+              triggerToast(`Order moved to ${nextStatus} 🚀`);
+            }
+          })
+          .catch((error) => {
+            console.error("Update failed:", error);
+            triggerToast("Network error, status update nahi hua!");
+          });
         }}
         onLogout={() => navigateTo('home')} 
         onNavigateToWebsite={() => navigateTo('home')} 
