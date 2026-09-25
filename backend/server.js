@@ -10,7 +10,8 @@ const Product = require('./src/models/Product'); // 👕 Naya Product model impo
 const app = express();
 
 app.use(cors()); // CORS chalu kiya
-app.use(express.json()); // Frontend ka data padhne ke liye
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // Frontend ka data padhne ke liye
 
 // Database connect karna
 connectDB();
