@@ -96,7 +96,35 @@ app.post('/api/orders', async (req, res) => {
     res.status(500).json({ message: "Order save karne mein error aayi." });
   }
 });
+// ==========================================
+// 🛒 NEW ORDER ROUTE (Naya order save karna)
+// ==========================================
+app.post('/api/orders', async (req, res) => {
+  try {
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+    res.status(201).json({ message: "Order successfully save ho gaya!", order: newOrder });
+  } catch (error) {
+    console.error("Order Save Error:", error);
+    res.status(500).json({ message: "Order save karne mein error aayi." });
+  }
+});
 
+// 🚀 YAHAN SE NAYA CODE START HOTA HAI
+// ==========================================
+// 📦 GET ORDERS ROUTE (Admin panel ko saare orders bhejna)
+// ==========================================
+app.get('/api/orders', async (req, res) => {
+  try {
+    // .sort({ createdAt: -1 }) se naye orders sabse upar dikhenge
+    const orders = await Order.find().sort({ createdAt: -1 }); 
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Orders Fetch Error:", error);
+    res.status(500).json({ message: "Orders laane mein error aayi." });
+  }
+});
+// 🚀 YAHAN NAYA CODE KHATAM HOTA HAI
 // ==========================================
 // 👕 PRODUCTS ROUTE (Saare kapde frontend ko bhejna)
 // ==========================================

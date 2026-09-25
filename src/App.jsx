@@ -62,17 +62,16 @@ function App() {
   const [dbOrders, setDbOrders] = useState([]);
 
   useEffect(() => {
-    // Sirf tabhi orders fetch karo jab admin page khula ho
-    if (currentPage === 'admin') {
-      fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
-        .then((response) => response.json())
-        .then((data) => {
-          setDbOrders(data);
-          console.log("📦 Backend se yeh ORDERS aaye hain:", data);
-        })
-        .catch((error) => console.log("Orders laane mein error:", error));
-    }
-  }, [currentPage]); 
+    // Yahan se if() hata diya gaya hai. 
+    // Ab ye har baar data fetch karega taaki Admin button ki ginti hamesha sahi rahe.
+    fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
+      .then((response) => response.json())
+      .then((data) => {
+        setDbOrders(data);
+        console.log("📦 Backend se yeh ORDERS aaye hain:", data);
+      })
+      .catch((error) => console.log("Orders laane mein error:", error));
+  }, [currentPage]);
   // 🚀 YAHAN NAYA CODE KHATAM HOTA HAI
   
   // Toast Notification State
@@ -353,7 +352,7 @@ const handleProceedToAddress = () => {
             style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', border: 'none', padding: '6px 12px', fontSize: '11px', fontWeight: '800', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
             title="Open Admin Supplier Panel"
           >
-            🛡️ ADMIN ({placedOrders.length})
+            🛡️ 🛡️ ADMIN ({dbOrders.filter(order => !order.status || order.status.toLowerCase() === 'pending').length})
           </button>
 
           {/* SEARCH INPUT TOGGLE */}
