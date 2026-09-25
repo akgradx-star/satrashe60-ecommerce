@@ -238,64 +238,56 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
     }
 
     const pubId = activeEditingCatalogId || `CAT-${Math.floor(1000 + Math.random() * 9000)}`;
-    const publishedCatalog = {
+    
+    // Website format ke hisaab se data taiyar karna
+    const newProductData = {
       id: pubId,
-      uploadType: "SINGLE",
+      slug: formName.toLowerCase().replace(/\s+/g, '-'),
       name: formName.trim(),
-      description: formDescription.trim(),
-      sku: formSku.trim(),
       price: Number(formSellingPrice),
       mrp: Number(formMrp),
       discount: calculatedDiscount,
       stock: Number(formStock),
-      department: selectedDepartment,
-      category: selectedCategory,
-      subcategory: selectedSubcategory,
-      productType: selectedProductType,
-      images: formImages,
+      image: formImages[0] || "/dress1.png", 
+      category: selectedProductType || "Kurti",
+      isNew: true,
       sizes: formSizes,
-      color: formColor,
+      colors: [formColor || "Standard"],
       fabric: formFabric,
-      status: "PUBLISHED",
-      missingFields: [],
-      createdAt: new Date().toLocaleDateString('en-GB')
+      fit: formFitShape,
+      length: formLength,
+      pattern: formPattern,
+      description: formDescription || "Premium quality product.",
     };
 
-    setCatalogs(prev => {
-      const exists = prev.some(c => c.id === pubId);
-      if (exists) return prev.map(c => c.id === pubId ? publishedCatalog : c);
-      return [publishedCatalog, ...prev];
+    // 🚀 Backend (MongoDB) ko data bhejna
+    fetch('https://satrashe60-ecommerce.onrender.com/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProductData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.product) {
+        alert(`✓ Kapda "${formName}" website par LIVE ho gaya hai!`);
+        
+        // Form ko reset aur band karna
+        setFormName("");
+        setFormImages([]);
+        setViewMode('list');
+        
+        // Agar main Store function maujood hai toh usko bhi update kar do
+        if (onPublishProductToStore) {
+          onPublishProductToStore(newProductData);
+        }
+      } else {
+        alert("Server se error aayi: " + data.message);
+      }
+    })
+    .catch(error => {
+      console.error("Publishing Failed:", error);
+      alert("Network Error: Kapda publish nahi ho paya.");
     });
-
-    if (onPublishProductToStore) {
-      onPublishProductToStore({
-        id: pubId,
-        slug: formName.toLowerCase().replace(/\s+/g, '-'),
-        name: formName.trim(),
-        price: Number(formSellingPrice),
-        mrp: Number(formMrp),
-        discount: calculatedDiscount,
-        stock: Number(formStock),
-        image: formImages[0] || "/dress1.png",
-        category: selectedProductType || "Tops",
-        isNew: true,
-        sizes: formSizes,
-        colors: [formColor || "Standard"],
-        fabric: formFabric,
-        fit: formFitShape,
-        length: formLength,
-        pattern: formPattern,
-        highlights: [
-          `Fabric: ${formFabric}`,
-          `Fit: ${formFitShape}`,
-          `Neck: ${formNeckCollar}`,
-          `Care: ${formWashCare}`
-        ]
-      });
-    }
-
-    alert(`✓ Product "${formName}" published successfully and synced with store!`);
-    setViewMode('list');
   };
 
   return (
