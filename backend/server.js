@@ -97,6 +97,19 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 // ==========================================
+// ➕ NEW PRODUCT ROUTE (Naya kapda DB mein save karna)
+// ==========================================
+app.post('/api/products', async (req, res) => {
+  try {
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+    res.status(201).json({ message: "Product successfully live ho gaya!", product: newProduct });
+  } catch (error) {
+    console.error("Product Save Error:", error);
+    res.status(500).json({ message: "Product save karne mein error aayi." });
+  }
+});
+// ==========================================
 // 🛒 NEW ORDER ROUTE (Naya order save karna)
 // ==========================================
 app.post('/api/orders', async (req, res) => {
