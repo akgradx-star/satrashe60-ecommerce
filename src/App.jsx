@@ -270,9 +270,16 @@ const handleProceedToAddress = () => {
   };
 // Dedicated View for Admin Dashboard with Real-time Status Updates
   if (currentPage === 'admin') {
+    // MongoDB ki _id ko id mein map karein taaki AdminDashboard chal sake
+    const mappedOrders = dbOrders.map(order => ({
+      ...order,
+      id: order._id || order.id,
+      status: order.orderStatus || 'Pending' // Backend orderStatus use karta hai
+    }));
+
     return (
       <AdminDashboard 
-        orders={dbOrders}
+        orders={mappedOrders}
         onUpdateOrderStatus={(orderId, nextStatus) => {
           // 1. Backend ko naya status bhejo
           fetch(`https://satrashe60-ecommerce.onrender.com/api/orders/${orderId}/status`, {
