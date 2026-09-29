@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  id: { type: Number, required: true, unique: true },
+  id: { type: String, required: true, unique: true }, // 👈 Yahan Number ko String kiya
   slug: String,
   name: String,
   category: String,
