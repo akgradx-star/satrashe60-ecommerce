@@ -2,7 +2,6 @@ import MobileCheckout from './MobileCheckout';
 import { useState, useEffect } from 'react';
 import './App.css';
 import Shop, { MASTER_PRODUCTS } from './Shop';
-import Collections from './Collections';
 import CheckoutModal from './CheckoutModal';
 import MobileProductDetail from './MobileProductDetail';
 import MobileBag from './MobileBag';
@@ -13,7 +12,7 @@ import Account from './Account';
 import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
-import CategoryPLP from './CategoryPLP'; // Ensure PLP component is available if used
+import CategoryPLP from './CategoryPLP'; 
 
 const DROPS_DATA = [
   { id: 1, slug: "linen-shirt-top", name: "Floral Shirt Top", price: "₹149", image: "/dress1.png" },
@@ -36,7 +35,6 @@ function App() {
   }, []);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sourceBackPage, setSourceBackPage] = useState('shop');
-  const [selectedCollectionSlug, setSelectedCollectionSlug] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
@@ -156,7 +154,6 @@ const handleProceedToAddress = () => {
       ? (MASTER_PRODUCTS || []).find(p => p.slug === productOrSlug || p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug)
       : productOrSlug;
 
-
     if (!foundProduct && typeof productOrSlug === 'string') {
       foundProduct = (MASTER_PRODUCTS || []).find(p => p.name.toLowerCase().includes(productOrSlug.toLowerCase()));
     }
@@ -166,11 +163,6 @@ const handleProceedToAddress = () => {
     setCurrentPage('product-detail');
     setHistoryStack(prev => [...prev, 'product-detail']);
     window.scrollTo(0, 0);
-  };
-
-  const handleOpenCollection = (slug) => {
-    setSelectedCollectionSlug(slug);
-    setCurrentPage('collections');
   };
 
   const navigateTo = (pageName, category = "ALL") => {
@@ -307,7 +299,6 @@ const handleProceedToAddress = () => {
         </div>
       )}
 
-      {/* Yahan se purana MobileHeaderNav hata diya gaya hai taaki 'home' par na dikhe */}
       {currentPage !== 'home' && (
         <MobileHeaderNav 
           cartCount={cartItems.length} 
@@ -376,12 +367,14 @@ const handleProceedToAddress = () => {
           onAddToCart={handleAddToCart} 
         />
       ) : currentPage === 'shop' ? (
-        <Collections 
-          selectedCollectionSlug={selectedCollectionSlug}
-          onSelectCollection={(slug) => setSelectedCollectionSlug(slug)}
-          onBackToHome={() => navigateTo('home')}
-          onAddToCart={handleAddToCart}
-          onOpenProduct={(prod) => handleOpenProduct(prod, 'collections')}
+        /* YAHAN PAR CHANGE KIYA HAI - Ab sidha naya Shop khulega */
+        <Shop 
+          products={dbProducts} 
+          initialCategory={selectedCategory} 
+          onNavigate={navigateTo} 
+          wishlist={wishlist} 
+          onToggleWishlist={handleToggleWishlist} 
+          onAddToCart={handleAddToCart} 
         />
       ) : currentPage === 'wishlist' ? (
         <div style={{ padding: '60px 4%', textAlign: 'center', minHeight: '60vh', backgroundColor: '#FAFAFA' }}>
@@ -449,12 +442,8 @@ const handleProceedToAddress = () => {
           </div>
         )
       ) : (
-        /* ==========================================
-           HOMEPAGE (PREMIUM DARK LAYOUT) 
-           ========================================== */
         <div className="premium-home-container">
           
-          {/* NAYA PREMIUM DARK HEADER */}
           <header className="premium-header">
             <button className="menu-btn" onClick={() => navigateTo('shop')}>☰</button>
             <img src="/logo.png" alt="SATRASHE60" className="header-logo" />
@@ -464,7 +453,6 @@ const handleProceedToAddress = () => {
             </div>
           </header>
 
-          {/* 1. HERO SECTION */}
           <div className="premium-hero">
             <div className="premium-hero-content">
               <div className="hero-eyebrow">STYLE MEETS YOU</div>
@@ -475,7 +463,6 @@ const handleProceedToAddress = () => {
             <div className="slider-count">01 / 03</div>
           </div>
 
-          {/* 2. SHOP BY SIZE */}
           <section className="premium-section">
             <div className="premium-section-header">
               <h2>SHOP BY SIZE</h2>
@@ -491,7 +478,6 @@ const handleProceedToAddress = () => {
             </div>
           </section>
 
-          {/* 3. SHOP BY CATEGORY */}
           <section className="premium-section">
             <div className="premium-section-header">
               <h2>SHOP BY CATEGORY</h2>
@@ -533,7 +519,6 @@ const handleProceedToAddress = () => {
             </div>
           </section>
 
-          {/* 4. FRESH DROPS PROMO */}
           <div className="premium-promo-banner">
             <div className="promo-overlay">
               <div className="hero-eyebrow">NEW ARRIVALS</div>
@@ -543,7 +528,6 @@ const handleProceedToAddress = () => {
             </div>
           </div>
 
-          {/* 5. BEST SELLERS */}
           <section className="premium-section">
             <div className="premium-section-header">
               <h2>BEST SELLERS</h2>
@@ -569,7 +553,6 @@ const handleProceedToAddress = () => {
             </div>
           </section>
 
-          {/* 6. TRUST ICONS STRIP */}
           <div className="premium-trust-bar">
             <div className="trust-item"><span className="icon">🚚</span><p>Free Shipping<br/>Above ₹549</p></div>
             <div className="trust-item"><span className="icon">💳</span><p>COD<br/>Available</p></div>
@@ -577,7 +560,6 @@ const handleProceedToAddress = () => {
             <div className="trust-item"><span className="icon">🎧</span><p>24/7<br/>Support</p></div>
           </div>
 
-          {/* 7. LIFESTYLE BANNER */}
           <div className="premium-lifestyle">
              <img src="/hero.png" alt="Lifestyle" className="lifestyle-image" />
              <div className="lifestyle-content">
@@ -588,7 +570,6 @@ const handleProceedToAddress = () => {
              </div>
           </div>
 
-          {/* 8. PREMIUM FOOTER */}
           <footer className="premium-footer">
             <div className="newsletter-box">
               <span className="newsletter-icon">✉️</span>
@@ -618,7 +599,6 @@ const handleProceedToAddress = () => {
         </div>
       )}
 
-      {/* MOBILE AUTH (OTP) MODAL */}
       <MobileAuthModal 
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
@@ -629,7 +609,6 @@ const handleProceedToAddress = () => {
         }}
       />
 
-      {/* MOBILE BOTTOM NAVIGATION BAR */}
       <div className="mobile-bottom-nav-bar">
         <button onClick={() => navigateTo('home')}>
           🏠
@@ -637,7 +616,7 @@ const handleProceedToAddress = () => {
         <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>
           🔍
         </button>
-        <button onClick={() => navigateTo('home')} className="nav-new-text">
+        <button onClick={() => navigateTo('shop', 'New Arrivals')} className="nav-new-text">
           NEW
         </button>
         <button onClick={() => navigateTo('cart')} style={{ position: 'relative' }}>
@@ -649,7 +628,6 @@ const handleProceedToAddress = () => {
         </button>
       </div>
 
-      {/* CHECKOUT MODAL OVERLAY */}
       {showCheckout && (
         <CheckoutModal 
           cartItems={cartItems}
