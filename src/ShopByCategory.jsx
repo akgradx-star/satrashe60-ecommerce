@@ -11,7 +11,7 @@ const CATEGORIES_DATA = [
   { id: 'track-pants', name: 'TRACK PANTS', image: '/dress2.png', slug: 'Track Pants' },
   { id: 'dresses', name: 'DRESSES', image: '/dress3.png', slug: 'Dresses' },
   { id: 'coords', name: 'CO-ORDS', image: '/dress4.png', slug: 'Co-ord Sets' },
-  { id: 'new-drop', name: 'NEW DROP', image: '/hero.png', slug: 'New Drop' },
+  { id: 'new-drop', name: 'NEW DROP', image: '/hero.png', slug: 'New Arrivals' }, // Slug theek kiya gaya hai
   { id: 'more', name: 'MORE', image: '/dress1.png', slug: 'ALL' }
 ];
 
@@ -25,7 +25,7 @@ export default function ShopByCategory({ navigateTo }) {
           <div 
             key={cat.id} 
             className="sbc-card" 
-            onClick={() => navigateTo('category-plp', cat.slug)}
+            onClick={() => navigateTo('shop', cat.slug)} /* 🚀 Yahan 'category-plp' ko 'shop' kiya hai */
           >
             <div className="sbc-image-wrapper">
               <img src={cat.image} alt={cat.name} className="sbc-image" loading="lazy" />
