@@ -449,11 +449,45 @@ const handleProceedToAddress = () => {
         <div className="premium-home-container">
           
           <header className="premium-header">
-            <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>☰</button>
-            <img src="/logo.png" alt="SATRASHE60" className="header-logo" />
+            
+            {/* LEFT SIDE: Back Button aur Menu */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              
+              {/* BACK BUTTON: Sirf tab dikhega jab hum Home page par nahi honge */}
+              {currentPage !== 'home' && (
+                <button 
+                  onClick={() => {
+                    // Agar product ya cart par hai, toh wapas Shop par bhejega, warna Home par
+                    if (currentPage === 'product' || currentPage === 'product-detail' || currentPage === 'cart') {
+                      navigateTo('shop', 'ALL');
+                    } else {
+                      navigateTo('home');
+                    }
+                  }} 
+                  style={{ background: 'none', border: 'none', color: '#FFF', fontSize: '24px', cursor: 'pointer', padding: 0, marginTop: '-4px' }}
+                >
+                  ←
+                </button>
+              )}
+              
+              <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>☰</button>
+            </div>
+
+            {/* LOGO: Ab logo par click karne se bhi seedha Home khulega */}
+            <img 
+              src="/logo.png" 
+              alt="SATRASHE60" 
+              className="header-logo" 
+              onClick={() => navigateTo('home')}
+              style={{ cursor: 'pointer' }}
+            />
+
+            {/* RIGHT SIDE: Search aur Cart */}
             <div className="header-icons">
               <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
-              <button onClick={() => navigateTo('cart')}>🛍️<span className="cart-badge">{cartItems.length}</span></button>
+              <button onClick={() => navigateTo('cart')}>
+                🛍️<span className="cart-badge">{cartItems.length}</span>
+              </button>
             </div>
           </header>
           {/* SEARCH BAR OVERLAY */}
