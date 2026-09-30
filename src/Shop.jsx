@@ -395,6 +395,21 @@ export default function Shop({
   const [sizeError, setSizeError] = useState("");
   const [addedNotice, setAddedNotice] = useState(false);
 
+  // 🚀 YAHAN SE NAYA CODE CHALU (Database se kapde laane ke liye)
+  const [liveProducts, setLiveProducts] = useState([]);
+
+  useEffect(() => {
+    fetch('https://satrashe60-ecommerce.onrender.com/api/products')
+      .then(response => response.json())
+      .then(data => {
+        if(Array.isArray(data)) {
+          setLiveProducts(data.reverse()); // Naye upload kiye kapde sabse upar dikhenge
+        }
+      })
+      .catch(error => console.error("Live products laane mein error:", error));
+  }, []);
+  // 🚀 NAYA CODE KHATAM
+
   useEffect(() => {
     if (initialCategory) setSelectedCategory(initialCategory);
   }, [initialCategory]);
@@ -411,23 +426,24 @@ export default function Shop({
   };
 
   // 🚀 NAYA: Agar database se kapde aaye hain toh wo dikhao, warna purane wale dikhao
-  const filteredProducts = (products.length > 0 ? products : MASTER_PRODUCTS).filter(product => {
+  const finalProductsToDisplay = liveProducts.length > 0 ? liveProducts : MASTER_PRODUCTS;
+
+  const filteredProducts = finalProductsToDisplay.filter(product => {
     if (initialSearchQuery) {
       const q = initialSearchQuery.toLowerCase();
-      const matchesName = product.name.toLowerCase().includes(q);
-      const matchesCat = product.category.toLowerCase().includes(q);
-      const matchesFab = product.fabric.toLowerCase().includes(q);
+      const matchesName = (product.name || "").toLowerCase().includes(q);
+      const matchesCat = (product.category || "").toLowerCase().includes(q);
+      const matchesFab = (product.fabric || "").toLowerCase().includes(q);
       if (!matchesName && !matchesCat && !matchesFab) return false;
     }
 
     if (selectedCategory === "Under ₹199" && product.price >= 199) return false;
     if (selectedCategory !== "ALL" && selectedCategory !== "All Products" && selectedCategory !== "Under ₹199") {
-      if (product.category.toLowerCase() !== selectedCategory.toLowerCase()) return false;
+      if ((product.category || "").toLowerCase() !== selectedCategory.toLowerCase()) return false;
     }
 
-    // YAHI WO JADOO HAI JO SELECTED SIZES WALE KAPDE DIKHAYEGA
     if (selectedSizes.length > 0) {
-      const hasSize = product.sizes.some(s => selectedSizes.includes(s));
+      const hasSize = (product.sizes || []).some(s => selectedSizes.includes(s));
       if (!hasSize) return false;
     }
 
@@ -443,7 +459,7 @@ export default function Shop({
     }
 
     if (selectedColors.length > 0) {
-      const hasColor = product.colors.some(c => selectedColors.includes(c));
+      const hasColor = (product.colors || []).some(c => selectedColors.includes(c));
       if (!hasColor) return false;
     }
 
