@@ -153,35 +153,44 @@ const handleProceedToAddress = () => {
   };
 
   const handleOpenProduct = (productOrSlug, source = 'shop') => {
-    let foundProduct;
+    try {
+      let foundProduct;
 
-    // Agar seedha product object aaya hai
-    if (typeof productOrSlug === 'object' && productOrSlug !== null) {
-      foundProduct = productOrSlug;
-    } else {
-      // 🚀 Sabse pehle ASLI database (dbProducts) mein dhoondhega
-      foundProduct = dbProducts.find(p => 
-        p.slug === productOrSlug || 
-        p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug || 
-        p._id === productOrSlug || 
-        p.id === productOrSlug
-      );
-
-      // Agar asli mein nahi mila, tab fallback ke liye dummy mein dekhega
-      if (!foundProduct) {
-        foundProduct = (MASTER_PRODUCTS || []).find(p => 
-          p.slug === productOrSlug || 
-          p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug
+      // Agar seedha product object aaya hai
+      if (typeof productOrSlug === 'object' && productOrSlug !== null) {
+        foundProduct = productOrSlug;
+      } else if (typeof productOrSlug === 'string') {
+        const searchSlug = productOrSlug.toLowerCase();
+        
+        // 🚀 SAFE SEARCH: '?' lagane se missing data par app crash nahi hogi
+        foundProduct = dbProducts.find(p => 
+          p?.slug === productOrSlug || 
+          (p?.name && p.name.toLowerCase().replace(/\s+/g, '-') === searchSlug) || 
+          p?._id === productOrSlug || 
+          p?.id === productOrSlug
         );
-      }
-    }
 
-    // Jo product mila usko open karega
-    setSelectedProduct(foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
-    setSourceBackPage(source);
-    setCurrentPage('product-detail');
-    setHistoryStack(prev => [...prev, 'product-detail']);
-    window.scrollTo(0, 0);
+        // Fallback (Dummy data)
+        if (!foundProduct) {
+          foundProduct = (MASTER_PRODUCTS || []).find(p => 
+            p?.slug === productOrSlug || 
+            (p?.name && p.name.toLowerCase().replace(/\s+/g, '-') === searchSlug)
+          );
+        }
+      }
+
+      // Jo product mila usko set karega
+      setSelectedProduct(foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
+      setSourceBackPage(source);
+      setCurrentPage('product-detail');
+      setHistoryStack(prev => [...prev, 'product-detail']);
+      window.scrollTo(0, 0);
+      
+    } catch (error) {
+      console.error("Product open karne mein error:", error);
+      // Agar kuch galat hua toh crash hone ki jagah Home par bhej dega
+      setCurrentPage('home'); 
+    }
   };
 
   const handleToggleWishlist = (id) => {
