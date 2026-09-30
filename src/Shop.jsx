@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Shop.css';
 
 export const MASTER_PRODUCTS = [
+  // (Your original MASTER_PRODUCTS array remains exactly the same here)
   {
     id: 1,
     slug: "linen-shirt-top",
@@ -350,8 +351,17 @@ const COLOR_MAP = {
   "Red": "#C15C5C"
 };
 
+const CATEGORIES = [
+  { name: 'Tops', img: '/dress1.png' },
+  { name: 'T-Shirts', img: '/dress2.png' },
+  { name: 'Kurtis', img: '/dress3.png' },
+  { name: 'One Pieces', img: '/dress4.png' },
+  { name: 'Jeans', img: '/dress1.png' },
+  { name: 'Track Pants', img: '/dress2.png' }
+];
+
 export default function Shop({ 
-  products = [], // 🚀 NAYA: Ab kapde database se yahan aayenge
+  products = [], 
   initialCategory = "ALL", 
   initialSearchQuery = "", 
   initialSizes = [], 
@@ -361,10 +371,7 @@ export default function Shop({
   onAddToCart 
 }) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  
-  // 🚀 YAHAN initialSizes ko default value banaya hai
   const [selectedSizes, setSelectedSizes] = useState(initialSizes);
-  
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedFabrics, setSelectedFabrics] = useState([]);
@@ -372,11 +379,9 @@ export default function Shop({
   const [onlyOneLeftOnly, setOnlyOneLeftOnly] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   
-  const [sortBy, setSortBy] = useState("Newest First");
+  const [sortBy, setSortBy] = useState("Recommended"); // Updated default
   const [viewMode, setViewMode] = useState("grid");
-  const [currentPageNum, setCurrentPageNum] = useState(1);
-  const itemsPerPage = 12;
-
+  
   const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   const [openAccordions, setOpenAccordions] = useState({
@@ -395,7 +400,6 @@ export default function Shop({
   const [sizeError, setSizeError] = useState("");
   const [addedNotice, setAddedNotice] = useState(false);
 
-  // 🚀 YAHAN SE NAYA CODE CHALU (Database se kapde laane ke liye)
   const [liveProducts, setLiveProducts] = useState([]);
 
   useEffect(() => {
@@ -403,18 +407,16 @@ export default function Shop({
       .then(response => response.json())
       .then(data => {
         if(Array.isArray(data)) {
-          setLiveProducts(data.reverse()); // Naye upload kiye kapde sabse upar dikhenge
+          setLiveProducts(data.reverse()); 
         }
       })
       .catch(error => console.error("Live products laane mein error:", error));
   }, []);
-  // 🚀 NAYA CODE KHATAM
 
   useEffect(() => {
     if (initialCategory) setSelectedCategory(initialCategory);
   }, [initialCategory]);
 
-  // 🚀 JAB BHI initialSizes AAYEGA, YEH FILTER KO UPDATE KAR DEGA
   useEffect(() => {
     if (initialSizes && initialSizes.length > 0) {
       setSelectedSizes(initialSizes);
@@ -425,9 +427,7 @@ export default function Shop({
     setOpenAccordions(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  // 🚀 NAYA: Agar database se kapde aaye hain toh wo dikhao, warna purane wale dikhao
-  // 🚀 NAYA: Live kapde sabse upar dikhao aur unke niche dummy kapde dikhao
-const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
+  const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
 
   const filteredProducts = finalProductsToDisplay.filter(product => {
     if (initialSearchQuery) {
@@ -439,9 +439,12 @@ const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
     }
 
     if (selectedCategory === "Under ₹199" && product.price >= 199) return false;
-    if (selectedCategory !== "ALL" && selectedCategory !== "All Products" && selectedCategory !== "Under ₹199") {
+    if (selectedCategory !== "ALL" && selectedCategory !== "All Products" && selectedCategory !== "Under ₹199" && selectedCategory !== "New Arrivals" && selectedCategory !== "Best Sellers") {
       if ((product.category || "").toLowerCase() !== selectedCategory.toLowerCase()) return false;
     }
+    
+    if (selectedCategory === "New Arrivals" && !product.isNew) return false;
+    if (selectedCategory === "Best Sellers" && !product.isBestSeller) return false;
 
     if (selectedSizes.length > 0) {
       const hasSize = (product.sizes || []).some(s => selectedSizes.includes(s));
@@ -476,36 +479,13 @@ const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === "Price: Low → High") return a.price - b.price;
-    if (sortBy === "Price: High → Low") return b.price - a.price;
-    if (sortBy === "Most Popular" || sortBy === "Best Selling") return b.isBestSeller ? 1 : -1;
-    return new Date(b.createdAt) - new Date(a.createdAt);
+    if (sortBy === "Price: Low to High") return a.price - b.price;
+    if (sortBy === "Price: High to Low") return b.price - a.price;
+    if (sortBy === "Newest First") return new Date(b.createdAt) - new Date(a.createdAt);
+    return 0; // "Recommended" (default order)
   });
 
   const totalProductsCount = sortedProducts.length;
-  const startIndex = (currentPageNum - 1) * itemsPerPage;
-  const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
-
-  const activeChips = [];
-  if (selectedCategory !== "ALL" && selectedCategory !== "All Products") activeChips.push({ type: 'category', label: selectedCategory });
-  selectedSizes.forEach(s => activeChips.push({ type: 'size', label: `Size: ${s}`, value: s }));
-  selectedPriceRanges.forEach(p => activeChips.push({ type: 'price', label: p, value: p }));
-  selectedColors.forEach(c => activeChips.push({ type: 'color', label: c, value: c }));
-  selectedFabrics.forEach(f => activeChips.push({ type: 'fabric', label: f, value: f }));
-  if (newThisWeekOnly) activeChips.push({ type: 'newThisWeek', label: "New This Week" });
-  if (onlyOneLeftOnly) activeChips.push({ type: 'onlyOneLeft', label: "Only 1 Left" });
-  if (selectedDiscount) activeChips.push({ type: 'discount', label: `${selectedDiscount}%+ Off` });
-
-  const handleRemoveChip = (chip) => {
-    if (chip.type === 'category') setSelectedCategory("ALL");
-    if (chip.type === 'size') setSelectedSizes(selectedSizes.filter(s => s !== chip.value));
-    if (chip.type === 'price') setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== chip.value));
-    if (chip.type === 'color') setSelectedColors(selectedColors.filter(c => c !== chip.value));
-    if (chip.type === 'fabric') setSelectedFabrics(selectedFabrics.filter(f => f !== chip.value));
-    if (chip.type === 'newThisWeek') setNewThisWeekOnly(false);
-    if (chip.type === 'onlyOneLeft') setOnlyOneLeftOnly(false);
-    if (chip.type === 'discount') setSelectedDiscount(null);
-  };
 
   const handleResetAll = () => {
     setSelectedCategory("ALL");
@@ -516,17 +496,7 @@ const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
     setNewThisWeekOnly(false);
     setOnlyOneLeftOnly(false);
     setSelectedDiscount(null);
-    setSortBy("Newest First");
-    setCurrentPageNum(1);
-  };
-
-  const handleOpenQuickAdd = (e, product) => {
-    e.stopPropagation();
-    if (product.stock === 0) return;
-    setQuickAddProduct(product);
-    setSelectedSizeForAdd(null);
-    setSizeError("");
-    setAddedNotice(false);
+    setSortBy("Recommended");
   };
 
   const handleConfirmAddToCart = () => {
@@ -543,402 +513,148 @@ const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
   };
 
   return (
-    <div className="shop-container">
+    <div className="premium-shop-container">
       
-      <button className="mobile-filter-toggle" onClick={() => setShowMobileFilter(true)}>
-        Filters & Categories 🔽
-      </button>
-
-      <div className="shop-main-layout">
-        
-        <aside className={`sidebar-filter ${showMobileFilter ? 'mobile-open' : ''}`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '16px', borderBottom: '1px solid #222222' }}>
-            <span style={{ fontSize: '12px', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase' }}>FILTERS</span>
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-              <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#888888', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}>
-                Reset All ↻
-              </button>
-              <button className="close-filter-btn" onClick={() => setShowMobileFilter(false)}>✕</button>
-            </div>
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '16px' }}>
-            <div onClick={() => toggleAccordion('category')} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: openAccordions.category ? '14px' : '0', cursor: 'pointer', textTransform: 'uppercase' }}>
-              CATEGORY <span>{openAccordions.category ? '—' : '+'}</span>
-            </div>
-            {openAccordions.category && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {[
-                  { name: "Tops", count: 48 },
-                  { name: "Kurtis", count: 36 },
-                  { name: "One Pieces", count: 28 },
-                  { name: "Co-ord Sets", count: 22 },
-                  { name: "Under ₹199", count: 18 },
-                  { name: "All Products", count: 156 }
-                ].map(item => (
-                  <label key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: selectedCategory === item.name ? '#FF6B00' : '#CCCCCC', cursor: 'pointer' }}>
-                    <input 
-                      type="checkbox" 
-                      checked={selectedCategory === item.name || (item.name === "All Products" && selectedCategory === "ALL")}
-                      onChange={() => setSelectedCategory(item.name === "All Products" ? "ALL" : item.name)}
-                      style={{ accentColor: '#FF6B00', width: '15px', height: '15px', cursor: 'pointer' }}
-                    />
-                    <span>{item.name} <span style={{ color: '#666666' }}>({item.count})</span></span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
-            <div onClick={() => toggleAccordion('size')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
-              SIZE <span>{openAccordions.size ? '—' : '+'}</span>
-            </div>
-            {openAccordions.size && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                {["XS", "S", "M", "L", "XL", "XXL"].map(size => {
-                  const isSel = selectedSizes.includes(size);
-                  return (
-                    <button
-                      key={size}
-                      onClick={() => {
-                        if (isSel) setSelectedSizes(selectedSizes.filter(s => s !== size));
-                        else setSelectedSizes([...selectedSizes, size]);
-                      }}
-                      style={{ padding: '6px 12px', border: '1px solid #333333', backgroundColor: isSel ? '#FF6B00' : 'transparent', color: '#FFFFFF', fontSize: '11px', fontWeight: '700', borderRadius: '3px', cursor: 'pointer' }}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
-            <div onClick={() => toggleAccordion('price')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
-              PRICE <span>{openAccordions.price ? '—' : '+'}</span>
-            </div>
-            {openAccordions.price && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-                {["Under ₹199", "₹199–₹299", "₹299–₹499", "₹499+"].map(range => (
-                  <label key={range} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={selectedPriceRanges.includes(range)}
-                      onChange={() => {
-                        if (selectedPriceRanges.includes(range)) setSelectedPriceRanges(selectedPriceRanges.filter(p => p !== range));
-                        else setSelectedPriceRanges([...selectedPriceRanges, range]);
-                      }}
-                      style={{ accentColor: '#FF6B00', width: '15px', height: '15px' }}
-                    />
-                    <span>{range}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
-            <div onClick={() => toggleAccordion('color')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '12px', color: '#DDDDDD', cursor: 'pointer' }}>
-              COLOR <span>{openAccordions.color ? '—' : '+'}</span>
-            </div>
-            {openAccordions.color && (
-              <div style={{ display: 'flex', gap: '10px' }}>
-                {Object.entries(COLOR_MAP).map(([colorName, hex]) => {
-                  const isSel = selectedColors.includes(colorName);
-                  return (
-                    <span 
-                      key={colorName} 
-                      title={colorName}
-                      onClick={() => {
-                        if (isSel) setSelectedColors(selectedColors.filter(c => c !== colorName));
-                        else setSelectedColors([...selectedColors, colorName]);
-                      }}
-                      style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: hex, border: isSel ? '2px solid #FF6B00' : '1px solid #444444', cursor: 'pointer', display: 'inline-block', boxShadow: isSel ? '0 0 6px #FF6B00' : 'none' }}
-                    ></span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '14px', paddingTop: '14px' }}>
-            <div onClick={() => toggleAccordion('fabric')} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', color: '#DDDDDD', cursor: 'pointer' }}>
-              FABRIC <span>{openAccordions.fabric ? '—' : '+'}</span>
-            </div>
-            {openAccordions.fabric && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
-                {["100% Pure Linen", "Ribbed Cotton Blend", "Cotton Viscose", "Premium Rayon Blend", "100% Heavyweight Cotton", "Georgette"].map(fab => (
-                  <label key={fab} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={selectedFabrics.includes(fab)}
-                      onChange={() => {
-                        if (selectedFabrics.includes(fab)) setSelectedFabrics(selectedFabrics.filter(f => f !== fab));
-                        else setSelectedFabrics([...selectedFabrics, fab]);
-                      }}
-                      style={{ accentColor: '#FF6B00', width: '15px', height: '15px' }}
-                    />
-                    <span>{fab}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '10px', color: '#DDDDDD' }}>NEW ARRIVALS</div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" 
-                checked={newThisWeekOnly}
-                onChange={(e) => setNewThisWeekOnly(e.target.checked)}
-                style={{ accentColor: '#FF6B00', width: '15px', height: '15px' }} 
-              />
-              <span>New This Week</span>
-            </label>
-          </div>
-
-          <div style={{ borderBottom: '1px solid #1A1A1A', paddingBottom: '16px', paddingTop: '14px' }}>
-            <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '1.5px', marginBottom: '10px', color: '#DDDDDD' }}>ONLY 1 LEFT</div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', color: '#CCCCCC', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" 
-                checked={onlyOneLeftOnly} 
-                onChange={(e) => setOnlyOneLeftOnly(e.target.checked)}
-                style={{ accentColor: '#FF6B00', width: '15px', height: '15px' }} 
-              />
-              <span>Show Only 1 Left</span>
-            </label>
-          </div>
-
-          <div style={{ marginTop: 'auto', backgroundColor: '#121212', border: '1px solid #222222', borderRadius: '8px', padding: '18px 14px', textAlign: 'center' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1px solid #333333', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px auto', fontSize: '16px' }}>
-              🎁
-            </div>
-            <div style={{ fontSize: '11px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '4px' }}>
-              EXCLUSIVE DROP ALERTS
-            </div>
-            <p style={{ fontSize: '10px', color: '#888888', marginBottom: '14px', lineHeight: '1.4' }}>
-              Join the club & get early access to new drops and offers.
-            </p>
-            <button style={{ backgroundColor: '#111111', color: '#FF6B00', border: '1px solid #333333', padding: '10px 16px', width: '100%', fontSize: '10px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px' }}>
-              JOIN THE CLUB
-            </button>
-          </div>
-        </aside>
-
-        <main style={{ padding: '30px 40px', backgroundColor: '#FAFAFA' }}>
-          <div className="breadcrumb">
-            <span onClick={() => onNavigate('/')} style={{ color: '#888888', cursor: 'pointer' }}>Home</span> › <span style={{ color: '#111111', fontWeight: '600' }}>Shop</span>
-          </div>
-
-          <div className="shop-header-bar">
-            <div>
-              <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '900', letterSpacing: '-0.5px', margin: '0 0 4px 0', textTransform: 'uppercase' }}>
-                SHOP ALL
-              </h1>
-              <p style={{ fontSize: '12px', color: '#666666', margin: 0 }}>
-                Showing {totalProductsCount === 0 ? '0' : `${startIndex + 1}–${Math.min(startIndex + itemsPerPage, totalProductsCount)}`} of {totalProductsCount} products
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '12px', color: '#666666' }}>Sort by:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                style={{ padding: '8px 14px', fontSize: '12px', fontWeight: '600', border: '1px solid #E0E0E0', borderRadius: '4px', background: '#FFFFFF', cursor: 'pointer' }}
-              >
-                <option value="Newest First">Newest First</option>
-                <option value="Price: Low → High">Price: Low → High</option>
-                <option value="Price: High → Low">Price: High → Low</option>
-                <option value="Most Popular">Most Popular</option>
-                <option value="Best Selling">Best Selling</option>
-              </select>
-
-              <div style={{ display: 'flex', border: '1px solid #E0E0E0', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
-                <button 
-                  onClick={() => setViewMode('grid')} 
-                  style={{ padding: '8px 10px', background: viewMode === 'grid' ? '#0A0A0A' : '#FFFFFF', color: viewMode === 'grid' ? '#FFFFFF' : '#666666', border: 'none', cursor: 'pointer', fontSize: '12px' }}
-                >
-                  田
-                </button>
-                <button 
-                  onClick={() => setViewMode('list')} 
-                  style={{ padding: '8px 10px', background: viewMode === 'list' ? '#0A0A0A' : '#FFFFFF', color: viewMode === 'list' ? '#FFFFFF' : '#666666', border: 'none', cursor: 'pointer', fontSize: '12px' }}
-                >
-                  ☰
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {activeChips.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px', flexWrap: 'wrap' }}>
-              {activeChips.map((chip, idx) => (
-                <div key={idx} style={{ backgroundColor: '#EFEFEF', color: '#333333', padding: '6px 14px', fontSize: '11px', fontWeight: '600', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {chip.label}
-                  <span onClick={() => handleRemoveChip(chip)} style={{ cursor: 'pointer', fontWeight: '800', color: '#888888' }}>✕</span>
-                </div>
-              ))}
-              <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#FF6B00', fontSize: '11px', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>
-                Clear All
-              </button>
-            </div>
-          )}
-
-          {totalProductsCount === 0 ? (
-            <div style={{ padding: '80px 0', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E0E0E0' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '12px' }}>NO PRODUCTS FOUND</h3>
-              <p style={{ fontSize: '13px', color: '#666666', marginBottom: '24px' }}>Try resetting filters or searching with a different keyword.</p>
-              <button onClick={handleResetAll} style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', border: 'none', padding: '12px 28px', fontSize: '12px', fontWeight: '800', cursor: 'pointer', borderRadius: '4px', letterSpacing: '1px' }}>
-                CONTINUE SHOPPING
-              </button>
-            </div>
-          ) : (
-            
-            <div className={`products-display-grid ${viewMode === 'list' ? 'list-view' : ''}`}>
-              {paginatedProducts.map(product => {
-                const isWishlisted = wishlist.includes(product.id);
-                return (
-                  <div 
-                    key={product.id} 
-                    onClick={() => onNavigate(`/product/${product.slug}`)}
-                    className="product-card-shop"
-                  >
-                    <div className="card-media">
-                      {product.isNew && (
-                        <span style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: '#0A0A0A', color: '#FFFFFF', fontSize: '9px', fontWeight: '800', padding: '3px 6px', borderRadius: '2px', letterSpacing: '1px', zIndex: 2 }}>
-                          NEW
-                        </span>
-                      )}
-
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); onToggleWishlist(product.id); }}
-                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'none', border: 'none', color: isWishlisted ? '#FF6B00' : '#FFFFFF', fontSize: '16px', cursor: 'pointer', zIndex: 2, textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}
-                      >
-                        {isWishlisted ? '♥' : '♡'}
-                      </button>
-
-                      <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-
-                      {product.stock === 1 ? (
-                        <span style={{ position: 'absolute', bottom: '8px', left: '8px', backgroundColor: '#FF6B00', color: '#FFFFFF', fontSize: '8px', fontWeight: '800', padding: '3px 6px', borderRadius: '2px', letterSpacing: '0.5px', textTransform: 'uppercase', zIndex: 2 }}>
-                          ONLY 1 LEFT
-                        </span>
-                      ) : product.stock === 0 ? (
-                        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(10, 10, 10, 0.75)', color: '#FFFFFF', fontSize: '11px', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', letterSpacing: '1px', zIndex: 2 }}>
-                          SOLD OUT
-                        </div>
-                      ) : null}
-
-                      {product.stock > 0 && (
-                        <button 
-                          onClick={(e) => handleOpenQuickAdd(e, product)}
-                          style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(10, 10, 10, 0.85)', color: '#FFFFFF', width: '28px', height: '28px', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', zIndex: 2 }}
-                        >
-                          🛍️
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="card-info">
-                      <h3 style={{ fontSize: '12px', fontWeight: '700', color: '#111111', margin: '0 0 4px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {product.name}
-                      </h3>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '13px', fontWeight: '800', color: '#111111' }}>₹{product.price}</span>
-                        <span style={{ fontSize: '10px', color: '#999999', textDecoration: 'line-through' }}>₹{product.oldPrice}</span>
-                        <span style={{ fontSize: '9px', fontWeight: '800', color: '#FF6B00' }}>{product.discount}% OFF</span>
-                      </div>
-
-                      <div style={{ fontSize: '9px', color: '#666666', fontWeight: '600', marginBottom: '6px' }}>
-                        Size: {product.sizes.join(" ")}
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '5px' }}>
-                        {product.colors.map((colorName, i) => (
-                          <span key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: COLOR_MAP[colorName] || '#CCCCCC', border: '1px solid #CCCCCC', display: 'inline-block' }}></span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {totalProductsCount > itemsPerPage && (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '30px' }}>
-              <button 
-                onClick={() => setCurrentPageNum(prev => Math.max(prev - 1, 1))}
-                disabled={currentPageNum === 1}
-                style={{ width: '32px', height: '32px', backgroundColor: '#EFEFEF', color: '#111111', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', opacity: currentPageNum === 1 ? 0.5 : 1 }}
-              >
-                ‹
-              </button>
-
-              {[...Array(Math.ceil(totalProductsCount / itemsPerPage))].map((_, idx) => {
-                const page = idx + 1;
-                return (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPageNum(page)}
-                    style={{ width: '32px', height: '32px', backgroundColor: currentPageNum === page ? '#0A0A0A' : '#EFEFEF', color: currentPageNum === page ? '#FFFFFF' : '#111111', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
-
-              <button 
-                onClick={() => setCurrentPageNum(prev => Math.min(prev + 1, Math.ceil(totalProductsCount / itemsPerPage)))}
-                disabled={currentPageNum === Math.ceil(totalProductsCount / itemsPerPage)}
-                style={{ width: '32px', height: '32px', backgroundColor: '#EFEFEF', color: '#111111', border: 'none', borderRadius: '4px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', opacity: currentPageNum === Math.ceil(totalProductsCount / itemsPerPage) ? 0.5 : 1 }}
-              >
-                ›
-              </button>
-            </div>
-          )}
-        </main>
+      {/* BANNER SECTION */}
+      <div className="shop-premium-banner">
+        <div className="banner-overlay">
+          <span className="banner-eyebrow">TRENDING NOW</span>
+          <h1 className="banner-title">WOMEN'S<br/>COLLECTION</h1>
+          <p className="banner-subtitle">STREET STYLE / COMFORT / AFFORDABLE</p>
+          <button className="banner-btn" onClick={() => setSelectedCategory("ALL")}>EXPLORE NOW →</button>
+        </div>
       </div>
 
+      {/* CIRCULAR CATEGORIES */}
+      <div className="shop-circular-categories">
+        {CATEGORIES.map((cat, idx) => (
+          <div 
+            key={idx} 
+            className="circular-cat-item"
+            onClick={() => setSelectedCategory(cat.name)}
+          >
+            <div className={`circle-img-box ${selectedCategory === cat.name ? 'active-circle' : ''}`}>
+              <img src={cat.img} alt={cat.name} />
+            </div>
+            <span className="circle-cat-name">{cat.name}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* FILTER & SORT BAR */}
+      <div className="shop-controls-bar">
+        <button className="filter-btn" onClick={() => setShowMobileFilter(true)}>
+          <span className="filter-icon">⎚</span> Filter
+        </button>
+        
+        <div className="sort-wrapper">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
+            <option value="Recommended">Sort By</option>
+            <option value="Newest First">Newest</option>
+            <option value="Price: Low to High">Price: Low - High</option>
+            <option value="Price: High to Low">Price: High - Low</option>
+          </select>
+        </div>
+
+        <div className="view-toggles">
+          <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active-view' : ''}>⊞</button>
+          <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active-view' : ''}>⊟</button>
+        </div>
+      </div>
+
+      {/* PRODUCT GRID */}
+      {totalProductsCount === 0 ? (
+        <div className="no-products-msg">
+          <h3>No products found for "{selectedCategory}"</h3>
+          <button onClick={handleResetAll} className="reset-btn-gold">View All Products</button>
+        </div>
+      ) : (
+        <div className={`premium-product-grid ${viewMode}`}>
+          {sortedProducts.map(product => {
+            const isWishlisted = wishlist.includes(product.id || product._id);
+            // Dynamic discount calculation
+            const discountPct = product.discount || Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) || 0;
+
+            return (
+              <div key={product.id || product._id} className="premium-shop-card">
+                
+                <div className="card-img-wrapper" onClick={() => onNavigate(`/product/${product.slug || product.name}`)}>
+                  {product.isNew && <span className="card-badge badge-new">New</span>}
+                  {product.isBestSeller && !product.isNew && <span className="card-badge badge-bestseller">Bestseller</span>}
+
+                  <button 
+                    className="card-wishlist-btn"
+                    onClick={(e) => { e.stopPropagation(); onToggleWishlist(product.id || product._id); }}
+                  >
+                    {isWishlisted ? '♥' : '♡'}
+                  </button>
+                  <img src={product.image || product.images?.[0]} alt={product.name} />
+                </div>
+
+                <div className="card-info-box">
+                  <h3 className="card-prod-title">{product.name}</h3>
+                  <div className="card-price-row">
+                    <span className="card-current-price">₹ {product.price}</span>
+                    {product.oldPrice && <span className="card-old-price">₹{product.oldPrice}</span>}
+                    {discountPct > 0 && <span className="card-discount">({discountPct}% OFF)</span>}
+                  </div>
+                  <div className="card-rating">
+                    <span className="stars">★★★★★</span> <span className="reviews">({product.reviews?.length || 124})</span>
+                  </div>
+                  
+                  <button 
+                    className="card-add-to-cart-btn"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      setQuickAddProduct(product);
+                      setSelectedSizeForAdd(null);
+                      setSizeError("");
+                      setAddedNotice(false);
+                    }}
+                  >
+                    🛍 ADD TO CART
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* QUICK ADD TO CART MODAL */}
       {quickAddProduct && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
-          <div style={{ backgroundColor: '#FFFFFF', padding: '24px', borderRadius: '8px', width: '320px', textAlign: 'center', border: '1px solid #111' }}>
-            <h3 style={{ fontSize: '14px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '8px' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(3px)' }}>
+          <div style={{ backgroundColor: '#111', padding: '24px', borderRadius: '8px', width: '320px', textAlign: 'center', border: '1px solid #333' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: '800', textTransform: 'uppercase', marginBottom: '8px', color: '#fff' }}>
               SELECT SIZE
             </h3>
-            <p style={{ fontSize: '12px', color: '#666666', marginBottom: '16px' }}>{quickAddProduct.name}</p>
+            <p style={{ fontSize: '12px', color: '#888', marginBottom: '16px' }}>{quickAddProduct.name}</p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
-              {quickAddProduct.sizes.map(sz => (
+              {(quickAddProduct.sizes || ["S", "M", "L", "XL"]).map(sz => (
                 <button
                   key={sz}
                   onClick={() => { setSelectedSizeForAdd(sz); setSizeError(""); }}
-                  style={{ width: '38px', height: '38px', border: selectedSizeForAdd === sz ? '2px solid #FF6B00' : '1px solid #CCCCCC', backgroundColor: selectedSizeForAdd === sz ? '#FF6B00' : '#FFFFFF', color: selectedSizeForAdd === sz ? '#FFFFFF' : '#111111', fontWeight: '800', borderRadius: '4px', cursor: 'pointer' }}
+                  style={{ width: '38px', height: '38px', border: selectedSizeForAdd === sz ? '2px solid #D4AF37' : '1px solid #333', backgroundColor: selectedSizeForAdd === sz ? '#D4AF37' : '#111', color: selectedSizeForAdd === sz ? '#000' : '#fff', fontWeight: '800', borderRadius: '4px', cursor: 'pointer' }}
                 >
                   {sz}
                 </button>
               ))}
             </div>
 
-            {sizeError && <div style={{ color: '#D92D20', fontSize: '11px', fontWeight: '700', marginBottom: '12px' }}>{sizeError}</div>}
-            {addedNotice && <div style={{ color: '#008000', fontSize: '11px', fontWeight: '800', marginBottom: '12px' }}>Added to Bag ✓</div>}
+            {sizeError && <div style={{ color: '#FF3333', fontSize: '11px', fontWeight: '700', marginBottom: '12px' }}>{sizeError}</div>}
+            {addedNotice && <div style={{ color: '#00cc00', fontSize: '11px', fontWeight: '800', marginBottom: '12px' }}>Added to Bag ✓</div>}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button 
                 onClick={handleConfirmAddToCart}
-                style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', border: 'none', padding: '12px', fontSize: '12px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px' }}
+                style={{ backgroundColor: '#D4AF37', color: '#000', border: 'none', padding: '12px', fontSize: '12px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px' }}
               >
-                ADD TO BAG
+                CONFIRM
               </button>
               <button 
                 onClick={() => setQuickAddProduct(null)}
-                style={{ backgroundColor: 'transparent', color: '#666666', border: 'none', padding: '8px', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}
+                style={{ backgroundColor: 'transparent', color: '#888', border: 'none', padding: '8px', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -947,37 +663,66 @@ const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
         </div>
       )}
 
-      {/* BOTTOM TRUST STRIP */}
-      <div style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', padding: '18px 4%', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', borderTop: '1px solid #1F1F1F' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '20px' }}>🚚</span>
-          <div>
-            <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase' }}>PAN INDIA DELIVERY</div>
-            <div style={{ fontSize: '9px', color: '#888888' }}>Fast & Reliable</div>
+      {/* MOBILE FILTER OVERLAY */}
+      {showMobileFilter && (
+        <div className="mobile-filter-overlay">
+          <div className="mobile-filter-content">
+            <div className="filter-header">
+              <h3>FILTERS</h3>
+              <button onClick={() => setShowMobileFilter(false)}>✕</button>
+            </div>
+            
+            <div className="filter-body" style={{ overflowY: 'auto' }}>
+              <div style={{ paddingBottom: '16px' }}>
+                <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#D4AF37', marginBottom: '10px' }}>CATEGORIES</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {["ALL", "Tops", "T-Shirts", "Kurtis", "One Pieces", "Co-ord Sets"].map(cat => (
+                    <button 
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      style={{ padding: '8px 12px', background: selectedCategory === cat ? '#D4AF37' : '#222', color: selectedCategory === cat ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px' }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div style={{ paddingBottom: '16px', paddingTop: '10px', borderTop: '1px solid #333' }}>
+                <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#D4AF37', marginBottom: '10px' }}>SIZES</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                  {["XS", "S", "M", "L", "XL", "XXL"].map(size => {
+                    const isSel = selectedSizes.includes(size);
+                    return (
+                      <button 
+                        key={size}
+                        onClick={() => {
+                          if (isSel) setSelectedSizes(selectedSizes.filter(s => s !== size));
+                          else setSelectedSizes([...selectedSizes, size]);
+                        }}
+                        style={{ width: '40px', height: '40px', background: isSel ? '#D4AF37' : '#222', color: isSel ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px' }}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              <div style={{ paddingTop: '10px', borderTop: '1px solid #333' }}>
+                <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#FF3333', fontSize: '12px', padding: '10px 0', cursor: 'pointer' }}>
+                  Clear All Filters
+                </button>
+              </div>
+            </div>
+
+            <div className="filter-footer">
+              <button className="apply-filter-btn" onClick={() => setShowMobileFilter(false)}>APPLY FILTERS</button>
+            </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '20px' }}>🛍️</span>
-          <div>
-            <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase' }}>NO RESTOCK</div>
-            <div style={{ fontSize: '9px', color: '#888888' }}>Once it's gone, it may never return.</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '20px' }}>🏷️</span>
-          <div>
-            <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase' }}>BEST PRICES</div>
-            <div style={{ fontSize: '9px', color: '#888888' }}>Everyday Affordable Fashion</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '20px' }}>🛡️</span>
-          <div>
-            <div style={{ fontSize: '10px', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase' }}>PREMIUM QUALITY</div>
-            <div style={{ fontSize: '9px', color: '#888888' }}>Handpicked with Love</div>
-          </div>
-        </div>
-      </div>
+      )}
+
     </div>
   );
 }
