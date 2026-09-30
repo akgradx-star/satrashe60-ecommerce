@@ -1,23 +1,30 @@
 import React from 'react';
 
+// 🛡️ VIP ADMIN EMAILS: Yahan aap apne aur apne workers ke asli email daal sakte hain
+const ADMIN_EMAILS = [
+  "akash@gmail.com",       // Aapka email (Test karne ke liye)
+  "worker1@gmail.com",     // Aapke worker ka email
+  "admin@satrashe60.com"   // Company email
+];
+
 export default function SideMenu({ isOpen, onClose, navigateTo, currentUser }) {
   if (!isOpen) return null;
 
-  // Menu button click hone par page change karega aur menu band kar dega
   const handleNav = (page, category = "ALL") => {
     navigateTo(page, category);
     onClose();
   };
 
-  // Agar user logged in hai toh uska data, warna default design jaisa dikhega
-  const userName = currentUser?.name || "Akash";
-  const userEmail = currentUser?.email || "akash@gmail.com";
+  const userName = currentUser?.name || "Guest";
+  const userEmail = currentUser?.email || "Login to access more";
+
+  // 🔒 MAGIC LOGIC: Check karega ki login karne wala customer hai ya ADMIN
+  const isAdmin = currentUser?.email && ADMIN_EMAILS.includes(currentUser.email);
 
   return (
     <div className="side-menu-overlay" onClick={onClose}>
       <div className="side-menu-drawer" onClick={(e) => e.stopPropagation()}>
         
-        {/* CLOSE BUTTON */}
         <button className="side-menu-close" onClick={onClose}>✕</button>
 
         {/* PROFILE SECTION */}
@@ -32,19 +39,19 @@ export default function SideMenu({ isOpen, onClose, navigateTo, currentUser }) {
           <span className="side-chevron">›</span>
         </div>
 
-        {/* VIP BANNER */}
-        <div className="side-vip-banner">
-          <span className="vip-icon">👑</span>
-          <div className="vip-text">
-            <h4>SatraShe VIP</h4>
-            <p>Exclusive offers, early access & more</p>
-          </div>
-          <span className="side-chevron" style={{ color: '#D4AF37' }}>›</span>
-        </div>
-
-        {/* SCROLLABLE MENU LINKS */}
         <div className="side-menu-links">
           
+          {/* 🚨 SECRET ADMIN BUTTON: Sirf Admin Emails ko dikhega */}
+          {isAdmin && (
+            <div className="menu-group" style={{ backgroundColor: '#1a0505', borderBottom: '1px solid #331111', borderRadius: '4px', marginBottom: '10px' }}>
+              <div className="menu-item" onClick={() => handleNav('admin')} style={{ paddingLeft: '10px' }}>
+                <span className="menu-icon">🛡️</span> 
+                <span className="menu-text" style={{ color: '#FF4444', fontWeight: '800' }}>Admin Dashboard</span> 
+                <span className="side-chevron" style={{ color: '#FF4444' }}>›</span>
+              </div>
+            </div>
+          )}
+
           <div className="menu-group">
             <div className="menu-item active-gold" onClick={() => handleNav('home')}>
               <span className="menu-icon">🏠</span> <span className="menu-text">Home</span> <span className="side-chevron">›</span>
@@ -73,17 +80,8 @@ export default function SideMenu({ isOpen, onClose, navigateTo, currentUser }) {
             <div className="menu-item" onClick={() => handleNav('shop', 'Jeans')}>
               <span className="menu-icon">👖</span> <span className="menu-text">Jeans</span> <span className="side-chevron">›</span>
             </div>
-            <div className="menu-item" onClick={() => handleNav('shop', 'Track Pants')}>
-              <span className="menu-icon">👖</span> <span className="menu-text">Track Pants</span> <span className="side-chevron">›</span>
-            </div>
-            <div className="menu-item" onClick={() => handleNav('shop', 'Dresses')}>
-              <span className="menu-icon">👗</span> <span className="menu-text">Dresses</span> <span className="side-chevron">›</span>
-            </div>
             <div className="menu-item" onClick={() => handleNav('shop', 'Co-ord Sets')}>
               <span className="menu-icon">👕</span> <span className="menu-text">Co-ords</span> <span className="side-chevron">›</span>
-            </div>
-            <div className="menu-item" onClick={() => handleNav('shop', 'ALL')}>
-              <span className="menu-icon">⊞</span> <span className="menu-text">More</span> <span className="side-chevron">›</span>
             </div>
           </div>
 
@@ -94,14 +92,8 @@ export default function SideMenu({ isOpen, onClose, navigateTo, currentUser }) {
             <div className="menu-item" onClick={() => handleNav('wishlist')}>
               <span className="menu-icon">🤍</span> <span className="menu-text">Wishlist</span> <span className="side-chevron">›</span>
             </div>
-            <div className="menu-item" onClick={() => handleNav('shop', 'ALL')}>
-              <span className="menu-icon">🏷️</span> <span className="menu-text">Offers & Discounts</span> <span className="side-chevron">›</span>
-            </div>
             <div className="menu-item" onClick={() => handleNav('about')}>
               <span className="menu-icon">🎧</span> <span className="menu-text">Help & Support</span> <span className="side-chevron">›</span>
-            </div>
-            <div className="menu-item" onClick={() => handleNav('account')}>
-              <span className="menu-icon">⚙️</span> <span className="menu-text">Settings</span> <span className="side-chevron">›</span>
             </div>
           </div>
 
