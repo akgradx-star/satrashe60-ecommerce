@@ -11,14 +11,9 @@ import About from './About';
 import Community from './Community';
 import Account from './Account';
 import AdminDashboard from './AdminDashboard';
-import MobileHeaderNav from './MobileHeaderNav'; // Path check kar lena agar component folder mein ho
-import MobileHeroBanner from './MobileHeroBanner';
-import MobileAnnouncementStrip from './MobileAnnouncementStrip';
-import ShopByCategory from './ShopByCategory';
-import CategoryPLP from './CategoryPLP';
-import CampaignCarousel from './CampaignCarousel';
-import ShopYourSize from './ShopYourSize';
+import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
+// Purane imports hataye gaye hain kyunki unki ab zaroorat nahi hai.
 
 const DROPS_DATA = [
   { id: 1, slug: "linen-shirt-top", name: "Floral Shirt Top", price: "₹149", image: "/dress1.png" },
@@ -32,7 +27,7 @@ const DROPS_DATA = [
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home'); 
-  const [historyStack, setHistoryStack] = useState(['home']); // Pages yaad rakhne ke liye
+  const [historyStack, setHistoryStack] = useState(['home']); 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -46,7 +41,6 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  // 🚀 NAYA: Backend se kapde (products) laane ka state aur API call
   const [dbProducts, setDbProducts] = useState([]);
 
   useEffect(() => {
@@ -58,12 +52,10 @@ function App() {
       })
       .catch((error) => console.log("Backend se connect nahi hua:", error));
   }, []);
-  // 🚀 YAHAN SE NAYA CODE START HOTA HAI (Orders ke liye)
+
   const [dbOrders, setDbOrders] = useState([]);
 
   useEffect(() => {
-    // Yahan se if() hata diya gaya hai. 
-    // Ab ye har baar data fetch karega taaki Admin button ki ginti hamesha sahi rahe.
     fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
       .then((response) => response.json())
       .then((data) => {
@@ -72,9 +64,7 @@ function App() {
       })
       .catch((error) => console.log("Orders laane mein error:", error));
   }, [currentPage]);
-  // 🚀 YAHAN NAYA CODE KHATAM HOTA HAI
   
-  // Toast Notification State
   const [toastMessage, setToastMessage] = useState(null);
   const [user, setUser] = useState(() => {
   const saved = localStorage.getItem('user');
@@ -89,11 +79,6 @@ const handleProceedToAddress = () => {
   }
 };
 
-  // ==========================================================================
-  // PERSISTENT STATE USING LOCALSTORAGE (Prevents Data Loss on Refresh)
-  // ==========================================================================
-  
-  // 1. Logged-in Customer Session
   const [currentUser, setCurrentUser] = useState(() => {
     const savedUser = localStorage.getItem('satrashe60_user');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -107,7 +92,6 @@ const handleProceedToAddress = () => {
     }
   }, [currentUser]);
 
-  // 2. Global Orders Store
   const [placedOrders, setPlacedOrders] = useState(() => {
     const savedOrders = localStorage.getItem('satrashe60_orders');
     return savedOrders ? JSON.parse(savedOrders) : [
@@ -129,7 +113,6 @@ const handleProceedToAddress = () => {
     localStorage.setItem('satrashe60_orders', JSON.stringify(placedOrders));
   }, [placedOrders]);
 
-  // 3. Cart Items State
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('satrashe60_cart');
     return savedCart ? JSON.parse(savedCart) : [
@@ -141,7 +124,6 @@ const handleProceedToAddress = () => {
     localStorage.setItem('satrashe60_cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // 4. Wishlist State
   const [wishlist, setWishlist] = useState(() => {
     const savedWish = localStorage.getItem('satrashe60_wishlist');
     return savedWish ? JSON.parse(savedWish) : [1, 4];
@@ -154,14 +136,14 @@ const handleProceedToAddress = () => {
   const handleGoBack = () => {
     if (historyStack.length > 1) {
       const newHistory = [...historyStack];
-      newHistory.pop(); // Current page ko delete karo
-      const previousPage = newHistory[newHistory.length - 1]; // Pichle page ka naam nikalo
+      newHistory.pop(); 
+      const previousPage = newHistory[newHistory.length - 1]; 
       setHistoryStack(newHistory);
       setCurrentPage(previousPage);
       window.scrollTo(0, 0);
     }
   };
-  // Trigger floating Toast Notification helper
+
   const triggerToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -192,7 +174,7 @@ const handleProceedToAddress = () => {
   };
 
   const navigateTo = (pageName, category = "ALL") => {
-    if (pageName === currentPage) return; // NAYA: Agar same page par hai toh kuch mat karo
+    if (pageName === currentPage) return; 
     
     if (pageName.startsWith('/product/')) {
       const slug = pageName.replace('/product/', '');
@@ -230,7 +212,6 @@ const handleProceedToAddress = () => {
     triggerToast("Item removed from Bag");
   };
 
-  // NAYA FUNCTION YAHAN ADD KIYA HAI 👇
   const handleUpdateCartQuantity = (itemId, selectedSize, newQuantity) => {
     setCartItems(prev => prev.map(item => 
       (item.id === itemId && item.selectedSize === selectedSize) 
@@ -239,7 +220,6 @@ const handleProceedToAddress = () => {
     ));
   };
 
-  // Called when customer successfully checks out (Also deducts inventory stock)
   const handleOrderPlacedSuccess = (newOrderDetails) => {
     const createdOrder = {
       id: `SATRA-${Math.floor(10000 + Math.random() * 90000)}`,
@@ -254,7 +234,6 @@ const handleProceedToAddress = () => {
       ...newOrderDetails
     };
 
-    // Automatic Inventory Stock Deduction
     cartItems.forEach(cartItem => {
       const matchedProduct = MASTER_PRODUCTS.find(p => p.name.toLowerCase() === cartItem.name.toLowerCase() || p.id === cartItem.id);
       if (matchedProduct && matchedProduct.stock > 0) {
@@ -268,31 +247,28 @@ const handleProceedToAddress = () => {
     setShowCheckout(false);
     triggerToast(`🎉 Order Placed Successfully! Ref: ${createdOrder.id}`);
   };
-// Dedicated View for Admin Dashboard with Real-time Status Updates
+
   if (currentPage === 'admin') {
-    // MongoDB ki _id ko id mein map karein taaki AdminDashboard chal sake
     const mappedOrders = dbOrders.map(order => ({
       ...order,
       id: order._id || order.id,
-      status: order.orderStatus || 'Pending' // Backend orderStatus use karta hai
+      status: order.orderStatus || 'Pending' 
     }));
 
     return (
       <AdminDashboard 
         orders={mappedOrders}
         onUpdateOrderStatus={(orderId, nextStatus) => {
-          // 1. Backend ko naya status bhejo
           fetch(`https://satrashe60-ecommerce.onrender.com/api/orders/${orderId}/status`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ status: nextStatus }) // Jaise: 'Ready to Ship' ya 'Cancelled'
+            body: JSON.stringify({ status: nextStatus }) 
           })
           .then((response) => response.json())
           .then((data) => {
             if(data.order) {
-              // 2. Agar DB mein update ho gaya, toh website par bhi turant change kar do (bina refresh kiye)
               setDbOrders(prev => prev.map(o => (o._id === orderId || o.id === orderId) ? { ...o, orderStatus: nextStatus } : o));
               triggerToast(`Order moved to ${nextStatus} 🚀`);
             }
@@ -311,7 +287,6 @@ const handleProceedToAddress = () => {
   return (
     <div className="app">
 
-      {/* FLOATING TOAST NOTIFICATION POPUP */}
       {toastMessage && (
         <div style={{
           position: 'fixed',
@@ -332,96 +307,8 @@ const handleProceedToAddress = () => {
         </div>
       )}
 
-      {/* TOP ANNOUNCEMENT BAR */}
-      {/* TOP ANNOUNCEMENT BAR */}
-      <div className="announcement desktop-only-header">
-        <span>🔥 <strong className="accent">126</strong> NEW STYLES DROPPED TODAY</span>
-        <span>|</span>
-        <span>🚚 FREE SHIPPING ABOVE ₹500</span>
-        <span>|</span>
-        <span>💳 COD AVAILABLE</span>
-        <span>|</span>
-        <span>🔄 EASY RETURNS</span>
-      </div>
-
-      {/* HEADER */}
-      <header className="header desktop-only-header">
-        <div className="logo-brand" onClick={() => navigateTo('home')}>
-          <img src="/logo.png" alt="1760 SATRASHE60" className="logo-image" />
-        </div>
-
-        <nav>
-          <a href="#shop" className={currentPage === 'shop' ? 'active' : ''} onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>SHOP</a>
-          <a href="#new" className={currentPage === 'home' ? 'active' : ''} onClick={(e) => { e.preventDefault(); navigateTo('home'); }}>NEW DROP</a>
-          <a href="#collections" className={currentPage === 'collections' ? 'active' : ''} onClick={(e) => { e.preventDefault(); handleOpenCollection(null); }}>COLLECTIONS</a>
-          <a href="#sale" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'Under ₹199'); }}>SALE</a>
-          <a 
-            href="#community" 
-            className={currentPage === 'community' ? 'active' : ''} 
-            onClick={(e) => { e.preventDefault(); navigateTo('community'); }}
-          >
-            COMMUNITY
-          </a>
-          <a 
-            href="#about" 
-            className={currentPage === 'about' ? 'active' : ''} 
-            onClick={(e) => { e.preventDefault(); navigateTo('about'); }}
-          >
-            ABOUT
-          </a>
-        </nav>
-
-        <div className="header-right">
-          {/* ADMIN SHORTCUT BUTTON WITH LIVE ORDERS COUNT */}
-          <button 
-            onClick={() => navigateTo('admin')}
-            style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', border: 'none', padding: '6px 12px', fontSize: '11px', fontWeight: '800', borderRadius: '4px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-            title="Open Admin Supplier Panel"
-          >
-            🛡️  ADMIN ({dbOrders.filter(order => !order.orderStatus || order.orderStatus.toLowerCase() === 'pending').length})
-          </button>
-
-          {/* SEARCH INPUT TOGGLE */}
-          {showSearchInput ? (
-            <input 
-              type="text"
-              placeholder="Search clothes..."
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage('shop'); }}
-              onBlur={() => { if (!searchQuery) setShowSearchInput(false); }}
-              autoFocus
-              className="search-input"
-              style={{ padding: '6px 14px', borderRadius: '20px', border: '1px solid #CCCCCC', fontSize: '12px', outline: 'none' }}
-            />
-          ) : (
-            <button className="icon-btn" title="Search" onClick={() => setShowSearchInput(true)}>🔍</button>
-          )}
-
-          {/* WISHLIST BUTTON */}
-          <button className="icon-btn" title="Wishlist" onClick={() => navigateTo('wishlist')}>
-            ♡
-            {wishlist.length > 0 && <span className="cart-badge-count">{wishlist.length}</span>}
-          </button>
-
-          {/* ACCOUNT BUTTON */}
-          <button 
-            className="icon-btn" 
-            title="Account" 
-            onClick={() => navigateTo('account')}
-            style={{ color: currentUser ? '#FF6B00' : 'inherit' }}
-          >
-            👤
-          </button>
-
-          {/* CART BUTTON */}
-          <button className="icon-btn" title="Cart" onClick={() => navigateTo('cart')}>
-            🛒
-            <span className="cart-badge-count">{cartItems.length}</span>
-          </button>
-        </div>
-      </header>
-     {/* MOBILE HEADER & NAVIGATION (Naya wala) */}
-     <MobileHeaderNav 
+      {/* MOBILE HEADER & NAVIGATION */}
+      <MobileHeaderNav 
         cartCount={cartItems.length} 
         wishlistCount={wishlist.length} 
         isLoggedIn={!!currentUser} 
@@ -430,7 +317,7 @@ const handleProceedToAddress = () => {
         goBack={handleGoBack}              
         historyLength={historyStack.length} 
       />
-      {/* ROUTING: PAGES SWITCHER */}
+
       {currentPage === 'account' ? (
         <Account 
           currentUser={currentUser}
@@ -447,9 +334,8 @@ const handleProceedToAddress = () => {
         />
       ) : currentPage === 'about' ? (
         <About onNavigateToShop={() => navigateTo('shop')} />
-     ) : currentPage === 'product-detail' ? (
+      ) : currentPage === 'product-detail' ? (
         isMobile ? (
-          /* NAYA MOBILE PRODUCT PAGE (Sirf phone par dikhega) */
           <MobileProductDetail 
             product={selectedProduct}
             onBack={handleGoBack}
@@ -457,7 +343,6 @@ const handleProceedToAddress = () => {
             onNavigateToBag={() => navigateTo('cart')}
           />
         ) : (
-          /* PURANA DESKTOP PRODUCT PAGE (Sirf Laptop par dikhega) */
           <ProductDetail 
             product={selectedProduct}
             onBack={() => setCurrentPage(sourceBackPage)}
@@ -468,7 +353,7 @@ const handleProceedToAddress = () => {
             sourceTitle={sourceBackPage.toUpperCase()}
           />
           )
-    ) : currentPage === 'category-plp' ? (
+      ) : currentPage === 'category-plp' ? (
         <CategoryPLP 
           categoryName={selectedCategory || "ALL"}
           products={MASTER_PRODUCTS}
@@ -479,7 +364,6 @@ const handleProceedToAddress = () => {
           navigateTo={navigateTo}
         />
       ) : currentPage === 'size-filter' ? (
-        /* 🚀 YAHAN SE SIZE FILTER WALA MAGIC HOGA */
         <Shop 
           products={dbProducts} 
           initialCategory="ALL"
@@ -498,7 +382,6 @@ const handleProceedToAddress = () => {
           onOpenProduct={(prod) => handleOpenProduct(prod, 'collections')}
         />
       ) : currentPage === 'wishlist' ? (
-        /* WISHLIST PAGE */
         <div style={{ padding: '60px 4%', textAlign: 'center', minHeight: '60vh', backgroundColor: '#FAFAFA' }}>
           <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '800', marginBottom: '20px' }}>YOUR WISHLIST</h2>
           {wishlist.length === 0 ? (
@@ -519,17 +402,16 @@ const handleProceedToAddress = () => {
             </div>
           )}
         </div>
-   ) : currentPage === 'cart' ? (
+      ) : currentPage === 'cart' ? (
         isMobile ? (
           <MobileBag 
             cartItems={cartItems}
             onBack={handleGoBack}
             onUpdateQuantity={handleUpdateCartQuantity}
             onRemoveItem={handleRemoveFromCart}
-            onProceedToAddress={handleProceedToAddress} /* 👈 YAHAN CHANGE HUA HAI */
+            onProceedToAddress={handleProceedToAddress}
           />
         ) : (
-          /* PURANA DESKTOP BAG (Sirf Laptop par dikhega) */
           <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: '#FAFAFA' }}>
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '32px', fontWeight: '800', textAlign: 'center', marginBottom: '20px' }}>YOUR BAG</h2>
             {cartItems.length === 0 ? (
@@ -549,16 +431,11 @@ const handleProceedToAddress = () => {
                     </div>
                     <button onClick={() => handleRemoveFromCart(idx)} style={{ background: 'none', border: 'none', color: '#999999', cursor: 'pointer', fontSize: '16px' }}>✕</button>
                   </div>
-                )
-                )
-                }
-
+                ))}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', fontWeight: '800', fontSize: '16px' }}>
                   <span>Subtotal:</span>
                   <span>₹{cartItems.reduce((acc, i) => acc + (Number(i.price) * (i.quantity || 1)), 0)}</span>
                 </div>
-
-                {/* CHECKOUT BUTTON */}
                 <button 
                   onClick={() => setShowCheckout(true)}
                   style={{ backgroundColor: '#FF6B00', color: '#FFFFFF', width: '100%', padding: '16px', border: 'none', marginTop: '20px', fontWeight: '800', cursor: 'pointer', borderRadius: '4px', letterSpacing: '1px', textTransform: 'uppercase' }}
@@ -569,349 +446,165 @@ const handleProceedToAddress = () => {
             )}
           </div>
         )
-      
       ) : (
-        /* HOMEPAGE COMPLETE CODE */
-        <>
-          {/* HERO SECTION */}
-          <section className="hero-exact desktop-only-hero">
-            <div className="hero-left-content">
-              <p className="hero-subhead">STREET FASHION DELIVERED ACROSS INDIA</p>
-              <h1 className="hero-main-title">SATRASHE<span>60</span></h1>
-              <p className="hero-tagline">ONE PIECE.<br />ONE CHANCE.</p>
-
-              <button className="hero-orange-btn" onClick={() => navigateTo('shop')}>
-                SHOP NEW DROP →
-              </button>
-
-              <div className="social-proof-customers">
-                <div className="avatar-group">
-                  <img src="/dress1.png" alt="Customer" />
-                  <img src="/dress2.png" alt="Customer" />
-                  <img src="/dress3.png" alt="Customer" />
-                  <img src="/dress4.png" alt="Customer" />
-                </div>
-                <span className="social-proof-text">50K+ HAPPY CUSTOMERS</span>
-              </div>
+        /* ==========================================
+           HOMEPAGE (PREMIUM DARK LAYOUT) 
+           ========================================== */
+        <div className="premium-home-container">
+          {/* 1. HERO SECTION */}
+          <div className="premium-hero">
+            <div className="premium-hero-content">
+              <div className="hero-eyebrow">STYLE MEETS YOU</div>
+              <h1 className="hero-main-title">WEAR<br/>YOUR<br/>STORY</h1>
+              <p className="hero-subtitle">PREMIUM FASHION FOR<br/>MODERN YOU</p>
+              <button className="gold-outline-btn" onClick={() => navigateTo('shop')}>SHOP NOW →</button>
             </div>
-
-            <div className="hero-right-media">
-              <img src="/hero.png" alt="Street Fashion Model" className="hero-bg-img" />
-
-              <div className="hero-floating-card">
-                <div className="floating-icon-box">🛍️</div>
-                <div className="floating-title">EVERY PIECE IS UNIQUE</div>
-                <div className="floating-desc">NO RESTOCK ONCE IT'S GONE, IT MAY NEVER RETURN.</div>
-              </div>
-            </div>
-          </section>
-          
-{/* ========================================== */}
-          {/* MOBILE NAYA LAYOUT (Bina Hero Image ke) */}
-          {/* ========================================== */}
-
-          {/* 1. SABSE UPAR: SHOP YOUR SIZE (Logo ke theek niche) */}
-          <div style={{ paddingTop: '10px' }}>
-            <ShopYourSize navigateTo={navigateTo} />
+            <div className="slider-count">01 / 03</div>
           </div>
 
-          {/* 2. CHALTI HUI LINE (Announcement Strip) */}
-          <MobileAnnouncementStrip />
-
-          {/* 3. SHOP BY CATEGORY */}
-          <ShopByCategory navigateTo={navigateTo} />
-
-          {/* TRUST BADGES BAR (Sirf Desktop ke liye) */}
-          <div className="trust-badges-bar desktop-only-header">
-            <div className="trust-item"><span className="trust-icon">🚚</span><div><div className="trust-text-title">PAN INDIA DELIVERY</div></div></div>
-            <div className="trust-item"><span className="trust-icon">⚙️</span><div><div className="trust-text-title">UNIQUE PRODUCTS</div><div className="trust-text-sub">NO RESTOCK</div></div></div>
-            <div className="trust-item"><span className="trust-icon">🏷️</span><div><div className="trust-text-title">BEST PRICES</div><div className="trust-text-sub">EVERY DAY</div></div></div>
-            <div className="trust-item"><span className="trust-icon">🛡️</span><div><div className="trust-text-title">PREMIUM QUALITY</div><div className="trust-text-sub">ASSURED</div></div></div>
-          </div>
-
-          {/* NEW: CAMPAIGN CAROUSEL */}
-          <CampaignCarousel navigateTo={navigateTo} />
-         {/* COMBINED TRENDING PRODUCTS SECTION */}
-          <section className="section" style={{ padding: '40px 4%' }}>
-            <div className="section-header-row">
-              <h2 className="section-title-exact">TODAY'S DROP & ONLY ONE LEFT ⚡</h2>
-              <a href="#shop" className="view-all-link" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>VIEW ALL ›</a>
+          {/* 2. SHOP BY SIZE */}
+          <section className="premium-section">
+            <div className="premium-section-header">
+              <h2>SHOP BY SIZE</h2>
             </div>
-
-            {/* Yeh scrollable grid mobile ke liye perfect hai */}
-            <div className="products-exact-grid-mobile">
-              {DROPS_DATA.map(item => (
-                <div key={item.id} className="product-card-exact" onClick={() => handleOpenProduct(item.slug || item.name, 'home')}>
-                  <div className="card-image-box">
-                    <span className="badge-new-black">{item.id % 2 === 0 ? "NEW" : "ONLY 1 LEFT"}</span>
-                    <button className="wishlist-heart-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(item.id); }}>♡</button>
-                    <img src={item.image} alt={item.name} />
-                  </div>
-                  <div className="card-meta">
-                    <div className="card-product-title">{item.name}</div>
-                    <div className="card-product-price">{item.price}</div>
+            <div className="premium-size-grid">
+              {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
+                <div key={size} className="premium-category-card" onClick={() => navigateTo('size-filter', [size])}>
+                  <div className="premium-cat-img-box size-box-center">
+                    <span className="size-text-gold">{size}</span>
                   </div>
                 </div>
               ))}
             </div>
           </section>
-          <div className="mobile-only-minimal-footer" onClick={() => navigateTo('home')}>
-            <img src="/logo.png" alt="SATRASHE60" className="minimal-footer-logo" />
-            <p className="minimal-footer-copy">© 2026 SATRASHE60. All Rights Reserved.</p>
+
+          {/* 3. SHOP BY CATEGORY */}
+          <section className="premium-section">
+            <div className="premium-section-header">
+              <h2>SHOP BY CATEGORY</h2>
+              <button className="gold-text-btn" onClick={() => navigateTo('shop')}>VIEW ALL →</button>
+            </div>
+            <div className="premium-category-grid">
+              {[
+                { name: 'Tops', img: '/dress1.png' },
+                { name: 'T-Shirts', img: '/dress2.png' },
+                { name: 'Kurtis', img: '/dress3.png' },
+                { name: 'One Pieces', img: '/dress4.png' },
+                { name: 'Jeans', img: '/dress1.png' },
+                { name: 'Track Pants', img: '/dress2.png' },
+                { name: 'Dresses', img: '/dress3.png' },
+                { name: 'Co-ords', img: '/dress4.png' }
+              ].map((cat, idx) => (
+                <div key={idx} className="premium-category-card" onClick={() => navigateTo('shop', cat.name)}>
+                  <div className="premium-cat-img-box">
+                    <img src={cat.img} alt={cat.name} />
+                  </div>
+                  <p>{cat.name}</p>
+                </div>
+              ))}
+              
+              <div className="premium-category-card" onClick={() => navigateTo('shop', 'New Arrivals')}>
+                <div className="premium-cat-img-box new-drop-box">
+                  <span className="crown-icon">👑</span>
+                  <span className="new-text">NEW</span>
+                </div>
+                <p>New Drop</p>
+              </div>
+              
+              <div className="premium-category-card" onClick={() => navigateTo('shop')}>
+                <div className="premium-cat-img-box more-box">
+                  <span className="hanger-icon">🧥</span>
+                </div>
+                <p>More</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. FRESH DROPS PROMO */}
+          <div className="premium-promo-banner">
+            <div className="promo-overlay">
+              <div className="hero-eyebrow">NEW ARRIVALS</div>
+              <h2 className="promo-title">FRESH DROPS<br/>EVERY WEEK</h2>
+              <p className="promo-subtitle">TRENDY • COMFY • AFFORDABLE</p>
+              <button className="gold-filled-btn" onClick={() => navigateTo('shop')}>EXPLORE NOW →</button>
+            </div>
           </div>
 
-
-          {/* SHOP BY CATEGORY (Purana Desktop wala) */}
-          <section className="section desktop-only-hero" style={{ padding: '20px 4% 40px 4%' }}>
-            <div className="section-header-row">
-              <h2 className="section-title-exact">SHOP BY CATEGORY</h2>
-              <a href="#shop" className="view-all-link" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>VIEW ALL ›</a>
+          {/* 5. BEST SELLERS */}
+          <section className="premium-section">
+            <div className="premium-section-header">
+              <h2>BEST SELLERS</h2>
+              <button className="gold-text-btn" onClick={() => navigateTo('shop', 'Best Sellers')}>VIEW ALL →</button>
             </div>
-
-            <div className="category-tiles-grid">
-              <div className="category-tile-card" onClick={() => navigateTo('shop', 'Tops')}>
-                <img src="/dress1.png" alt="TOPS" />
-                <div className="category-tile-overlay">
-                  <div className="category-tile-title">TOPS</div>
-                  <div className="category-tile-sub">SHOP NOW →</div>
-                </div>
-              </div>
-
-              <div className="category-tile-card" onClick={() => navigateTo('shop', 'Kurtis')}>
-                <img src="/dress2.png" alt="KURTIS" />
-                <div className="category-tile-overlay">
-                  <div className="category-tile-title">KURTIS</div>
-                  <div className="category-tile-sub">SHOP NOW →</div>
-                </div>
-              </div>
-
-              <div className="category-tile-card" onClick={() => navigateTo('shop', 'One Pieces')}>
-                <img src="/dress3.png" alt="ONE PIECES" />
-                <div className="category-tile-overlay">
-                  <div className="category-tile-title">ONE PIECES</div>
-                  <div className="category-tile-sub">SHOP NOW →</div>
-                </div>
-              </div>
-
-              <div className="category-tile-card" onClick={() => navigateTo('shop', 'Co-ord Sets')}>
-                <img src="/dress4.png" alt="CO-ORD SETS" />
-                <div className="category-tile-overlay">
-                  <div className="category-tile-title">CO-ORD SETS</div>
-                  <div className="category-tile-sub">SHOP NOW →</div>
-                </div>
-              </div>
-
-              <div className="category-tile-card" onClick={() => navigateTo('shop', 'Under ₹199')}>
-                <img src="/dress1.png" alt="UNDER 199" />
-                <div className="category-tile-overlay">
-                  <div className="category-tile-title">UNDER ₹199</div>
-                  <div className="category-tile-sub">SHOP NOW →</div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* OUR STORY SECTION */}
-          <section className="our-story-section">
-            <div className="story-img-box">
-              <img src="/hero.png" alt="Our Story" />
-            </div>
-
-            <div className="story-content-box">
-              <p className="story-eyebrow">OUR STORY</p>
-              <h2 className="story-title">FROM STREET MARKETS <br /><span>TO YOUR DOORSTEP</span></h2>
-              <p className="story-desc">
-                We travel across India's famous street markets to handpick trendy, affordable and unique fashion for you. No middlemen. No bulk production. Just real fashion, carefully selected with love.
-              </p>
-
-              <div className="story-features-list">
-                <div className="story-feature-item">
-                  <div className="story-feature-icon">♡</div>
-                  <div>
-                    <div className="story-feature-title">HANDPICKED</div>
-                    <div className="story-feature-sub">WITH LOVE</div>
+            <div className="premium-products-scroll">
+              {DROPS_DATA.slice(0, 3).map(prod => (
+                <div key={prod.id} className="premium-product-card" onClick={() => handleOpenProduct(prod.slug, 'home')}>
+                  <div className="product-image-wrapper">
+                    <img src={prod.image} alt={prod.name} />
+                    <button className="premium-wishlist-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }}>♡</button>
+                  </div>
+                  <div className="product-info-dark">
+                    <h3>{prod.name}</h3>
+                    <div className="price-row-dark">
+                      <span className="current-price">{prod.price}</span>
+                      <span className="old-price">₹699</span>
+                    </div>
+                    <div className="rating-stars">★★★★★ <span className="review-count">(124)</span></div>
                   </div>
                 </div>
-
-                <div className="story-feature-item">
-                  <div className="story-feature-icon">👕</div>
-                  <div>
-                    <div className="story-feature-title">FRESH STYLES</div>
-                    <div className="story-feature-sub">EVERY WEEK</div>
-                  </div>
-                </div>
-
-                <div className="story-feature-item">
-                  <div className="story-feature-icon">👤</div>
-                  <div>
-                    <div className="story-feature-title">MADE FOR</div>
-                    <div className="story-feature-sub">EVERY YOU</div>
-                  </div>
-                </div>
-              </div>
-
-              <button className="black-story-btn" onClick={() => navigateTo('about')}>KNOW OUR STORY</button>
+              ))}
             </div>
           </section>
 
-          {/* FROM OUR INSTAGRAM */}
-          <section className="section" style={{ padding: '40px 4%' }}>
-            <div className="section-header-row">
-              <div>
-                <h2 className="section-title-exact">FROM OUR INSTAGRAM</h2>
-                <p style={{ fontSize: '12px', color: '#666666', marginTop: '4px' }}>@satrashe60_official</p>
-              </div>
-              <button className="black-follow-btn">FOLLOW US</button>
-            </div>
-
-            <div className="insta-grid">
-              <div className="insta-card"><img src="/dress1.png" alt="Insta" /></div>
-              <div className="insta-card"><img src="/dress2.png" alt="Insta" /></div>
-              <div className="insta-card"><img src="/dress3.png" alt="Insta" /></div>
-              <div className="insta-card"><img src="/dress4.png" alt="Insta" /></div>
-              <div className="insta-card"><img src="/dress1.png" alt="Insta" /></div>
-              <div className="insta-card"><img src="/dress2.png" alt="Insta" /></div>
-            </div>
-          </section>
-
-          {/* WHAT OUR CUSTOMERS SAY */}
-          <section className="section" style={{ padding: '40px 4%', backgroundColor: '#F9F9F9' }}>
-            <div className="section-header-row">
-              <h2 className="section-title-exact">WHAT OUR CUSTOMERS SAY <span style={{ fontSize: '13px', color: '#666666', marginLeft: '8px' }}>⭐ 4.8/5 (3,200+ Reviews)</span></h2>
-              <a href="#reviews" className="view-all-link">VIEW ALL REVIEWS ›</a>
-            </div>
-
-            <div className="reviews-grid">
-              <div className="review-card">
-                <div>
-                  <div className="stars-row">★★★★★</div>
-                  <p className="review-text">"Amazing quality & same as shown in pics. Packaging was too good. Will order again!"</p>
-                </div>
-                <div className="reviewer-profile">
-                  <img src="/dress1.png" alt="User" className="reviewer-avatar" />
-                  <span className="reviewer-name">Pooja S.</span>
-                </div>
-              </div>
-
-              <div className="review-card">
-                <div>
-                  <div className="stars-row">★★★★★</div>
-                  <p className="review-text">"Finally a brand that gives unique styles at such affordable prices. Love SATRASHE60!"</p>
-                </div>
-                <div className="reviewer-profile">
-                  <img src="/dress2.png" alt="User" className="reviewer-avatar" />
-                  <span className="reviewer-name">Neha T.</span>
-                </div>
-              </div>
-
-              <div className="review-card">
-                <div>
-                  <div className="stars-row">★★★★★</div>
-                  <p className="review-text">"Super fast delivery and the fit is perfect. My new favourite store for sure!"</p>
-                </div>
-                <div className="reviewer-profile">
-                  <img src="/dress3.png" alt="User" className="reviewer-avatar" />
-                  <span className="reviewer-name">Ayesha M.</span>
-                </div>
-              </div>
-
-              <div className="review-card">
-                <div>
-                  <div className="stars-row">★★★★★</div>
-                  <p className="review-text">"Every drop is just wow! Can't wait for the next one."</p>
-                </div>
-                <div className="reviewer-profile">
-                  <img src="/dress4.png" alt="User" className="reviewer-avatar" />
-                  <span className="reviewer-name">Simran K.</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* JOIN THE CLUB */}
-          <div className="join-club-bar">
-            <div className="join-club-left">
-              <span className="join-icon">✉️</span>
-              <div>
-                <div className="join-title">JOIN THE CLUB</div>
-                <div className="join-sub">Get early access to new drops, exclusive offers & more.</div>
-              </div>
-            </div>
-
-            <form className="join-form" onSubmit={(e) => e.preventDefault()}>
-              <input type="email" placeholder="Enter your email" className="join-input" required />
-              <button type="submit" className="join-orange-btn">JOIN NOW</button>
-            </form>
+          {/* 6. TRUST ICONS STRIP */}
+          <div className="premium-trust-bar">
+            <div className="trust-item"><span className="icon">🚚</span><p>Free Shipping<br/>Above ₹549</p></div>
+            <div className="trust-item"><span className="icon">💳</span><p>COD<br/>Available</p></div>
+            <div className="trust-item"><span className="icon">🛡️</span><p>Secure<br/>Payments</p></div>
+            <div className="trust-item"><span className="icon">🎧</span><p>24/7<br/>Support</p></div>
           </div>
 
-          {/* FOOTER */}
-          <footer className="exact-footer">
-            <div className="footer-cols-grid">
-              <div>
-                <div className="footer-brand-logo">1760 SATRASHE<span>60</span></div>
-                <p className="footer-tagline">Street Fashion. One Chance.</p>
-                <div className="footer-social-icons">📷 🎥 👤 📌</div>
-              </div>
+          {/* 7. LIFESTYLE BANNER */}
+          <div className="premium-lifestyle">
+             <img src="/hero.png" alt="Lifestyle" className="lifestyle-image" />
+             <div className="lifestyle-content">
+               <div className="hero-eyebrow">MORE THAN JUST CLOTHES</div>
+               <h2>IT'S A LIFESTYLE</h2>
+               <p>At SATRASHE60, we bring you the perfect blend of street style, comfort and confidence. Because your story deserves the best fit.</p>
+               <button className="gold-outline-btn" onClick={() => navigateTo('about')}>KNOW OUR STORY →</button>
+             </div>
+          </div>
 
-              <div>
-                <div className="footer-col-title">SHOP</div>
-                <div className="footer-links-list">
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop'); }}>All Products</a>
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'Tops'); }}>Tops</a>
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'Kurtis'); }}>Kurtis</a>
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'One Pieces'); }}>One Pieces</a>
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'Co-ord Sets'); }}>Co-ord Sets</a>
-                  <a href="#shop" onClick={(e) => { e.preventDefault(); navigateTo('shop', 'Under ₹199'); }}>Under ₹199</a>
-                </div>
+          {/* 8. PREMIUM FOOTER */}
+          <footer className="premium-footer">
+            <div className="newsletter-box">
+              <span className="newsletter-icon">✉️</span>
+              <div className="newsletter-text">
+                 <h4>STAY IN THE LOOP</h4>
+                 <p>Get exclusive offers, new drops and more.</p>
               </div>
-
-              <div>
-                <div className="footer-col-title">HELP</div>
-                <div className="footer-links-list">
-                  <a href="#track">Track Order</a>
-                  <a href="#shipping">Shipping & Delivery</a>
-                  <a href="#returns">Returns & Refunds</a>
-                  <a href="#faq">FAQ</a>
-                  <a href="#contact">Contact Us</a>
-                </div>
-              </div>
-
-              <div>
-                <div className="footer-col-title">COMPANY</div>
-                <div className="footer-links-list">
-                  <a href="#about" onClick={(e) => { e.preventDefault(); navigateTo('about'); }}>About Us</a>
-                  <a href="#story" onClick={(e) => { e.preventDefault(); navigateTo('about'); }}>Our Story</a>
-                  <a href="#careers">Careers</a>
-                  <a href="#privacy">Privacy Policy</a>
-                  <a href="#terms">Terms & Conditions</a>
-                  <a href="#admin" onClick={(e) => { e.preventDefault(); navigateTo('admin'); }} style={{ color: '#FF6B00', fontWeight: 'bold' }}>Admin Portal</a>
-                </div>
-              </div>
-
-              <div>
-                <div className="footer-col-title">PAYMENT METHODS</div>
-                <div className="payment-badge-group">
-                  <span className="pay-badge">VISA</span>
-                  <span className="pay-badge">MasterCard</span>
-                  <span className="pay-badge">RuPay</span>
-                  <span className="pay-badge">UPI</span>
-                  <span className="pay-badge">Paytm</span>
-                </div>
-                <div className="footer-col-title" style={{ marginTop: '20px' }}>WE DELIVER</div>
-                <div className="payment-badge-group">
-                  <span className="pay-badge">DELHIVERY</span>
-                  <span className="pay-badge">BLUE DART</span>
-                  <span className="pay-badge">EXPRESSBEES</span>
-                </div>
+              <div className="newsletter-input-group">
+                <input type="email" placeholder="Enter your email address" />
+                <button>SUBSCRIBE</button>
               </div>
             </div>
-
-            <div className="copyright-text">
-              © 2026 SATRASHE60. All Rights Reserved.
+            <div className="footer-bottom-links">
+               <img src="/logo.png" alt="SATRASHE60" className="footer-logo-small" />
+               <div className="footer-nav">
+                 <span onClick={() => navigateTo('home')}>Home</span>
+                 <span onClick={() => navigateTo('shop')}>Shop</span>
+                 <span onClick={() => navigateTo('about')}>About</span>
+                 <span onClick={() => navigateTo('about')}>Contact</span>
+               </div>
+               <div className="footer-socials">
+                 <span>📷</span> <span>▶️</span> <span>📌</span> <span>💬</span>
+               </div>
+               <div className="footer-copy">© 2026 SATRASHE60. All rights reserved.</div>
             </div>
           </footer>
-        </>
+        </div>
       )}
+
       {/* MOBILE AUTH (OTP) MODAL */}
       <MobileAuthModal 
         isOpen={showAuthModal}
@@ -919,10 +612,11 @@ const handleProceedToAddress = () => {
         onLoginSuccess={(userData) => {
           setUser(userData);
           setShowAuthModal(false);
-          setShowCheckout(true); // Login hote hi seedha address page
+          setShowCheckout(true);
         }}
       />
-{/* MOBILE BOTTOM NAVIGATION BAR */}
+
+      {/* MOBILE BOTTOM NAVIGATION BAR */}
       <div className="mobile-bottom-nav-bar">
         <button onClick={() => navigateTo('home')}>
           🏠
@@ -941,6 +635,7 @@ const handleProceedToAddress = () => {
           👤
         </button>
       </div>
+
       {/* CHECKOUT MODAL OVERLAY */}
       {showCheckout && (
         <CheckoutModal 
