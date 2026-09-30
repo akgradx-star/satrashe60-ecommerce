@@ -426,7 +426,8 @@ export default function Shop({
   };
 
   // 🚀 NAYA: Agar database se kapde aaye hain toh wo dikhao, warna purane wale dikhao
-  const finalProductsToDisplay = liveProducts.length > 0 ? liveProducts : MASTER_PRODUCTS;
+  // 🚀 NAYA: Live kapde sabse upar dikhao aur unke niche dummy kapde dikhao
+const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
 
   const filteredProducts = finalProductsToDisplay.filter(product => {
     if (initialSearchQuery) {
