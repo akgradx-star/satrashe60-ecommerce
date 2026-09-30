@@ -591,23 +591,29 @@ const handleProceedToAddress = () => {
               <h2>BEST SELLERS</h2>
               <button className="gold-text-btn" onClick={() => navigateTo('shop', 'Best Sellers')}>VIEW ALL →</button>
             </div>
-            <div className="premium-products-scroll">
-              {DROPS_DATA.slice(0, 3).map(prod => (
-                <div key={prod.id} className="premium-product-card" onClick={() => handleOpenProduct(prod.slug, 'home')}>
+           <div className="premium-products-scroll">
+              {dbProducts.slice(0, 6).map(prod => {
+                const productImg = prod.image || (prod.images && prod.images[0]) || '/dress1.png';
+                const productId = prod._id || prod.id;
+                
+                return (
+                <div key={productId} className="premium-product-card" onClick={() => handleOpenProduct(prod, 'home')}>
                   <div className="product-image-wrapper">
-                    <img src={prod.image} alt={prod.name} />
-                    <button className="premium-wishlist-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }}>♡</button>
+                    {/* 🚀 REAL NEW TAG */}
+                    <span className="card-badge badge-new" style={{position: 'absolute', top: '10px', left: '10px', background: '#D4AF37', color: '#000', padding: '2px 8px', fontSize: '10px', fontWeight: '800', borderRadius: '2px', zIndex: 10}}>NEW</span>
+                    <img src={productImg} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button className="premium-wishlist-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(productId); }}>♡</button>
                   </div>
                   <div className="product-info-dark">
                     <h3>{prod.name}</h3>
                     <div className="price-row-dark">
-                      <span className="current-price">{prod.price}</span>
-                      <span className="old-price">₹699</span>
+                      <span className="current-price">₹{prod.price}</span>
+                      {prod.oldPrice && <span className="old-price">₹{prod.oldPrice}</span>}
                     </div>
-                    <div className="rating-stars">★★★★★ <span className="review-count">(124)</span></div>
+                    <div className="rating-stars">★★★★★ <span className="review-count">({prod.reviews?.length || 124})</span></div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </section>
 
