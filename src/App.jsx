@@ -48,10 +48,18 @@ function App() {
     fetch('https://satrashe60-ecommerce.onrender.com/api/products')
       .then((response) => response.json())
       .then((data) => {
-        setDbProducts(data);
-        console.log("🔥 Backend se yeh kapde aaye hain:", data);
+        // 🚀 CRASH FIX: Agar data array (list) nahi hai, toh blank list set karega
+        if (Array.isArray(data)) {
+          setDbProducts(data);
+          console.log("🔥 Backend se yeh kapde aaye hain:", data);
+        } else {
+          setDbProducts([]);
+        }
       })
-      .catch((error) => console.log("Backend se connect nahi hua:", error));
+      .catch((error) => {
+        console.log("Backend se connect nahi hua:", error);
+        setDbProducts([]); // 🛡️ Safe fallback, crash hone se bachayega
+      });
   }, []);
 
   const [dbOrders, setDbOrders] = useState([]);
@@ -60,10 +68,17 @@ function App() {
     fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
       .then((response) => response.json())
       .then((data) => {
-        setDbOrders(data);
-        console.log("📦 Backend se yeh ORDERS aaye hain:", data);
+        if (Array.isArray(data)) {
+          setDbOrders(data);
+          console.log("📦 Backend se yeh ORDERS aaye hain:", data);
+        } else {
+          setDbOrders([]);
+        }
       })
-      .catch((error) => console.log("Orders laane mein error:", error));
+      .catch((error) => {
+        console.log("Orders laane mein error:", error);
+        setDbOrders([]); // 🛡️ Safe fallback
+      });
   }, [currentPage]);
   
   const [toastMessage, setToastMessage] = useState(null);
@@ -156,31 +171,42 @@ const handleProceedToAddress = () => {
     try {
       let foundProduct;
 
-      // Agar seedha product object aaya hai
       if (typeof productOrSlug === 'object' && productOrSlug !== null) {
         foundProduct = productOrSlug;
       } else if (typeof productOrSlug === 'string') {
         const searchSlug = productOrSlug.toLowerCase();
         
-        // 🚀 SAFE SEARCH: '?' lagane se missing data par app crash nahi hogi
+        // 🚀 EXACT MATCH FIX: Ab naam ke spaces ko bhi sahi se pakdega
         foundProduct = dbProducts.find(p => 
           p?.slug === productOrSlug || 
+          p?.name === productOrSlug || 
+          (p?.name && p.name.toLowerCase() === searchSlug) || 
           (p?.name && p.name.toLowerCase().replace(/\s+/g, '-') === searchSlug) || 
           p?._id === productOrSlug || 
           p?.id === productOrSlug
         );
 
-        // Fallback (Dummy data)
         if (!foundProduct) {
           foundProduct = (MASTER_PRODUCTS || []).find(p => 
             p?.slug === productOrSlug || 
-            (p?.name && p.name.toLowerCase().replace(/\s+/g, '-') === searchSlug)
+            p?.name === productOrSlug || 
+            (p?.name && p.name.toLowerCase() === searchSlug)
           );
         }
       }
 
-      // Jo product mila usko set karega
-      setSelectedProduct(foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
+      let finalProduct = foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]);
+      
+      // 🛡️ PRODUCT DETAIL CRASH FIX: Agar backend se sizes ya images nahi aaye, toh dummy daal dega taaki page crash na ho
+      if (finalProduct) {
+        finalProduct = { 
+          ...finalProduct, 
+          sizes: finalProduct.sizes || ["S", "M", "L", "XL"],
+          images: finalProduct.images || [finalProduct.image || '/dress1.png']
+        };
+      }
+
+      setSelectedProduct(finalProduct);
       setSourceBackPage(source);
       setCurrentPage('product-detail');
       setHistoryStack(prev => [...prev, 'product-detail']);
@@ -188,7 +214,6 @@ const handleProceedToAddress = () => {
       
     } catch (error) {
       console.error("Product open karne mein error:", error);
-      // Agar kuch galat hua toh crash hone ki jagah Home par bhej dega
       setCurrentPage('home'); 
     }
   };
