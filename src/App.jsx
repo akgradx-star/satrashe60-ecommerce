@@ -44,40 +44,37 @@ function App() {
   const [dbProducts, setDbProducts] = useState([]);
 
 
+  // 🚀 1. PRODUCTS FETCH (Ultra-Safe)
   useEffect(() => {
     fetch('https://satrashe60-ecommerce.onrender.com/api/products')
       .then((response) => response.json())
       .then((data) => {
-        // 🚀 CRASH FIX: Agar data array (list) nahi hai, toh blank list set karega
-        if (Array.isArray(data)) {
-          setDbProducts(data);
-          console.log("🔥 Backend se yeh kapde aaye hain:", data);
-        } else {
-          setDbProducts([]);
-        }
+        // Yeh line data kisi bhi format mein ho, usko sahi array mein convert kar legi
+        const kapde = Array.isArray(data) ? data : (data.products || data.data || []);
+        setDbProducts(Array.isArray(kapde) ? kapde : []);
+        console.log("🔥 Backend se yeh kapde aaye hain:", kapde);
       })
       .catch((error) => {
-        console.log("Backend se connect nahi hua:", error);
-        setDbProducts([]); // 🛡️ Safe fallback, crash hone se bachayega
+        console.error("Backend se kapde laane mein error:", error);
+        setDbProducts([]); // Fallback array taaki crash na ho
       });
   }, []);
 
   const [dbOrders, setDbOrders] = useState([]);
 
+  // 🚀 2. ORDERS FETCH (Ultra-Safe)
   useEffect(() => {
     fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
       .then((response) => response.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setDbOrders(data);
-          console.log("📦 Backend se yeh ORDERS aaye hain:", data);
-        } else {
-          setDbOrders([]);
-        }
+        // Same safety orders ke liye
+        const ordersList = Array.isArray(data) ? data : (data.orders || data.data || []);
+        setDbOrders(Array.isArray(ordersList) ? ordersList : []);
+        console.log("📦 Backend se yeh ORDERS aaye hain:", ordersList);
       })
       .catch((error) => {
-        console.log("Orders laane mein error:", error);
-        setDbOrders([]); // 🛡️ Safe fallback
+        console.error("Orders laane mein error:", error);
+        setDbOrders([]); // Fallback array
       });
   }, [currentPage]);
   
