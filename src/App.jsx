@@ -1,3 +1,4 @@
+import SideMenu from './SideMenu';
 import MobileCheckout from './MobileCheckout';
 import { useState, useEffect } from 'react';
 import './App.css';
@@ -25,6 +26,7 @@ const DROPS_DATA = [
 ];
 
 function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home'); 
   const [historyStack, setHistoryStack] = useState(['home']); 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -40,6 +42,7 @@ function App() {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [dbProducts, setDbProducts] = useState([]);
+
 
   useEffect(() => {
     fetch('https://satrashe60-ecommerce.onrender.com/api/products')
@@ -445,7 +448,7 @@ const handleProceedToAddress = () => {
         <div className="premium-home-container">
           
           <header className="premium-header">
-            <button className="menu-btn" onClick={() => navigateTo('shop')}>☰</button>
+            <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>☰</button>
             <img src="/logo.png" alt="SATRASHE60" className="header-logo" />
             <div className="header-icons">
               <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
@@ -636,8 +639,14 @@ const handleProceedToAddress = () => {
           onClearCart={() => setCartItems([])}
         />
       )}
-
+<SideMenu 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        navigateTo={navigateTo}
+        currentUser={currentUser}
+      />
     </div>
+    
   );
 }
 
