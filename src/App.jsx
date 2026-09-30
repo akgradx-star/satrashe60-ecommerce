@@ -374,6 +374,7 @@ const handleProceedToAddress = () => {
         <Shop 
           products={dbProducts} 
           initialCategory={selectedCategory} 
+          initialSearchQuery={searchQuery}
           onNavigate={navigateTo} 
           wishlist={wishlist} 
           onToggleWishlist={handleToggleWishlist} 
@@ -455,6 +456,26 @@ const handleProceedToAddress = () => {
               <button onClick={() => navigateTo('cart')}>🛍️<span className="cart-badge">{cartItems.length}</span></button>
             </div>
           </header>
+          {/* SEARCH BAR OVERLAY */}
+          {showSearchInput && (
+            <div className="premium-search-bar">
+              <input 
+                type="text" 
+                placeholder="Search 'Tops', 'Kurtis'..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if(e.key === 'Enter') {
+                    navigateTo('shop', 'ALL');
+                    setShowSearchInput(false);
+                  }
+                }}
+                autoFocus
+              />
+              <button className="search-go-btn" onClick={() => { navigateTo('shop', 'ALL'); setShowSearchInput(false); }}>Go</button>
+              <button className="search-close-btn" onClick={() => { setShowSearchInput(false); setSearchQuery(''); }}>✕</button>
+            </div>
+          )}
 
           <div className="premium-hero">
             <div className="premium-hero-content">
