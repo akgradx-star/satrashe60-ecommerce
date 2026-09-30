@@ -514,7 +514,19 @@ export default function Shop({
 
   return (
     <div className="premium-shop-container">
-      
+      {/* 🚀 BACK NAVIGATION (BREADCRUMBS) */}
+      <div style={{ padding: '15px 5%', fontSize: '12px', color: '#888', backgroundColor: '#050505' }}>
+        <span 
+          onClick={() => onNavigate('home')} 
+          style={{ cursor: 'pointer', color: '#FFF', fontWeight: '600', letterSpacing: '1px' }}
+        >
+          HOME
+        </span>
+        <span style={{ margin: '0 10px' }}>/</span>
+        <span style={{ color: '#D4AF37', fontWeight: '600', letterSpacing: '1px' }}>
+          SHOP
+        </span>
+      </div>
       {/* BANNER SECTION */}
       <div className="shop-premium-banner">
         <div className="banner-overlay">
