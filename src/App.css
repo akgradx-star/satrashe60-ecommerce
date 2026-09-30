@@ -1415,3 +1415,39 @@ body {
 .footer-nav span { cursor: pointer; }
 .footer-socials { font-size: 16px; letter-spacing: 10px; cursor: pointer; }
 .footer-copy { font-size: 9px; color: #555; }
+/* NAYA PREMIUM HEADER CSS */
+.premium-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #050505; /* Dark background */
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+  border-bottom: 1px solid #1A1A1A;
+}
+
+.premium-header .menu-btn { 
+  background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; 
+}
+
+.premium-header .header-logo { 
+  height: 35px; object-fit: contain; 
+}
+
+.premium-header .header-icons button { 
+  background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; margin-left: 15px; position: relative; 
+}
+
+.premium-header .cart-badge {
+  position: absolute; top: -5px; right: -8px; background: #D4AF37; color: #000; font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 50%;
+}
+
+/* Adjust top margin so hero image doesn't get hidden under header */
+.premium-home-container {
+  margin-top: 0 !important;
+  padding-top: 65px;
+}

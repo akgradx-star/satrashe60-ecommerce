@@ -13,7 +13,7 @@ import Account from './Account';
 import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
-// Purane imports hataye gaye hain kyunki unki ab zaroorat nahi hai.
+import CategoryPLP from './CategoryPLP'; // Ensure PLP component is available if used
 
 const DROPS_DATA = [
   { id: 1, slug: "linen-shirt-top", name: "Floral Shirt Top", price: "₹149", image: "/dress1.png" },
@@ -307,16 +307,18 @@ const handleProceedToAddress = () => {
         </div>
       )}
 
-      {/* MOBILE HEADER & NAVIGATION */}
-      <MobileHeaderNav 
-        cartCount={cartItems.length} 
-        wishlistCount={wishlist.length} 
-        isLoggedIn={!!currentUser} 
-        currentPage={currentPage} 
-        navigateTo={navigateTo} 
-        goBack={handleGoBack}              
-        historyLength={historyStack.length} 
-      />
+      {/* Yahan se purana MobileHeaderNav hata diya gaya hai taaki 'home' par na dikhe */}
+      {currentPage !== 'home' && (
+        <MobileHeaderNav 
+          cartCount={cartItems.length} 
+          wishlistCount={wishlist.length} 
+          isLoggedIn={!!currentUser} 
+          currentPage={currentPage} 
+          navigateTo={navigateTo} 
+          goBack={handleGoBack}              
+          historyLength={historyStack.length} 
+        />
+      )}
 
       {currentPage === 'account' ? (
         <Account 
@@ -451,6 +453,17 @@ const handleProceedToAddress = () => {
            HOMEPAGE (PREMIUM DARK LAYOUT) 
            ========================================== */
         <div className="premium-home-container">
+          
+          {/* NAYA PREMIUM DARK HEADER */}
+          <header className="premium-header">
+            <button className="menu-btn" onClick={() => navigateTo('shop')}>☰</button>
+            <img src="/logo.png" alt="SATRASHE60" className="header-logo" />
+            <div className="header-icons">
+              <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
+              <button onClick={() => navigateTo('cart')}>🛍️<span className="cart-badge">{cartItems.length}</span></button>
+            </div>
+          </header>
+
           {/* 1. HERO SECTION */}
           <div className="premium-hero">
             <div className="premium-hero-content">
