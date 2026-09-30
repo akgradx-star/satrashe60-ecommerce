@@ -153,32 +153,34 @@ const handleProceedToAddress = () => {
   };
 
   const handleOpenProduct = (productOrSlug, source = 'shop') => {
-    let foundProduct = typeof productOrSlug === 'string' 
-      ? (MASTER_PRODUCTS || []).find(p => p.slug === productOrSlug || p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug)
-      : productOrSlug;
+    let foundProduct;
 
-    if (!foundProduct && typeof productOrSlug === 'string') {
-      foundProduct = (MASTER_PRODUCTS || []).find(p => p.name.toLowerCase().includes(productOrSlug.toLowerCase()));
+    // Agar seedha product object aaya hai
+    if (typeof productOrSlug === 'object' && productOrSlug !== null) {
+      foundProduct = productOrSlug;
+    } else {
+      // 🚀 Sabse pehle ASLI database (dbProducts) mein dhoondhega
+      foundProduct = dbProducts.find(p => 
+        p.slug === productOrSlug || 
+        p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug || 
+        p._id === productOrSlug || 
+        p.id === productOrSlug
+      );
+
+      // Agar asli mein nahi mila, tab fallback ke liye dummy mein dekhega
+      if (!foundProduct) {
+        foundProduct = (MASTER_PRODUCTS || []).find(p => 
+          p.slug === productOrSlug || 
+          p.name.toLowerCase().replace(/\s+/g, '-') === productOrSlug
+        );
+      }
     }
 
-    setSelectedProduct(foundProduct || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
+    // Jo product mila usko open karega
+    setSelectedProduct(foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]));
     setSourceBackPage(source);
     setCurrentPage('product-detail');
     setHistoryStack(prev => [...prev, 'product-detail']);
-    window.scrollTo(0, 0);
-  };
-
-  const navigateTo = (pageName, category = "ALL") => {
-    if (pageName === currentPage) return; 
-    
-    if (pageName.startsWith('/product/')) {
-      const slug = pageName.replace('/product/', '');
-      handleOpenProduct(slug, currentPage);
-      return;
-    }
-    setCurrentPage(pageName);
-    setSelectedCategory(category);
-    setHistoryStack(prev => [...prev, pageName]);
     window.scrollTo(0, 0);
   };
 
