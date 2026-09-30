@@ -80,9 +80,15 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
       } catch (error) {
         console.error("Signup failed:", error);
         alert("❌ Server se connect nahi ho paya. Backend chalu hai ya nahi check karein.");
+      }} else {
+      // 🚀 SMART ADMIN BYPASS (Server so raha ho tab bhi turant login karega)
+      if (formData.email === 'akash@gmail.com' || formData.email === 'worker1@gmail.com' || formData.email === 'admin@satrashe60.com') {
+        alert("✅ Welcome back Admin (Instant Login) 🚀");
+        onLogin({ name: "Admin (Akash)", email: formData.email });
+        return; // Server ka wait nahi karega, yahin se direct login!
       }
-    } else {
-      // LOGIN KA CODE
+
+      // NORMAL CUSTOMER LOGIN KA CODE
       try {
         const response = await fetch('http://10.42.209.222:5001/api/login', {
           method: 'POST',
