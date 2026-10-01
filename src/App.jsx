@@ -41,41 +41,61 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [dbProducts, setDbProducts] = useState([]);
+ const [dbProducts, setDbProducts] = useState([]);
 
-
-  // 🚀 1. PRODUCTS FETCH (Ultra-Safe)
+  // 🚀 1. PRODUCTS FETCH (Ziddi Auto-Retry for Render Sleep Mode)
   useEffect(() => {
-    fetch('https://satrashe60-ecommerce.onrender.com/api/products')
-      .then((response) => response.json())
-      .then((data) => {
-        // Yeh line data kisi bhi format mein ho, usko sahi array mein convert kar legi
-        const kapde = Array.isArray(data) ? data : (data.products || data.data || []);
-        setDbProducts(Array.isArray(kapde) ? kapde : []);
-        console.log("🔥 Backend se yeh kapde aaye hain:", kapde);
-      })
-      .catch((error) => {
-        console.error("Backend se kapde laane mein error:", error);
-        setDbProducts([]); // Fallback array taaki crash na ho
-      });
+    const fetchProductsWithRetry = (retries = 10) => { // 10 baar try karega
+      fetch('https://satrashe60-ecommerce.onrender.com/api/products')
+        .then((response) => {
+          if (!response.ok) throw new Error("Server abhi uth raha hai...");
+          return response.json();
+        })
+        .then((data) => {
+          const kapde = Array.isArray(data) ? data : (data.products || data.data || []);
+          setDbProducts(Array.isArray(kapde) ? kapde : []);
+          console.log("🔥 Backend se yeh kapde aaye hain:", kapde);
+        })
+        .catch((error) => {
+          console.log(`Backend so raha hai. Retries left: ${retries}`, error);
+          if (retries > 0) {
+            // Agar fail hua, toh 3 second baad wapas try karega 
+            setTimeout(() => fetchProductsWithRetry(retries - 1), 3000);
+          } else {
+            setDbProducts([]); // Sab fail hone ke baad fallback
+          }
+        });
+    };
+
+    fetchProductsWithRetry(); // Pehli baar start karna
   }, []);
 
   const [dbOrders, setDbOrders] = useState([]);
 
-  // 🚀 2. ORDERS FETCH (Ultra-Safe)
+  // 🚀 2. ORDERS FETCH (Ziddi Auto-Retry)
   useEffect(() => {
-    fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
-      .then((response) => response.json())
-      .then((data) => {
-        // Same safety orders ke liye
-        const ordersList = Array.isArray(data) ? data : (data.orders || data.data || []);
-        setDbOrders(Array.isArray(ordersList) ? ordersList : []);
-        console.log("📦 Backend se yeh ORDERS aaye hain:", ordersList);
-      })
-      .catch((error) => {
-        console.error("Orders laane mein error:", error);
-        setDbOrders([]); // Fallback array
-      });
+    const fetchOrdersWithRetry = (retries = 10) => {
+      fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
+        .then((response) => {
+          if (!response.ok) throw new Error("Server abhi uth raha hai...");
+          return response.json();
+        })
+        .then((data) => {
+          const ordersList = Array.isArray(data) ? data : (data.orders || data.data || []);
+          setDbOrders(Array.isArray(ordersList) ? ordersList : []);
+          console.log("📦 Backend se yeh ORDERS aaye hain:", ordersList);
+        })
+        .catch((error) => {
+          console.log(`Orders server so raha hai. Retries left: ${retries}`, error);
+          if (retries > 0) {
+            setTimeout(() => fetchOrdersWithRetry(retries - 1), 3000);
+          } else {
+            setDbOrders([]); 
+          }
+        });
+    };
+
+    fetchOrdersWithRetry();
   }, [currentPage]);
   
   const [toastMessage, setToastMessage] = useState(null);
