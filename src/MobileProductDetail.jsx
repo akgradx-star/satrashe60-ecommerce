@@ -37,7 +37,16 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
     setIsAddedToBag(true);
   };
 
+  // 🚀 CRASH FIX 1: Agar product exist hi nahi karta, toh empty screen mat dikhao
   if (!product) return null;
+
+  // 🚀 SAFE FALLBACKS: Backend se agar data miss ho, toh crash hone se bachayega
+  const productSizes = Array.isArray(product.sizes) && product.sizes.length > 0 
+    ? product.sizes 
+    : ["S", "M", "L", "XL"];
+  
+  const productImg = product.image || (product.images && product.images[0]) || '/dress1.png';
+  const discountAmt = product.discount || Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) || 0;
 
   return (
     <div className="mobile-page-container">
@@ -52,7 +61,7 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
 
       {/* PRODUCT MEDIA */}
       <div className="mobile-product-image-container">
-        <img src={product.image} alt={product.name} className="product-main-image" />
+        <img src={productImg} alt={product.name || 'Product'} className="product-main-image" />
       </div>
 
       {/* PRODUCT INFO */}
@@ -61,9 +70,10 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
         <div className="price-row">
           <span className="current-price">₹{product.price}</span>
           {product.oldPrice && <span className="old-price">₹{product.oldPrice}</span>}
-          {product.discount > 0 && <span className="discount-badge">{product.discount}% OFF</span>}
+          {discountAmt > 0 && <span className="discount-badge">{discountAmt}% OFF</span>}
         </div>
-        {product.stock === 1 && (
+        {/* CRASH FIX 2: Safe stock check */}
+        {(product.stock === 1 || product.quantity === 1) && (
           <div className="stock-warning" style={{color: '#FF6B00', fontSize: '12px', fontWeight: 'bold', marginTop: '4px'}}>
             Only 1 left in stock!
           </div>
@@ -74,8 +84,9 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
       <div className="mobile-section size-section">
         <h3 className="section-title text-center" style={{fontSize: '14px', marginBottom: '12px'}}>SELECT A SIZE</h3>
         <div className="size-grid">
-          {product.sizes.map((size) => {
-            const isAvailable = product.sizeInventory[size] > 0;
+          {productSizes.map((size) => {
+            // CRASH FIX 3: Safe inventory check
+            const isAvailable = product.sizeInventory ? product.sizeInventory[size] !== 0 : true;
             return (
               <button
                 key={size}
@@ -106,11 +117,12 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
           {activeAccordion === 'details' && (
             <div className="accordion-content">
               <ul className="details-list" style={{listStyle: 'none', padding: 0, margin: 0}}>
-                <li style={{marginBottom: '6px'}}><strong>Fabric:</strong> {product.fabric}</li>
-                <li style={{marginBottom: '6px'}}><strong>Fit:</strong> {product.fitShape}</li>
-                <li style={{marginBottom: '6px'}}><strong>Pattern:</strong> {product.pattern}</li>
-                <li style={{marginBottom: '6px'}}><strong>Neck:</strong> {product.neckCollar}</li>
-                <li style={{marginBottom: '6px'}}><strong>SKU:</strong> {product.slug.toUpperCase()}</li>
+                <li style={{marginBottom: '6px'}}><strong>Fabric:</strong> {product.fabric || 'Premium Blend'}</li>
+                <li style={{marginBottom: '6px'}}><strong>Fit:</strong> {product.fitShape || 'Regular Fit'}</li>
+                <li style={{marginBottom: '6px'}}><strong>Pattern:</strong> {product.pattern || 'Solid'}</li>
+                <li style={{marginBottom: '6px'}}><strong>Neck:</strong> {product.neckCollar || 'Standard'}</li>
+                {/* CRASH FIX 4: Safe slug check */}
+                <li style={{marginBottom: '6px'}}><strong>SKU:</strong> {product.slug ? product.slug.toUpperCase() : (product._id || product.id)?.toString().slice(-6).toUpperCase()}</li>
               </ul>
             </div>
           )}
@@ -157,7 +169,8 @@ export default function MobileProductDetail({ product, onBack, onAddToCart, onNa
       <div style={{ marginTop: '30px', paddingBottom: '40px' }}>
         <h3 style={{ textAlign: 'center', fontSize: '16px', fontWeight: '800', marginBottom: '20px' }}>YOU MAY ALSO LIKE</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', padding: '0 16px' }}>
-          {MASTER_PRODUCTS.filter(p => p.id !== product.id).slice(0, 4).map((suggestedProduct, index) => (
+          {/* CRASH FIX 5: Safe id check for filtering */}
+          {MASTER_PRODUCTS.filter(p => p.id !== (product._id || product.id)).slice(0, 4).map((suggestedProduct, index) => (
             <div key={index} style={{ cursor: 'pointer' }}>
               <div style={{ position: 'relative' }}>
                 <img 
