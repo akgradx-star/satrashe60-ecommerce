@@ -214,7 +214,20 @@ const handleProceedToAddress = () => {
       setCurrentPage('home'); 
     }
   };
-
+// 🚀 MISSING FUNCTION YAHAN PASTE KAREIN
+  const navigateTo = (pageName, category = "ALL") => {
+    if (pageName === currentPage) return; 
+    
+    if (pageName.startsWith('/product/')) {
+      const slug = pageName.replace('/product/', '');
+      handleOpenProduct(slug, currentPage);
+      return;
+    }
+    setCurrentPage(pageName);
+    setSelectedCategory(category);
+    setHistoryStack(prev => [...prev, pageName]);
+    window.scrollTo(0, 0);
+  };
   const handleToggleWishlist = (id) => {
     if (wishlist.includes(id)) {
       setWishlist(wishlist.filter(item => item !== id));
