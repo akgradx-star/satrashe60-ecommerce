@@ -1,6 +1,6 @@
 import SideMenu from './SideMenu';
 import MobileCheckout from './MobileCheckout';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import './App.css';
 import Shop, { MASTER_PRODUCTS } from './Shop';
 import CheckoutModal from './CheckoutModal';
@@ -14,40 +14,40 @@ import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
 import CategoryPLP from './CategoryPLP'; 
-
-const DROPS_DATA = [
-  { id: 1, slug: "linen-shirt-top", name: "Floral Shirt Top", price: "₹149", image: "/dress1.png" },
-  { id: 2, slug: "black-ribbed-top", name: "Black Ribbed Top", price: "₹129", image: "/dress2.png" },
-  { id: 3, slug: "tie-knot-shirt", name: "Tie Knot Shirt", price: "₹159", image: "/dress3.png" },
-  { id: 4, slug: "printed-co-ord-set", name: "Printed Co-ord Set", price: "₹299", image: "/dress4.png" },
-  { id: 5, slug: "oversized-tee", name: "Oversized Tee", price: "₹149", image: "/dress1.png" },
-  { id: 6, slug: "boho-printed-top", name: "Boho Printed Top", price: "₹169", image: "/dress2.png" },
-  { id: 7, slug: "striped-shirt", name: "Striped Shirt", price: "₹139", image: "/dress3.png" }
-];
+import { ShopContext } from './ShopContext'; // 🚀 TANKI IMPORT HO GAYI
 
 function App() {
+  // 🚀 TANKI SE SAARA DATA DIRECT LE RAHE HAIN
+  const { 
+    currentUser, setCurrentUser,
+    cartItems, handleAddToCart: contextAddToCart, handleRemoveFromCart: contextRemoveFromCart, handleUpdateCartQuantity, clearCart,
+    wishlist, handleToggleWishlist: contextToggleWishlist,
+    placedOrders, addOrder
+  } = useContext(ShopContext);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home'); 
   const [historyStack, setHistoryStack] = useState(['home']); 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sourceBackPage, setSourceBackPage] = useState('shop');
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
- // 🚀 CACHE SYSTEM: Ab refresh karne par products gayab nahi honge, turant dikhenge!
+  
   const [dbProducts, setDbProducts] = useState(() => {
     const cached = localStorage.getItem('satrashe60_cached_products');
     return cached ? JSON.parse(cached) : [];
   });
 
-  // 🚀 PRODUCTS FETCH (Ziddi Auto-Retry + Data Sanitization)
   useEffect(() => {
     const fetchProductsWithRetry = (retries = 10) => { 
       fetch('https://satrashe60-ecommerce.onrender.com/api/products')
@@ -57,20 +57,15 @@ function App() {
         })
         .then((data) => {
           const kapde = Array.isArray(data) ? data : (data.products || data.data || []);
-          
-          // 🛡️ CRASH PROTECTOR: Backend ka kachra yahan saaf hoga taaki white screen na aaye
           const safeKapde = kapde.map(p => ({
             ...p,
             id: p._id || p.id, 
-            // Agar size string mein aaya hai ya missing hai, toh array bana dega
             sizes: Array.isArray(p.sizes) && p.sizes.length > 0 ? p.sizes : ["S", "M", "L", "XL"],
             image: p.image || (p.images && p.images[0]) || '/dress1.png',
             name: p.name || 'Premium Product',
             price: p.price || 0
           }));
-
           setDbProducts(safeKapde);
-          // Naye kapde aate hi memory mein save kar lo agli baar ke liye
           localStorage.setItem('satrashe60_cached_products', JSON.stringify(safeKapde));
         })
         .catch((error) => {
@@ -79,105 +74,26 @@ function App() {
           }
         });
     };
-
     fetchProductsWithRetry();
   }, []);
 
-  const [dbOrders, setDbOrders] = useState([]);
-
-  // 🚀 2. ORDERS FETCH (Ziddi Auto-Retry)
-  useEffect(() => {
-    const fetchOrdersWithRetry = (retries = 10) => {
-      fetch('https://satrashe60-ecommerce.onrender.com/api/orders')
-        .then((response) => {
-          if (!response.ok) throw new Error("Server abhi uth raha hai...");
-          return response.json();
-        })
-        .then((data) => {
-          const ordersList = Array.isArray(data) ? data : (data.orders || data.data || []);
-          setDbOrders(Array.isArray(ordersList) ? ordersList : []);
-          console.log("📦 Backend se yeh ORDERS aaye hain:", ordersList);
-        })
-        .catch((error) => {
-          console.log(`Orders server so raha hai. Retries left: ${retries}`, error);
-          if (retries > 0) {
-            setTimeout(() => fetchOrdersWithRetry(retries - 1), 3000);
-          } else {
-            setDbOrders([]); 
-          }
-        });
-    };
-
-    fetchOrdersWithRetry();
-  }, [currentPage]);
-  
   const [toastMessage, setToastMessage] = useState(null);
-  const [user, setUser] = useState(() => {
-  const saved = localStorage.getItem('user');
-  return saved ? JSON.parse(saved) : null;
-});
-const [showAuthModal, setShowAuthModal] = useState(false);
-const handleProceedToAddress = () => {
-  if (user && user.isLoggedIn) {
-    setShowCheckout(true);
-  } else {
-    setShowAuthModal(true);
-  }
-};
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('satrashe60_user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const triggerToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
 
-  useEffect(() => {
+  const handleProceedToAddress = () => {
     if (currentUser) {
-      localStorage.setItem('satrashe60_user', JSON.stringify(currentUser));
+      setShowCheckout(true);
     } else {
-      localStorage.removeItem('satrashe60_user');
+      setShowAuthModal(true);
     }
-  }, [currentUser]);
-
-  const [placedOrders, setPlacedOrders] = useState(() => {
-    const savedOrders = localStorage.getItem('satrashe60_orders');
-    return savedOrders ? JSON.parse(savedOrders) : [
-      {
-        id: 'SATRA-89211',
-        date: '10 Aug 2026',
-        customerName: 'Akash Muttewar',
-        customerPhone: '+91 98765 43210',
-        shippingAddress: 'Flat 402, High Street Towers, Baner, Pune - 411045, Maharashtra',
-        items: [{ name: 'Black Ribbed Top', selectedSize: 'M', price: 129, image: '/dress2.png', sku: 'SKU-BLK-RIB-02' }],
-        totalAmount: 129,
-        paymentMethod: 'Cash On Delivery (COD)',
-        status: 'Pending'
-      }
-    ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('satrashe60_orders', JSON.stringify(placedOrders));
-  }, [placedOrders]);
-
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('satrashe60_cart');
-    return savedCart ? JSON.parse(savedCart) : [
-      { id: 1, name: "Linen Shirt Top", price: 149, selectedSize: "M", quantity: 1, image: "/dress1.png" }
-    ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('satrashe60_cart', JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const [wishlist, setWishlist] = useState(() => {
-    const savedWish = localStorage.getItem('satrashe60_wishlist');
-    return savedWish ? JSON.parse(savedWish) : [1, 4];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('satrashe60_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+  };
 
   const handleGoBack = () => {
     if (historyStack.length > 1) {
@@ -190,23 +106,13 @@ const handleProceedToAddress = () => {
     }
   };
 
-  const triggerToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3000);
-  };
-
   const handleOpenProduct = (productOrSlug, source = 'shop') => {
     try {
       let foundProduct;
-
       if (typeof productOrSlug === 'object' && productOrSlug !== null) {
         foundProduct = productOrSlug;
       } else if (typeof productOrSlug === 'string') {
         const searchSlug = productOrSlug.toLowerCase();
-        
-        // 🚀 EXACT MATCH FIX: Ab naam ke spaces ko bhi sahi se pakdega
         foundProduct = dbProducts.find(p => 
           p?.slug === productOrSlug || 
           p?.name === productOrSlug || 
@@ -215,7 +121,6 @@ const handleProceedToAddress = () => {
           p?._id === productOrSlug || 
           p?.id === productOrSlug
         );
-
         if (!foundProduct) {
           foundProduct = (MASTER_PRODUCTS || []).find(p => 
             p?.slug === productOrSlug || 
@@ -226,8 +131,6 @@ const handleProceedToAddress = () => {
       }
 
       let finalProduct = foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]);
-      
-      // 🛡️ PRODUCT DETAIL CRASH FIX: Agar backend se sizes ya images nahi aaye, toh dummy daal dega taaki page crash na ho
       if (finalProduct) {
         finalProduct = { 
           ...finalProduct, 
@@ -235,22 +138,19 @@ const handleProceedToAddress = () => {
           images: finalProduct.images || [finalProduct.image || '/dress1.png']
         };
       }
-
       setSelectedProduct(finalProduct);
       setSourceBackPage(source);
       setCurrentPage('product-detail');
       setHistoryStack(prev => [...prev, 'product-detail']);
       window.scrollTo(0, 0);
-      
     } catch (error) {
       console.error("Product open karne mein error:", error);
       setCurrentPage('home'); 
     }
   };
-// 🚀 MISSING FUNCTION YAHAN PASTE KAREIN
+
   const navigateTo = (pageName, category = "ALL") => {
     if (pageName === currentPage) return; 
-    
     if (pageName.startsWith('/product/')) {
       const slug = pageName.replace('/product/', '');
       handleOpenProduct(slug, currentPage);
@@ -261,51 +161,15 @@ const handleProceedToAddress = () => {
     setHistoryStack(prev => [...prev, pageName]);
     window.scrollTo(0, 0);
   };
-  const handleToggleWishlist = (id) => {
-    if (wishlist.includes(id)) {
-      setWishlist(wishlist.filter(item => item !== id));
-      triggerToast("Removed from Wishlist 🤍");
-    } else {
-      setWishlist([...wishlist, id]);
-      triggerToast("Added to Wishlist ❤️");
-    }
-  };
 
-  const handleAddToCart = (item) => {
-    // 🛡️ Safe Item Format
-    const safeItem = {
-      ...item,
-      id: item._id || item.id || Math.random().toString(),
-      quantity: item.quantity || 1,
-      selectedSize: item.selectedSize || "Free Size"
-    };
-    setCartItems(prev => [...prev, safeItem]);
-    triggerToast(`✓ Added to Bag (${safeItem.name || 'Item'})`);
-  };
-
+  // 🚀 TANKI WALE FUNCTIONS USE KAR RAHE HAIN
+  const handleToggleWishlist = (id) => contextToggleWishlist(id, triggerToast);
+  const handleAddToCart = (item) => contextAddToCart(item, triggerToast);
+  const handleRemoveFromCart = (idx) => contextRemoveFromCart(idx, triggerToast);
+  
   const handleBuyNow = (item) => {
-    // 🛡️ Buy Now ke liye bhi Safe Item Format
-    const safeItem = {
-      ...item,
-      id: item._id || item.id || Math.random().toString(),
-      quantity: item.quantity || 1,
-      selectedSize: item.selectedSize || "Free Size"
-    };
-    setCartItems(prev => [...prev, safeItem]);
+    contextAddToCart(item, null);
     setShowCheckout(true);
-  };
-
-  const handleRemoveFromCart = (indexToRemove) => {
-    setCartItems(cartItems.filter((_, idx) => idx !== indexToRemove));
-    triggerToast("Item removed from Bag");
-  };
-
-  const handleUpdateCartQuantity = (itemId, selectedSize, newQuantity) => {
-    setCartItems(prev => prev.map(item => 
-      (item.id === itemId && item.selectedSize === selectedSize) 
-        ? { ...item, quantity: newQuantity } 
-        : item
-    ));
   };
 
   const handleOrderPlacedSuccess = (newOrderDetails) => {
@@ -322,50 +186,15 @@ const handleProceedToAddress = () => {
       ...newOrderDetails
     };
 
-    cartItems.forEach(cartItem => {
-      const matchedProduct = MASTER_PRODUCTS.find(p => p.name.toLowerCase() === cartItem.name.toLowerCase() || p.id === cartItem.id);
-      if (matchedProduct && matchedProduct.stock > 0) {
-        matchedProduct.stock -= (cartItem.quantity || 1);
-        if (matchedProduct.stock < 0) matchedProduct.stock = 0;
-      }
-    });
-
-    setPlacedOrders(prev => [createdOrder, ...prev]);
-    setCartItems([]);
+    addOrder(createdOrder);
+    clearCart();
     setShowCheckout(false);
     triggerToast(`🎉 Order Placed Successfully! Ref: ${createdOrder.id}`);
   };
 
   if (currentPage === 'admin') {
-    const mappedOrders = dbOrders.map(order => ({
-      ...order,
-      id: order._id || order.id,
-      status: order.orderStatus || 'Pending' 
-    }));
-
     return (
       <AdminDashboard 
-        orders={mappedOrders}
-        onUpdateOrderStatus={(orderId, nextStatus) => {
-          fetch(`https://satrashe60-ecommerce.onrender.com/api/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: nextStatus }) 
-          })
-          .then((response) => response.json())
-          .then((data) => {
-            if(data.order) {
-              setDbOrders(prev => prev.map(o => (o._id === orderId || o.id === orderId) ? { ...o, orderStatus: nextStatus } : o));
-              triggerToast(`Order moved to ${nextStatus} 🚀`);
-            }
-          })
-          .catch((error) => {
-            console.error("Update failed:", error);
-            triggerToast("Network error, status update nahi hua!");
-          });
-        }}
         onLogout={() => navigateTo('home')} 
         onNavigateToWebsite={() => navigateTo('home')} 
       />
@@ -374,22 +203,12 @@ const handleProceedToAddress = () => {
 
   return (
     <div className="app">
-
       {toastMessage && (
         <div style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          backgroundColor: '#0A0A0A',
-          color: '#FFFFFF',
-          padding: '12px 20px',
-          borderRadius: '6px',
-          fontSize: '12px',
-          fontWeight: '800',
-          zIndex: 99999,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-          borderLeft: '4px solid #FF6B00',
-          letterSpacing: '0.5px'
+          position: 'fixed', bottom: '24px', right: '24px', backgroundColor: '#0A0A0A',
+          color: '#FFFFFF', padding: '12px 20px', borderRadius: '6px', fontSize: '12px',
+          fontWeight: '800', zIndex: 99999, boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+          borderLeft: '4px solid #FF6B00', letterSpacing: '0.5px'
         }}>
           {toastMessage}
         </div>
@@ -463,7 +282,6 @@ const handleProceedToAddress = () => {
           onAddToCart={handleAddToCart} 
         />
       ) : currentPage === 'shop' ? (
-        /* YAHAN PAR CHANGE KIYA HAI - Ab sidha naya Shop khulega */
         <Shop 
           products={dbProducts} 
           initialCategory={selectedCategory} 
@@ -540,17 +358,11 @@ const handleProceedToAddress = () => {
         )
       ) : (
         <div className="premium-home-container">
-          
           <header className="premium-header">
-            
-            {/* LEFT SIDE: Back Button aur Menu */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              
-              {/* BACK BUTTON: Sirf tab dikhega jab hum Home page par nahi honge */}
               {currentPage !== 'home' && (
                 <button 
                   onClick={() => {
-                    // Agar product ya cart par hai, toh wapas Shop par bhejega, warna Home par
                     if (currentPage === 'product' || currentPage === 'product-detail' || currentPage === 'cart') {
                       navigateTo('shop', 'ALL');
                     } else {
@@ -562,20 +374,9 @@ const handleProceedToAddress = () => {
                   ←
                 </button>
               )}
-              
               <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>☰</button>
             </div>
-
-            {/* LOGO: Ab logo par click karne se bhi seedha Home khulega */}
-            <img 
-              src="/logo.png" 
-              alt="SATRASHE60" 
-              className="header-logo" 
-              onClick={() => navigateTo('home')}
-              style={{ cursor: 'pointer' }}
-            />
-
-            {/* RIGHT SIDE: Search aur Cart */}
+            <img src="/logo.png" alt="SATRASHE60" className="header-logo" onClick={() => navigateTo('home')} style={{ cursor: 'pointer' }} />
             <div className="header-icons">
               <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
               <button onClick={() => navigateTo('cart')}>
@@ -583,7 +384,7 @@ const handleProceedToAddress = () => {
               </button>
             </div>
           </header>
-          {/* SEARCH BAR OVERLAY */}
+
           {showSearchInput && (
             <div className="premium-search-bar">
               <input 
@@ -615,15 +416,11 @@ const handleProceedToAddress = () => {
           </div>
 
           <section className="premium-section">
-            <div className="premium-section-header">
-              <h2>SHOP BY SIZE</h2>
-            </div>
+            <div className="premium-section-header"><h2>SHOP BY SIZE</h2></div>
             <div className="premium-size-grid">
               {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
                 <div key={size} className="premium-category-card" onClick={() => navigateTo('size-filter', [size])}>
-                  <div className="premium-cat-img-box size-box-center">
-                    <span className="size-text-gold">{size}</span>
-                  </div>
+                  <div className="premium-cat-img-box size-box-center"><span className="size-text-gold">{size}</span></div>
                 </div>
               ))}
             </div>
@@ -636,35 +433,23 @@ const handleProceedToAddress = () => {
             </div>
             <div className="premium-category-grid">
               {[
-                { name: 'Tops', img: '/dress1.png' },
-                { name: 'T-Shirts', img: '/dress2.png' },
-                { name: 'Kurtis', img: '/dress3.png' },
-                { name: 'One Pieces', img: '/dress4.png' },
-                { name: 'Jeans', img: '/dress1.png' },
-                { name: 'Track Pants', img: '/dress2.png' },
-                { name: 'Dresses', img: '/dress3.png' },
-                { name: 'Co-ords', img: '/dress4.png' }
+                { name: 'Tops', img: '/dress1.png' }, { name: 'T-Shirts', img: '/dress2.png' },
+                { name: 'Kurtis', img: '/dress3.png' }, { name: 'One Pieces', img: '/dress4.png' },
+                { name: 'Jeans', img: '/dress1.png' }, { name: 'Track Pants', img: '/dress2.png' },
+                { name: 'Dresses', img: '/dress3.png' }, { name: 'Co-ords', img: '/dress4.png' }
               ].map((cat, idx) => (
                 <div key={idx} className="premium-category-card" onClick={() => navigateTo('shop', cat.name)}>
-                  <div className="premium-cat-img-box">
-                    <img src={cat.img} alt={cat.name} />
-                  </div>
+                  <div className="premium-cat-img-box"><img src={cat.img} alt={cat.name} /></div>
                   <p>{cat.name}</p>
                 </div>
               ))}
               
               <div className="premium-category-card" onClick={() => navigateTo('shop', 'New Arrivals')}>
-                <div className="premium-cat-img-box new-drop-box">
-                  <span className="crown-icon">👑</span>
-                  <span className="new-text">NEW</span>
-                </div>
+                <div className="premium-cat-img-box new-drop-box"><span className="crown-icon">👑</span><span className="new-text">NEW</span></div>
                 <p>New Drop</p>
               </div>
-              
               <div className="premium-category-card" onClick={() => navigateTo('shop')}>
-                <div className="premium-cat-img-box more-box">
-                  <span className="hanger-icon">🧥</span>
-                </div>
+                <div className="premium-cat-img-box more-box"><span className="hanger-icon">🧥</span></div>
                 <p>More</p>
               </div>
             </div>
@@ -692,7 +477,6 @@ const handleProceedToAddress = () => {
                 return (
                 <div key={productId} className="premium-product-card" onClick={() => handleOpenProduct(prod, 'home')}>
                   <div className="product-image-wrapper">
-                    {/* 🚀 REAL NEW TAG */}
                     <span className="card-badge badge-new" style={{position: 'absolute', top: '10px', left: '10px', background: '#D4AF37', color: '#000', padding: '2px 8px', fontSize: '10px', fontWeight: '800', borderRadius: '2px', zIndex: 10}}>NEW</span>
                     <img src={productImg} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <button className="premium-wishlist-btn" onClick={(e) => { e.stopPropagation(); handleToggleWishlist(productId); }}>♡</button>
@@ -760,29 +544,20 @@ const handleProceedToAddress = () => {
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onLoginSuccess={(userData) => {
-          setUser(userData);
+          setCurrentUser(userData);
           setShowAuthModal(false);
           setShowCheckout(true);
         }}
       />
 
       <div className="mobile-bottom-nav-bar">
-        <button onClick={() => navigateTo('home')}>
-          🏠
-        </button>
-        <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>
-          🔍
-        </button>
-        <button onClick={() => navigateTo('shop', 'New Arrivals')} className="nav-new-text">
-          NEW
-        </button>
+        <button onClick={() => navigateTo('home')}>🏠</button>
+        <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
+        <button onClick={() => navigateTo('shop', 'New Arrivals')} className="nav-new-text">NEW</button>
         <button onClick={() => navigateTo('cart')} style={{ position: 'relative' }}>
-          🛍️
-          {cartItems.length > 0 && <span className="bottom-nav-badge">{cartItems.length}</span>}
+          🛍️{cartItems.length > 0 && <span className="bottom-nav-badge">{cartItems.length}</span>}
         </button>
-        <button onClick={() => navigateTo('account')}>
-          👤
-        </button>
+        <button onClick={() => navigateTo('account')}>👤</button>
       </div>
 
       {showCheckout && (
@@ -793,14 +568,13 @@ const handleProceedToAddress = () => {
           onClearCart={() => setCartItems([])}
         />
       )}
-<SideMenu 
+      <SideMenu 
         isOpen={isMenuOpen} 
         onClose={() => setIsMenuOpen(false)} 
         navigateTo={navigateTo}
         currentUser={currentUser}
       />
     </div>
-    
   );
 }
 
