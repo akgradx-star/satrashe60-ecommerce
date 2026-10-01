@@ -41,11 +41,15 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
- const [dbProducts, setDbProducts] = useState([]);
+ // 🚀 CACHE SYSTEM: Ab refresh karne par products gayab nahi honge, turant dikhenge!
+  const [dbProducts, setDbProducts] = useState(() => {
+    const cached = localStorage.getItem('satrashe60_cached_products');
+    return cached ? JSON.parse(cached) : [];
+  });
 
-  // 🚀 1. PRODUCTS FETCH (Ziddi Auto-Retry for Render Sleep Mode)
+  // 🚀 PRODUCTS FETCH (Ziddi Auto-Retry + Data Sanitization)
   useEffect(() => {
-    const fetchProductsWithRetry = (retries = 10) => { // 10 baar try karega
+    const fetchProductsWithRetry = (retries = 10) => { 
       fetch('https://satrashe60-ecommerce.onrender.com/api/products')
         .then((response) => {
           if (!response.ok) throw new Error("Server abhi uth raha hai...");
@@ -53,21 +57,30 @@ function App() {
         })
         .then((data) => {
           const kapde = Array.isArray(data) ? data : (data.products || data.data || []);
-          setDbProducts(Array.isArray(kapde) ? kapde : []);
-          console.log("🔥 Backend se yeh kapde aaye hain:", kapde);
+          
+          // 🛡️ CRASH PROTECTOR: Backend ka kachra yahan saaf hoga taaki white screen na aaye
+          const safeKapde = kapde.map(p => ({
+            ...p,
+            id: p._id || p.id, 
+            // Agar size string mein aaya hai ya missing hai, toh array bana dega
+            sizes: Array.isArray(p.sizes) && p.sizes.length > 0 ? p.sizes : ["S", "M", "L", "XL"],
+            image: p.image || (p.images && p.images[0]) || '/dress1.png',
+            name: p.name || 'Premium Product',
+            price: p.price || 0
+          }));
+
+          setDbProducts(safeKapde);
+          // Naye kapde aate hi memory mein save kar lo agli baar ke liye
+          localStorage.setItem('satrashe60_cached_products', JSON.stringify(safeKapde));
         })
         .catch((error) => {
-          console.log(`Backend so raha hai. Retries left: ${retries}`, error);
           if (retries > 0) {
-            // Agar fail hua, toh 3 second baad wapas try karega 
             setTimeout(() => fetchProductsWithRetry(retries - 1), 3000);
-          } else {
-            setDbProducts([]); // Sab fail hone ke baad fallback
           }
         });
     };
 
-    fetchProductsWithRetry(); // Pehli baar start karna
+    fetchProductsWithRetry();
   }, []);
 
   const [dbOrders, setDbOrders] = useState([]);
@@ -259,16 +272,30 @@ const handleProceedToAddress = () => {
   };
 
   const handleAddToCart = (item) => {
-    setCartItems(prev => [...prev, item]);
-    triggerToast(`✓ Added to Bag (${item.name})`);
+    // 🛡️ Safe Item Format
+    const safeItem = {
+      ...item,
+      id: item._id || item.id || Math.random().toString(),
+      quantity: item.quantity || 1,
+      selectedSize: item.selectedSize || "Free Size"
+    };
+    setCartItems(prev => [...prev, safeItem]);
+    triggerToast(`✓ Added to Bag (${safeItem.name || 'Item'})`);
   };
 
   const handleBuyNow = (item) => {
-    setCartItems(prev => [...prev, item]);
+    // 🛡️ Buy Now ke liye bhi Safe Item Format
+    const safeItem = {
+      ...item,
+      id: item._id || item.id || Math.random().toString(),
+      quantity: item.quantity || 1,
+      selectedSize: item.selectedSize || "Free Size"
+    };
+    setCartItems(prev => [...prev, safeItem]);
     setShowCheckout(true);
   };
 
-  const  handleRemoveFromCart = (indexToRemove) => {
+  const handleRemoveFromCart = (indexToRemove) => {
     setCartItems(cartItems.filter((_, idx) => idx !== indexToRemove));
     triggerToast("Item removed from Bag");
   };
