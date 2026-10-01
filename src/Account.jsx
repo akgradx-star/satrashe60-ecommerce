@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
 export default function Account({ currentUser, onLogin, onLogout, onNavigateToShop }) {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'signup'
-  const [activeSection, setActiveSection] = useState('dashboard'); // 'dashboard' | 'orders' | 'profile' | 'addresses' | 'subscriptions'
+  const [activeTab, setActiveTab] = useState('login'); 
+  const [activeSection, setActiveSection] = useState('dashboard'); 
 
-  // Form State
   const [formData, setFormData] = useState({
     fullName: '',
     mobile: '',
@@ -12,7 +11,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     password: '',
   });
 
-  // Mock Orders Data
   const [orders] = useState([
     {
       id: 'SATRA-89211',
@@ -21,7 +19,7 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
       size: 'M',
       price: 129,
       status: 'In Transit',
-      trackingStep: 2, // 1: Placed, 2: Shipped, 3: Out for delivery, 4: Delivered
+      trackingStep: 2, 
       image: '/dress2.png'
     },
     {
@@ -36,12 +34,11 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     }
   ]);
 
-  // Mock Saved Addresses
   const [addresses, setAddresses] = useState([
     {
       id: 1,
-      fullName: currentUser?.name || 'Customer',
-      mobile: '+91 98765 43210',
+      fullName: currentUser?.name ? String(currentUser.name) : 'Customer',
+      mobile: currentUser?.mobile ? String(currentUser.mobile) : '+91 98765 43210',
       address: 'Flat 402, High Street Towers, Baner Road',
       city: 'Pune',
       state: 'Maharashtra',
@@ -50,9 +47,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     }
   ]);
 
-  // ==========================================
-  // 🚀 API CONNECTION (Login/Signup)
-  // ==========================================
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     
@@ -81,14 +75,12 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
         alert("❌ Server se connect nahi ho paya.");
       }
     } else {
-      // SMART ADMIN BYPASS
       if (formData.email === 'akash@gmail.com' || formData.email === 'worker1@gmail.com' || formData.email === 'admin@satrashe60.com') {
         alert("✅ Welcome back Admin (Instant Login) 🚀");
         onLogin({ name: "Admin (Akash)", email: formData.email });
         return; 
       }
 
-      // NORMAL CUSTOMER LOGIN
       try {
         const response = await fetch('http://10.42.209.222:5001/api/login', {
           method: 'POST',
@@ -111,9 +103,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     }
   };
 
-  // ==========================================
-  // VIEW A: AGAR USER LOGIN NAHI HAI
-  // ==========================================
   if (!currentUser) {
     return (
       <div style={{ backgroundColor: '#FAFAFA', minHeight: '80vh', padding: '60px 4%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -160,9 +149,11 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     );
   }
 
-  // ==========================================
-  // VIEW B: USER LOGGED IN HAI (PREMIUM DASHBOARD)
-  // ==========================================
+  // 🚀 SUPER CRASH PROTECTOR: Mobile ka kachra yahan filter ho jayega
+  const rawName = currentUser?.name || 'Valued Customer';
+  const safeUserName = String(rawName); // Forcefully usko text bana dega taaki crash na ho
+  const safeUserInitial = safeUserName.charAt(0).toUpperCase();
+
   return (
     <div style={{ backgroundColor: '#FAFAFA', minHeight: '80vh', padding: window.innerWidth < 768 ? '20px 15px' : '40px 4%', }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '260px 1fr', gap: '30px', alignItems: 'start' }}>
@@ -171,11 +162,11 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
         <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E5E5', borderRadius: '8px', padding: '24px' }}>
           <div style={{ paddingBottom: '20px', borderBottom: '1px solid #EEEEEE', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '48px', height: '48px', backgroundColor: '#0A0A0A', borderRadius: '50%', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: '900' }}>
-              {currentUser.name.charAt(0).toUpperCase()}
+              {safeUserInitial}
             </div>
             <div>
               <div style={{ fontSize: '10px', fontWeight: '800', color: '#C9A227', textTransform: 'uppercase', letterSpacing: '1px' }}>VERIFIED MEMBER</div>
-              <div style={{ fontSize: '15px', fontWeight: '900', color: '#111111', marginTop: '2px' }}>{currentUser.name}</div>
+              <div style={{ fontSize: '15px', fontWeight: '900', color: '#111111', marginTop: '2px' }}>{safeUserName}</div>
             </div>
           </div>
 
@@ -208,7 +199,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
         {/* RIGHT MAIN CONTENT */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* 🎁 PREMIUM GIFT CARD BANNER (Hamesha Top Par Dikhaga Dashboard me) */}
           {activeSection === 'dashboard' && (
             <div style={{ background: 'linear-gradient(135deg, #111111, #2A2A2A)', borderRadius: '8px', padding: '24px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
               <div>
@@ -222,11 +212,10 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
 
           <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E5E5', borderRadius: '8px', padding: '32px' }}>
             
-            {/* 1. DASHBOARD OVERVIEW */}
             {activeSection === 'dashboard' && (
               <div>
                 <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '26px', fontWeight: '900', margin: '0 0 24px 0' }}>
-                  WELCOME BACK!
+                  WELCOME BACK, {safeUserName.toUpperCase()}!
                 </h2>
                 <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : 'repeat(3, 1fr)', gap: '16px', marginBottom: '36px' }}>
                   <div style={{ backgroundColor: '#F9F9F9', border: '1px solid #EEEEEE', borderRadius: '6px', padding: '20px', textAlign: 'center' }}>
@@ -245,7 +234,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
               </div>
             )}
 
-            {/* 2. ORDERS & LIVE TRACKING */}
             {(activeSection === 'orders' || activeSection === 'dashboard') && (
               <div>
                 {activeSection === 'orders' && <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '24px', fontWeight: '900', margin: '0 0 20px 0' }}>MY ORDERS & TRACKING</h2>}
@@ -254,7 +242,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {orders.map(order => (
                     <div key={order.id} style={{ border: '1px solid #EEEEEE', borderRadius: '8px', overflow: 'hidden' }}>
-                      {/* Order Info */}
                       <div style={{ display: 'flex', gap: '16px', padding: '20px', backgroundColor: '#FFFFFF', alignItems: 'center' }}>
                         <img src={order.image} alt={order.productName} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #EEE' }} />
                         <div style={{ flex: 1 }}>
@@ -267,7 +254,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
                         </span>
                       </div>
                       
-                      {/* Live Tracking Bar */}
                       <div style={{ backgroundColor: '#F9F9F9', padding: '16px 20px', borderTop: '1px solid #EEEEEE' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
                           <div style={{ position: 'absolute', top: '10px', left: '10%', right: '10%', height: '2px', backgroundColor: '#DDDDDD', zIndex: 1 }}></div>
@@ -287,22 +273,21 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
               </div>
             )}
 
-            {/* 3. EDIT PROFILE */}
             {activeSection === 'profile' && (
               <div>
                 <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '24px', fontWeight: '900', margin: '0 0 20px 0' }}>EDIT PROFILE</h2>
                 <form style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                   <div style={{ gridColumn: 'span 2' }}>
                     <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '6px' }}>FULL NAME</label>
-                    <input type="text" defaultValue={currentUser.name} style={{ width: '100%', padding: '12px 14px', border: '1px solid #D5D5D5', borderRadius: '4px', fontSize: '13px' }} />
+                    <input type="text" defaultValue={safeUserName} style={{ width: '100%', padding: '12px 14px', border: '1px solid #D5D5D5', borderRadius: '4px', fontSize: '13px' }} />
                   </div>
                   <div>
                     <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '6px' }}>EMAIL ADDRESS</label>
-                    <input type="email" defaultValue={currentUser.email} disabled style={{ width: '100%', padding: '12px 14px', border: '1px solid #EEEEEE', backgroundColor: '#F9F9F9', borderRadius: '4px', fontSize: '13px', color: '#888' }} />
+                    <input type="email" defaultValue={currentUser?.email ? String(currentUser.email) : ''} disabled style={{ width: '100%', padding: '12px 14px', border: '1px solid #EEEEEE', backgroundColor: '#F9F9F9', borderRadius: '4px', fontSize: '13px', color: '#888' }} />
                   </div>
                   <div>
                     <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '6px' }}>MOBILE NUMBER</label>
-                    <input type="text" defaultValue="+91" style={{ width: '100%', padding: '12px 14px', border: '1px solid #D5D5D5', borderRadius: '4px', fontSize: '13px' }} />
+                    <input type="text" defaultValue={currentUser?.mobile ? String(currentUser.mobile) : "+91"} style={{ width: '100%', padding: '12px 14px', border: '1px solid #D5D5D5', borderRadius: '4px', fontSize: '13px' }} />
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
                     <button type="button" style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', padding: '14px 24px', border: 'none', borderRadius: '4px', fontWeight: '800', fontSize: '12px', cursor: 'pointer', letterSpacing: '1px' }}>
@@ -313,7 +298,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
               </div>
             )}
 
-            {/* 4. SAVED ADDRESSES */}
             {activeSection === 'addresses' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -341,7 +325,6 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
               </div>
             )}
 
-            {/* 5. MY SUBSCRIPTIONS */}
             {activeSection === 'subscriptions' && (
               <div>
                 <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '24px', fontWeight: '900', margin: '0 0 20px 0' }}>MY SUBSCRIPTIONS</h2>
