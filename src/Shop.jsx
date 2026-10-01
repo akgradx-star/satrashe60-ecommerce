@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Shop.css';
 
 export const MASTER_PRODUCTS = [
-  // (Your original MASTER_PRODUCTS array remains exactly the same here)
   {
     id: 1,
     slug: "linen-shirt-top",
@@ -343,14 +342,6 @@ export const MASTER_PRODUCTS = [
   }
 ];
 
-const COLOR_MAP = {
-  "White": "#FFFFFF",
-  "Beige": "#D2B48C",
-  "Black": "#000000",
-  "Brown": "#5C2C16",
-  "Red": "#C15C5C"
-};
-
 const CATEGORIES = [
   { name: 'Tops', img: '/dress1.png' },
   { name: 'T-Shirts', img: '/dress2.png' },
@@ -379,21 +370,10 @@ export default function Shop({
   const [onlyOneLeftOnly, setOnlyOneLeftOnly] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   
-  const [sortBy, setSortBy] = useState("Recommended"); // Updated default
+  const [sortBy, setSortBy] = useState("Recommended"); 
   const [viewMode, setViewMode] = useState("grid");
   
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-
-  const [openAccordions, setOpenAccordions] = useState({
-    category: true,
-    size: false,
-    price: false,
-    color: true,
-    fabric: false,
-    newArrivals: true,
-    onlyOneLeft: true,
-    discount: false
-  });
 
   const [quickAddProduct, setQuickAddProduct] = useState(null);
   const [selectedSizeForAdd, setSelectedSizeForAdd] = useState(null);
@@ -422,10 +402,6 @@ export default function Shop({
       setSelectedSizes(initialSizes);
     }
   }, [initialSizes]);
-
-  const toggleAccordion = (section) => {
-    setOpenAccordions(prev => ({ ...prev, [section]: !prev[section] }));
-  };
 
   const finalProductsToDisplay = [...liveProducts, ...MASTER_PRODUCTS];
 
@@ -482,7 +458,7 @@ export default function Shop({
     if (sortBy === "Price: Low to High") return a.price - b.price;
     if (sortBy === "Price: High to Low") return b.price - a.price;
     if (sortBy === "Newest First") return new Date(b.createdAt) - new Date(a.createdAt);
-    return 0; // "Recommended" (default order)
+    return 0; 
   });
 
   const totalProductsCount = sortedProducts.length;
@@ -513,54 +489,93 @@ export default function Shop({
   };
 
   return (
-    <div className="premium-shop-container">
-      {/* 🚀 BACK NAVIGATION (BREADCRUMBS) */}
-      <div style={{ padding: '15px 5%', fontSize: '12px', color: '#888', backgroundColor: '#050505' }}>
-        <span 
-          onClick={() => onNavigate('home')} 
-          style={{ cursor: 'pointer', color: '#FFF', fontWeight: '600', letterSpacing: '1px' }}
-        >
-          HOME
-        </span>
-        <span style={{ margin: '0 10px' }}>/</span>
-        <span style={{ color: '#D4AF37', fontWeight: '600', letterSpacing: '1px' }}>
-          SHOP
-        </span>
+    <div className="premium-shop-container" style={{ backgroundColor: '#000000', minHeight: '100vh', paddingBottom: '60px' }}>
+      
+      {/* 🚀 1. LUXURY HEADER (Pill Nav & Center Logo) */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', backgroundColor: '#000000', position: 'relative', borderBottom: '1px solid #1A1A1A' }}>
+        
+        {/* Left Side: Back & Pill */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}>
+          <button onClick={() => onNavigate('home')} style={{ background: 'transparent', border: '1px solid #D4AF37', borderRadius: '50%', width: '32px', height: '32px', color: '#D4AF37', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '18px' }}>
+            ←
+          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', background: '#111111', borderRadius: '24px', padding: '3px', border: '1px solid #222222' }}>
+            <button 
+              onClick={() => onNavigate('home')} 
+              style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', borderRadius: '20px', padding: '6px 14px', fontSize: '11px', fontWeight: '800', letterSpacing: '1px', cursor: 'pointer', transition: 'all 0.3s ease' }}
+            >
+              HOME
+            </button>
+            <button 
+              style={{ background: 'transparent', color: '#888888', border: 'none', padding: '6px 14px', fontSize: '11px', fontWeight: '800', letterSpacing: '1px', cursor: 'default' }}
+            >
+              SHOP
+            </button>
+          </div>
+        </div>
+
+        {/* Center: Small Fixed Logo */}
+        <img 
+          src="/logo.png" 
+          alt="1760 SATRASHE60" 
+          style={{ height: '38px', position: 'absolute', left: '50%', transform: 'translateX(-50%)', objectFit: 'contain', cursor: 'pointer', zIndex: 5 }} 
+          onClick={() => onNavigate('home')}
+        />
+
+        {/* Right Side: Search Icon */}
+        <button style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: '20px', cursor: 'pointer', zIndex: 10 }}>
+          🔍
+        </button>
       </div>
-      {/* BANNER SECTION */}
-      <div className="shop-premium-banner">
-        <div className="banner-overlay">
-          <span className="banner-eyebrow">TRENDING NOW</span>
-          <h1 className="banner-title">WOMEN'S<br/>COLLECTION</h1>
-          <p className="banner-subtitle">STREET STYLE / COMFORT / AFFORDABLE</p>
-          <button className="banner-btn" onClick={() => setSelectedCategory("ALL")}>EXPLORE NOW →</button>
+
+      {/* 🚀 2. GOLD RING CATEGORIES SLIDER */}
+      <div style={{ display: 'flex', gap: '18px', overflowX: 'auto', padding: '24px 20px', backgroundColor: '#000000', scrollbarWidth: 'none' }} className="hide-scrollbar">
+        {CATEGORIES.map((cat, idx) => {
+          const isSelected = selectedCategory === cat.name;
+          return (
+            <div 
+              key={idx} 
+              onClick={() => setSelectedCategory(cat.name)}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
+            >
+              <div style={{ 
+                width: '76px', 
+                height: '76px', 
+                borderRadius: '50%', 
+                border: isSelected ? '2px solid #D4AF37' : '2px solid #333333', 
+                padding: '3px',
+                transition: 'all 0.3s ease',
+                boxShadow: isSelected ? '0 0 10px rgba(212, 175, 55, 0.3)' : 'none'
+              }}>
+                <img src={cat.img} alt={cat.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+              </div>
+              <span style={{ color: isSelected ? '#D4AF37' : '#FFFFFF', fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', transition: 'color 0.3s ease' }}>
+                {cat.name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* BANNER SECTION (Dark Theme) */}
+      <div className="shop-premium-banner" style={{ margin: '0 20px 20px 20px', borderRadius: '8px' }}>
+        <div className="banner-overlay" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%)' }}>
+          <span className="banner-eyebrow" style={{ color: '#D4AF37' }}>TRENDING NOW</span>
+          <h1 className="banner-title" style={{ color: '#FFF' }}>WOMEN'S<br/>COLLECTION</h1>
+          <p className="banner-subtitle" style={{ color: '#CCC' }}>STREET STYLE / COMFORT / AFFORDABLE</p>
+          <button className="banner-btn" style={{ borderColor: '#D4AF37', color: '#D4AF37' }} onClick={() => setSelectedCategory("ALL")}>EXPLORE NOW →</button>
         </div>
       </div>
 
-      {/* CIRCULAR CATEGORIES */}
-      <div className="shop-circular-categories">
-        {CATEGORIES.map((cat, idx) => (
-          <div 
-            key={idx} 
-            className="circular-cat-item"
-            onClick={() => setSelectedCategory(cat.name)}
-          >
-            <div className={`circle-img-box ${selectedCategory === cat.name ? 'active-circle' : ''}`}>
-              <img src={cat.img} alt={cat.name} />
-            </div>
-            <span className="circle-cat-name">{cat.name}</span>
-          </div>
-        ))}
-      </div>
-
       {/* FILTER & SORT BAR */}
-      <div className="shop-controls-bar">
-        <button className="filter-btn" onClick={() => setShowMobileFilter(true)}>
+      <div className="shop-controls-bar" style={{ backgroundColor: '#111111', borderBottom: '1px solid #222' }}>
+        <button className="filter-btn" onClick={() => setShowMobileFilter(true)} style={{ color: '#D4AF37' }}>
           <span className="filter-icon">⎚</span> Filter
         </button>
         
         <div className="sort-wrapper">
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select" style={{ color: '#FFF', backgroundColor: '#111' }}>
             <option value="Recommended">Sort By</option>
             <option value="Newest First">Newest</option>
             <option value="Price: Low to High">Price: Low - High</option>
@@ -569,53 +584,54 @@ export default function Shop({
         </div>
 
         <div className="view-toggles">
-          <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active-view' : ''}>⊞</button>
-          <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active-view' : ''}>⊟</button>
+          <button onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'active-view' : ''} style={{ color: viewMode === 'grid' ? '#D4AF37' : '#888' }}>⊞</button>
+          <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active-view' : ''} style={{ color: viewMode === 'list' ? '#D4AF37' : '#888' }}>⊟</button>
         </div>
       </div>
 
       {/* PRODUCT GRID */}
       {totalProductsCount === 0 ? (
-        <div className="no-products-msg">
+        <div className="no-products-msg" style={{ color: '#FFF' }}>
           <h3>No products found for "{selectedCategory}"</h3>
           <button onClick={handleResetAll} className="reset-btn-gold">View All Products</button>
         </div>
       ) : (
-        <div className={`premium-product-grid ${viewMode}`}>
+        <div className={`premium-product-grid ${viewMode}`} style={{ padding: '20px' }}>
           {sortedProducts.map(product => {
             const isWishlisted = wishlist.includes(product.id || product._id);
-            // Dynamic discount calculation
             const discountPct = product.discount || Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) || 0;
 
             return (
-              <div key={product.id || product._id} className="premium-shop-card">
+              <div key={product.id || product._id} className="premium-shop-card" style={{ backgroundColor: '#111', border: '1px solid #222' }}>
                 
                 <div className="card-img-wrapper" onClick={() => onNavigate(`/product/${product.slug || product.name}`)}>
-                  {product.isNew && <span className="card-badge badge-new">New</span>}
+                  {product.isNew && <span className="card-badge badge-new" style={{ backgroundColor: '#D4AF37', color: '#000' }}>New</span>}
                   {product.isBestSeller && !product.isNew && <span className="card-badge badge-bestseller">Bestseller</span>}
 
                   <button 
                     className="card-wishlist-btn"
                     onClick={(e) => { e.stopPropagation(); onToggleWishlist(product.id || product._id); }}
+                    style={{ color: isWishlisted ? '#D4AF37' : '#FFF', backgroundColor: 'rgba(0,0,0,0.5)' }}
                   >
                     {isWishlisted ? '♥' : '♡'}
                   </button>
                   <img src={product.image || product.images?.[0]} alt={product.name} />
                 </div>
 
-                <div className="card-info-box">
-                  <h3 className="card-prod-title">{product.name}</h3>
+                <div className="card-info-box" style={{ padding: '12px' }}>
+                  <h3 className="card-prod-title" style={{ color: '#FFF' }}>{product.name}</h3>
                   <div className="card-price-row">
-                    <span className="card-current-price">₹ {product.price}</span>
-                    {product.oldPrice && <span className="card-old-price">₹{product.oldPrice}</span>}
-                    {discountPct > 0 && <span className="card-discount">({discountPct}% OFF)</span>}
+                    <span className="card-current-price" style={{ color: '#FFF' }}>₹ {product.price}</span>
+                    {product.oldPrice && <span className="card-old-price" style={{ color: '#666' }}>₹{product.oldPrice}</span>}
+                    {discountPct > 0 && <span className="card-discount" style={{ color: '#D4AF37', backgroundColor: 'transparent', padding: 0 }}>({discountPct}% OFF)</span>}
                   </div>
-                  <div className="card-rating">
-                    <span className="stars">★★★★★</span> <span className="reviews">({product.reviews?.length || 124})</span>
+                  <div className="card-rating" style={{ color: '#D4AF37' }}>
+                    <span className="stars">★★★★★</span> <span className="reviews" style={{ color: '#888' }}>({product.reviews?.length || 124})</span>
                   </div>
                   
                   <button 
                     className="card-add-to-cart-btn"
+                    style={{ border: '1px solid #D4AF37', backgroundColor: 'transparent', color: '#D4AF37', marginTop: '10px' }}
                     onClick={(e) => { 
                       e.stopPropagation(); 
                       setQuickAddProduct(product);
@@ -655,7 +671,7 @@ export default function Shop({
             </div>
 
             {sizeError && <div style={{ color: '#FF3333', fontSize: '11px', fontWeight: '700', marginBottom: '12px' }}>{sizeError}</div>}
-            {addedNotice && <div style={{ color: '#00cc00', fontSize: '11px', fontWeight: '800', marginBottom: '12px' }}>Added to Bag ✓</div>}
+            {addedNotice && <div style={{ color: '#D4AF37', fontSize: '11px', fontWeight: '800', marginBottom: '12px' }}>Added to Bag ✓</div>}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button 
@@ -677,11 +693,11 @@ export default function Shop({
 
       {/* MOBILE FILTER OVERLAY */}
       {showMobileFilter && (
-        <div className="mobile-filter-overlay">
-          <div className="mobile-filter-content">
-            <div className="filter-header">
-              <h3>FILTERS</h3>
-              <button onClick={() => setShowMobileFilter(false)}>✕</button>
+        <div className="mobile-filter-overlay" style={{ zIndex: 3000 }}>
+          <div className="mobile-filter-content" style={{ backgroundColor: '#111', color: '#FFF' }}>
+            <div className="filter-header" style={{ borderBottom: '1px solid #333' }}>
+              <h3 style={{ color: '#D4AF37' }}>FILTERS</h3>
+              <button onClick={() => setShowMobileFilter(false)} style={{ color: '#FFF' }}>✕</button>
             </div>
             
             <div className="filter-body" style={{ overflowY: 'auto' }}>
@@ -692,7 +708,7 @@ export default function Shop({
                     <button 
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
-                      style={{ padding: '8px 12px', background: selectedCategory === cat ? '#D4AF37' : '#222', color: selectedCategory === cat ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px' }}
+                      style={{ padding: '8px 12px', background: selectedCategory === cat ? '#D4AF37' : '#222', color: selectedCategory === cat ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}
                     >
                       {cat}
                     </button>
@@ -712,7 +728,7 @@ export default function Shop({
                           if (isSel) setSelectedSizes(selectedSizes.filter(s => s !== size));
                           else setSelectedSizes([...selectedSizes, size]);
                         }}
-                        style={{ width: '40px', height: '40px', background: isSel ? '#D4AF37' : '#222', color: isSel ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px' }}
+                        style={{ width: '40px', height: '40px', background: isSel ? '#D4AF37' : '#222', color: isSel ? '#000' : '#fff', border: 'none', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold' }}
                       >
                         {size}
                       </button>
@@ -722,14 +738,14 @@ export default function Shop({
               </div>
               
               <div style={{ paddingTop: '10px', borderTop: '1px solid #333' }}>
-                <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#FF3333', fontSize: '12px', padding: '10px 0', cursor: 'pointer' }}>
+                <button onClick={handleResetAll} style={{ background: 'none', border: 'none', color: '#FF3333', fontSize: '12px', padding: '10px 0', cursor: 'pointer', fontWeight: 'bold' }}>
                   Clear All Filters
                 </button>
               </div>
             </div>
 
-            <div className="filter-footer">
-              <button className="apply-filter-btn" onClick={() => setShowMobileFilter(false)}>APPLY FILTERS</button>
+            <div className="filter-footer" style={{ borderTop: '1px solid #333', backgroundColor: '#111' }}>
+              <button className="apply-filter-btn" onClick={() => setShowMobileFilter(false)} style={{ backgroundColor: '#D4AF37', color: '#000' }}>APPLY FILTERS</button>
             </div>
           </div>
         </div>
