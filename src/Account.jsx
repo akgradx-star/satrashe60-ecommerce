@@ -52,7 +52,8 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
     
     if (activeTab === 'signup') {
       try {
-        const response = await fetch('http://10.42.209.222:5001/api/signup', {
+        // 🚀 CHANGE 1: Local IP ki jagah Live Render URL laga diya
+        const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -72,7 +73,7 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
         }
       } catch (error) {
         console.error("Signup failed:", error);
-        alert("❌ Server se connect nahi ho paya.");
+        alert("❌ Server se connect nahi ho paya. Backend so raha hoga.");
       }
     } else {
       if (formData.email === 'akash@gmail.com' || formData.email === 'worker1@gmail.com' || formData.email === 'admin@satrashe60.com') {
@@ -82,7 +83,8 @@ export default function Account({ currentUser, onLogin, onLogout, onNavigateToSh
       }
 
       try {
-        const response = await fetch('http://10.42.209.222:5001/api/login', {
+        // 🚀 CHANGE 2: Yahan bhi Live Render URL laga diya
+        const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
