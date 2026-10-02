@@ -13,7 +13,7 @@ import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
 import CategoryPLP from './CategoryPLP'; 
-import Home from './Home';
+import Home from './HeroHome';
 import { ShopContext } from './ShopContext'; 
 
 function App() {
