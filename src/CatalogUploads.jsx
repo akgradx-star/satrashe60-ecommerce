@@ -12,7 +12,10 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [selectedProductType, setSelectedProductType] = useState(null);
-
+const [formIsBestSeller, setFormIsBestSeller] = useState(false);
+  const [showSizeDetails, setShowSizeDetails] = useState(false);
+  const [formSizeMeasurements, setFormSizeMeasurements] = useState({ chest: '', shoulder: '', hip: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false); // Double click fix ke liye
   const [catalogs, setCatalogs] = useState([
     {
       id: "CAT-101",
@@ -230,64 +233,70 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
     setViewMode('list');
   };
 
-  const handlePublishSingleProduct = () => {
+  const handlePublishSingleProduct = async () => {
+    // 🚀 Double Click Fix: Agar pehle se save ho raha hai toh ruk jao
+    if (isSubmitting) return;
+
     const missing = handleValidateForm();
     if (missing.length > 0) {
       alert(`Cannot publish. Required fields missing:\n- ${missing.join('\n- ')}`);
       return;
     }
 
-    const pubId = activeEditingCatalogId || `CAT-${Math.floor(1000 + Math.random() * 9000)}`;
-    
-    // Website format ke hisaab se data taiyar karna
-    const newProductData = {
-      id: pubId,
-      slug: formName.toLowerCase().replace(/\s+/g, '-'),
-      name: formName.trim(),
-      price: Number(formSellingPrice),
-      mrp: Number(formMrp),
-      discount: calculatedDiscount,
-      stock: Number(formStock),
-      image: formImages[0] || "/dress1.png", 
-      category: selectedProductType || "Kurti",
-      isNew: true,
-      sizes: formSizes,
-      colors: [formColor || "Standard"],
-      fabric: formFabric,
-      fit: formFitShape,
-      length: formLength,
-      pattern: formPattern,
-      description: formDescription || "Premium quality product.",
-    };
+    setIsSubmitting(true); // Button disable ho jayega
 
-    // 🚀 Backend (MongoDB) ko data bhejna
-    fetch('https://satrashe60-ecommerce.onrender.com/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newProductData)
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+      // 🚀 Fake delay dikhane ke liye (Aap isko hata sakte hain backend active hone par)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const pubId = activeEditingCatalogId || `CAT-${Math.floor(1000 + Math.random() * 9000)}`;
+      
+      const newProductData = {
+        id: pubId,
+        slug: formName.toLowerCase().replace(/\s+/g, '-'),
+        name: formName.trim(),
+        price: Number(formSellingPrice),
+        mrp: Number(formMrp),
+        discount: calculatedDiscount,
+        stock: Number(formStock),
+        image: formImages[0] || "/dress1.png", 
+        category: selectedProductType === 'Manual' ? formPattern : selectedProductType, // Form Pattern used as custom category input
+        isNew: true,
+        sizes: formSizes,
+        colors: [formColor || "Standard"],
+        fabric: formFabric,
+        isBestSeller: formIsBestSeller, // 🚀 Best seller added
+        measurements: showSizeDetails ? formSizeMeasurements : null, // 🚀 Measurements added
+        description: formDescription || "Premium quality product.",
+      };
+
+      // 🚀 Backend API Call
+      const response = await fetch('https://satrashe60-ecommerce.onrender.com/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProductData)
+      });
+      const data = await response.json();
+
       if(data.product) {
         alert(`✓ Kapda "${formName}" website par LIVE ho gaya hai!`);
         
-        // Form ko reset aur band karna
         setFormName("");
         setFormImages([]);
         setViewMode('list');
         
-        // Agar main Store function maujood hai toh usko bhi update kar do
         if (onPublishProductToStore) {
           onPublishProductToStore(newProductData);
         }
       } else {
         alert("Server se error aayi: " + data.message);
       }
-    })
-    .catch(error => {
+    } catch (error) {
       console.error("Publishing Failed:", error);
       alert("Network Error: Kapda publish nahi ho paya.");
-    });
+    } finally {
+      setIsSubmitting(false); // Process khatam, button wapas active
+    }
   };
 
   return (
@@ -535,152 +544,208 @@ export default function CatalogUploads({ onPublishProductToStore, onBackToDashbo
       )}
 
       {viewMode === 'single-form' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', backgroundColor: '#F8FAFC', padding: '10px', borderRadius: '8px' }}>
+        <div style={{ backgroundColor: '#000', color: '#FFF', padding: '20px', fontFamily: "'Inter', sans-serif", borderRadius: '8px' }}>
           
-          <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
             <div>
-              <div style={{ fontSize: '11px', color: '#6B7280' }}>
-                Active Creator: <strong style={{ color: '#FF6B00' }}>{selectedProductType}</strong> ({selectedCategory})
-              </div>
-              <h2 style={{ fontSize: '18px', fontWeight: '900', color: '#111827', margin: '2px 0 0 0' }}>
-                {activeEditingCatalogId ? `EDIT CATALOG REF: ${activeEditingCatalogId}` : 'NEW PRODUCT CREATION'}
+              <h2 style={{ margin: '0 0 5px 0', color: '#FFF', fontSize: '20px' }}>
+                {activeEditingCatalogId ? `EDIT CATALOG REF: ${activeEditingCatalogId}` : 'Add New Product'}
               </h2>
+              <p style={{ margin: 0, color: '#888', fontSize: '12px' }}>Fill in the details to add a new product to your store.</p>
             </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button type="button" onClick={() => setViewMode('list')} style={{ background: 'transparent', border: '1px solid #333', color: '#FFF', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>✕ Cancel</button>
+              <button type="button" onClick={handleSaveAsDraft} style={{ backgroundColor: '#333', color: '#FFF', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>💾 Save as Draft</button>
+              
+              {/* 🚀 PUBLISH BUTTON FIX */}
+              <button 
                 type="button"
-                onClick={handleSaveAsDraft}
-                style={{ backgroundColor: '#F3F4F6', color: '#111827', border: '1px solid #D1D5DB', padding: '8px 14px', borderRadius: '4px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
+                onClick={handlePublishSingleProduct} 
+                disabled={isSubmitting}
+                style={{ 
+                  background: isSubmitting ? '#555' : '#D4AF37', 
+                  color: isSubmitting ? '#CCC' : '#000', 
+                  border: 'none', 
+                  padding: '8px 20px', 
+                  borderRadius: '4px', 
+                  fontWeight: 'bold', 
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px'
+                }}
               >
-                💾 Save as Draft
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowLivePreviewModal(true)}
-                style={{ backgroundColor: '#3B82F6', color: '#FFFFFF', border: 'none', padding: '8px 14px', borderRadius: '4px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-              >
-                👁️ Preview Storefront
-              </button>
-              <button
-                type="button"
-                onClick={handlePublishSingleProduct}
-                style={{ backgroundColor: '#0A0A0A', color: '#FFFFFF', border: 'none', padding: '8px 18px', borderRadius: '4px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-              >
-                🚀 Publish Product
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('list')}
-                style={{ backgroundColor: '#FFFFFF', color: '#EF4444', border: '1px solid #FCA5A5', padding: '8px 12px', borderRadius: '4px', fontSize: '11px', fontWeight: '800', cursor: 'pointer' }}
-              >
-                ✕ Cancel
+                {isSubmitting ? '⏳ Processing...' : '📤 Publish Product'}
               </button>
             </div>
           </div>
 
           {formValidationErrors.length > 0 && (
-            <div style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', padding: '12px 18px', borderRadius: '6px', color: '#991B1B', fontSize: '12px', fontWeight: '700' }}>
-              ⚠️ Missing Required Fields for Publishing: {formValidationErrors.join(', ')}
+            <div style={{ backgroundColor: '#4a0000', border: '1px solid #ff4d4d', padding: '12px 18px', borderRadius: '6px', color: '#ff4d4d', fontSize: '12px', fontWeight: '700', marginBottom: '20px' }}>
+              ⚠️ Missing Required Fields: {formValidationErrors.join(', ')}
             </div>
           )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '20px' }}>
             
+            {/* LEFT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: '0 0 10px 0', color: '#111827' }}>1. Kapde ki Photo Daalein *</h3>
-                <p style={{ fontSize: '11px', color: '#6B7280', marginTop: '-6px', marginBottom: '10px' }}>(Kam se kam 1, zyada se zyada 6)</p>
+              {/* 1. Basic Details */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <h3 style={{ fontSize: '14px', color: '#D4AF37', margin: '0 0 15px 0' }}>1. Product Basic Details</h3>
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Product Name *</label>
+                    <input type="text" value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="e.g. Classic Black Kurti" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Product SKU *</label>
+                    <input type="text" value={formSku} onChange={(e) => setFormSku(e.target.value)} placeholder="e.g. SKT-001" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                </div>
                 
+                {/* 🚀 BEST SELLER TOGGLE */}
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={formIsBestSeller} onChange={(e) => setFormIsBestSeller(e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#D4AF37' }} />
+                  <span style={{ fontSize: '13px', color: '#FFF', fontWeight: 'bold' }}>👑 Mark as Best Seller</span>
+                </label>
+                <p style={{ fontSize: '10px', color: '#888', margin: '5px 0 0 25px' }}>If enabled, this product will show in the Best Seller section directly.</p>
+              </div>
+
+              {/* 3. Pricing & Stock */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <h3 style={{ fontSize: '14px', color: '#D4AF37', margin: '0 0 15px 0' }}>3. Pricing & Stock</h3>
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Selling Price (Grahak ke liye) ₹ *</label>
+                    <input type="number" value={formSellingPrice} onChange={(e) => setFormSellingPrice(e.target.value)} placeholder="e.g. 999" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>MRP (Print Price) ₹ *</label>
+                    <input type="number" value={formMrp} onChange={(e) => setFormMrp(e.target.value)} placeholder="e.g. 1499" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Quantity *</label>
+                    <input type="number" value={formStock} onChange={(e) => setFormStock(e.target.value)} placeholder="e.g. 50" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Size & Measurements */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    <h3 style={{ fontSize: '14px', color: '#D4AF37', margin: 0 }}>4. Size & Measurements</h3>
+                    {/* 🚀 ADD SIZE DETAILS TOGGLE */}
+                    <button type="button" onClick={() => setShowSizeDetails(!showSizeDetails)} style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '6px 12px', borderRadius: '4px', fontSize: '11px', cursor: 'pointer' }}>
+                      {showSizeDetails ? '- Hide Details' : '+ Add Size Details'}
+                    </button>
+                </div>
+                
+                <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '10px' }}>Select Size *</label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '15px' }}>
+                  {["XS", "S", "M", "L", "XL", "XXL", "XXXL", "4XL"].map(sz => (
+                    <button 
+                      type="button"
+                      key={sz} 
+                      onClick={() => setFormSizes(prev => prev.includes(sz) ? prev.filter(s => s !== sz) : [...prev, sz])}
+                      style={{ background: formSizes.includes(sz) ? '#D4AF37' : '#111', color: formSizes.includes(sz) ? '#000' : '#FFF', border: `1px solid ${formSizes.includes(sz) ? '#D4AF37' : '#333'}`, padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
+                      {sz}
+                    </button>
+                  ))}
+                </div>
+
+                {/* 🚀 DETAILED SIZE BOX */}
+                {showSizeDetails && (
+                  <div style={{ background: '#111', padding: '15px', borderRadius: '6px', border: '1px dashed #444' }}>
+                    <p style={{ fontSize: '11px', color: '#D4AF37', margin: '0 0 10px 0' }}>Enter manual measurements for perfect fit details:</p>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '11px', color: '#888' }}>Chest (in)</label>
+                        <input type="text" placeholder="e.g. 32" value={formSizeMeasurements.chest} onChange={(e) => setFormSizeMeasurements({...formSizeMeasurements, chest: e.target.value})} style={{ width: '100%', padding: '8px', background: '#000', border: '1px solid #333', color: '#FFF', borderRadius: '4px', marginTop: '4px', boxSizing: 'border-box' }} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '11px', color: '#888' }}>Shoulder (in)</label>
+                        <input type="text" placeholder="e.g. 14" value={formSizeMeasurements.shoulder} onChange={(e) => setFormSizeMeasurements({...formSizeMeasurements, shoulder: e.target.value})} style={{ width: '100%', padding: '8px', background: '#000', border: '1px solid #333', color: '#FFF', borderRadius: '4px', marginTop: '4px', boxSizing: 'border-box' }} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '11px', color: '#888' }}>Hip (in)</label>
+                        <input type="text" placeholder="e.g. 34" value={formSizeMeasurements.hip} onChange={(e) => setFormSizeMeasurements({...formSizeMeasurements, hip: e.target.value})} style={{ width: '100%', padding: '8px', background: '#000', border: '1px solid #333', color: '#FFF', borderRadius: '4px', marginTop: '4px', boxSizing: 'border-box' }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              {/* 2. Category & Product Type */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <h3 style={{ fontSize: '14px', color: '#D4AF37', margin: '0 0 15px 0' }}>2. Category & Product Type</h3>
+                <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Kapde ki Category Chunein *</label>
+                <select value={selectedProductType || ''} onChange={(e) => setSelectedProductType(e.target.value)} style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', marginBottom: selectedProductType === 'Manual' ? '15px' : '0', boxSizing: 'border-box' }}>
+                  <option value="" disabled>Select Category</option>
+                  <option value="Kurti">Kurti</option>
+                  <option value="Onepiece">Onepiece</option>
+                  <option value="Top">Top</option>
+                  <option value="T Shirt">T Shirt</option>
+                  <option value="Shirt">Shirt</option>
+                  <option value="Crop Top">Crop Top</option>
+                  <option value="Manual">Manual</option>
+                </select>
+                
+                {/* 🚀 MANUAL CATEGORY INPUT */}
+                {selectedProductType === 'Manual' && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#D4AF37', marginBottom: '5px' }}>Manual Category *</label>
+                    <input type="text" value={formPattern} onChange={(e) => setFormPattern(e.target.value)} placeholder="Type custom category name..." style={{ width: '100%', padding: '10px', background: '#111', border: '1px dashed #D4AF37', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                )}
+              </div>
+
+              {/* 5. Color, Fabric & Info */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <h3 style={{ fontSize: '14px', color: '#D4AF37', margin: '0 0 15px 0' }}>5. Color, Fabric & Product Info</h3>
+                
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Rang (Color) *</label>
+                    <input type="text" value={formColor} onChange={(e) => setFormColor(e.target.value)} placeholder="e.g. Royal Blue" style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Fabric *</label>
+                    {/* 🚀 DATALIST FOR FABRIC */}
+                    <input list="fabric-options" value={formFabric} onChange={(e) => setFormFabric(e.target.value)} placeholder="Type or select..." style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', boxSizing: 'border-box' }} />
+                    <datalist id="fabric-options">
+                      {["Cotton", "Silk", "Linen", "Georgette", "Rayon", "Polyester", "Chiffon", "Crepe", "Denim", "Velvet"].map(fab => <option key={fab} value={fab} />)}
+                    </datalist>
+                  </div>
+                </div>
+
+                <label style={{ display: 'block', fontSize: '12px', color: '#CCC', marginBottom: '5px' }}>Product Description / Details *</label>
+                <textarea value={formDescription} onChange={(e) => setFormDescription(e.target.value)} rows="4" placeholder="Write product description, care instructions..." style={{ width: '100%', padding: '10px', background: '#111', border: '1px solid #333', color: '#FFF', borderRadius: '4px', resize: 'none', boxSizing: 'border-box' }}></textarea>
+              </div>
+
+              {/* IMAGES */}
+              <div style={{ background: '#0A0A0A', padding: '20px', borderRadius: '8px', border: '1px solid #222' }}>
+                <h3 style={{ fontSize: '13px', color: '#D4AF37', margin: '0 0 10px 0' }}>Product Images (Max 6)</h3>
                 <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   {formImages.map((img, idx) => (
-                    <div key={idx} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #DDD' }}>
+                    <div key={idx} style={{ position: 'relative', width: '70px', height: '70px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #333' }}>
                       <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       <button type="button" onClick={() => handleRemoveImage(idx)} style={{ position: 'absolute', top: '2px', right: '2px', background: 'rgba(0,0,0,0.6)', color: '#FFF', border: 'none', borderRadius: '50%', width: '16px', height: '16px', fontSize: '9px', cursor: 'pointer' }}>✕</button>
                     </div>
                   ))}
                   
                   {formImages.length < 6 && (
-                    <label style={{ width: '70px', height: '70px', borderRadius: '6px', border: '2px dashed #CBD5E1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backgroundColor: '#F8FAFC' }}>
+                    <label style={{ width: '70px', height: '70px', borderRadius: '6px', border: '2px dashed #444', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backgroundColor: '#111' }}>
                       <span style={{ fontSize: '20px' }}>📸</span>
                       <span style={{ fontSize: '9px', fontWeight: '800', color: '#6B7280', marginTop: '2px' }}>Upload</span>
                       <input type="file" accept="image/*" onChange={handleImageAdd} style={{ display: 'none' }} />
                     </label>
                   )}
                 </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: 0, color: '#111827' }}>2. Product ki Jaankaari</h3>
-                
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>PRODUCT KA NAAM (Kya bech rahe hain?) *</label>
-                  <input type="text" placeholder="e.g. Lal Cotton Kurti" value={formName} onChange={(e) => setFormName(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', fontWeight: '700', boxSizing: 'border-box' }} />
-                </div>
-                
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>KAPDE KI CATEGORY CHUNEIN *</label>
-                  <select value={selectedProductType || ''} onChange={(e) => setSelectedProductType(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', fontWeight: '700', boxSizing: 'border-box' }}>
-                    <option value="" disabled>-- Ek Option Chunein --</option>
-                    <option value="Kurti">Kurti</option>
-                    <option value="T-Shirt">T-Shirt</option>
-                    <option value="One-Piece">One-Piece</option>
-                    <option value="Top">Top</option>
-                    <option value="Saree">Saree</option>
-                  </select>
-                </div>
-
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: 0, color: '#111827' }}>3. Daam Aur Stock</h3>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>SELLING PRICE (Grahak ke liye) ₹ *</label>
-                    <input type="number" placeholder="149" value={formSellingPrice} onChange={(e) => setFormSellingPrice(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', fontWeight: '800', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>MRP (Print Price) ₹ *</label>
-                    <input type="number" placeholder="499" value={formMrp} onChange={(e) => setFormMrp(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', fontWeight: '800', boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>KUL KITE PIECE HAIN? (Stock) *</label>
-                  <input type="number" placeholder="1" value={formStock} onChange={(e) => setFormStock(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', fontWeight: '800', boxSizing: 'border-box' }} />
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h3 style={{ fontSize: '13px', fontWeight: '900', textTransform: 'uppercase', margin: '0 0 4px 0', color: '#111827' }}>4. Baki Details</h3>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>SIZE (Jaise: S, M, L) *</label>
-                    <input type="text" placeholder="e.g. S, M, L" value={formSizes.join(', ')} onChange={(e) => setFormSizes(e.target.value.split(',').map(s => s.trim()))} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>RANG (Color) *</label>
-                    <input type="text" placeholder="e.g. Lal / Maroon" value={formColor} onChange={(e) => setFormColor(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>KAPDE KA NAAM (Fabric) *</label>
-                    <input type="text" placeholder="e.g. Pure Cotton" value={formFabric} onChange={(e) => setFormFabric(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box' }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '11px', fontWeight: '800', display: 'block', marginBottom: '4px', color: '#4B5563' }}>PRODUCT NUMBER (SKU) *</label>
-                    <input type="text" placeholder="Apne aap aayega" value={formSku} onChange={(e) => setFormSku(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '13px', backgroundColor: '#F9FAFB', boxSizing: 'border-box' }} />
-                  </div>
-                </div>
-
               </div>
 
             </div>
