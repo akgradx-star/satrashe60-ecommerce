@@ -22,9 +22,21 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Best Sellers Swipe State
+  // 🚀 HERO CAROUSEL STATE (Automatic Image Change)
+  const [heroImgIndex, setHeroImgIndex] = useState(0);
+  const heroImages = ['/dress2.png', '/dress1.png', '/dress3.png', '/dress4.png'];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroImgIndex((prev) => (prev + 1) % heroImages.length);
+    }, 2500); // Har 2.5 second mein image change hogi
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
+  // 🚀 BEST SELLERS FIX (Taaki black screen na aaye)
+  const displayProducts = dbProducts && dbProducts.length > 0 ? dbProducts.slice(0, 10) : MASTER_PRODUCTS.slice(0, 5);
   const [swipeIndex, setSwipeIndex] = useState(0);
-  const bestSellersCount = dbProducts.length > 0 ? dbProducts.length : 1;
+  const bestSellersCount = displayProducts.length || 1;
 
   const handleSwipe = () => {
     setSwipeIndex((prev) => (prev + 1) % bestSellersCount);
@@ -61,7 +73,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
   return (
     <div style={{ backgroundColor: '#000', color: '#FFF', paddingBottom: '80px', fontFamily: "'Inter', sans-serif" }}>
       
-      {/* HEADER (3-Line Menu Added Back) */}
+      {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.95)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onMenuClick} style={{ background: 'transparent', color: '#FFF', border: 'none', fontSize: '24px', cursor: 'pointer', padding: 0 }}>☰</button>
@@ -72,7 +84,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
           <button onClick={() => navigateTo('cart')} style={{ background: 'none', border: 'none', position: 'relative', cursor: 'pointer', fontSize: '18px' }}>
-            🛍️{cartItems.length > 0 && <span style={{ position: 'absolute', top: '-5px', right: '-8px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: '900', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
+            🛍️️{cartItems.length > 0 && <span style={{ position: 'absolute', top: '-5px', right: '-8px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: '900', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
           </button>
         </div>
       </div>
@@ -85,16 +97,18 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         </div>
       )}
 
-      {/* PERFECT STANDARD HERO BANNER */}
+      {/* 🚀 AUTO-SLIDING HERO BANNER */}
       <div style={{ margin: '16px', borderRadius: '12px', border: '1px solid #333', overflow: 'hidden', position: 'relative', backgroundColor: '#111', display: 'flex', alignItems: 'center', height: '350px' }}>
         <div style={{ padding: '24px', flex: 1, zIndex: 2, background: 'linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ color: '#D4AF37', fontSize: '10px', letterSpacing: '2px', marginBottom: '8px', fontWeight: '800' }}>NEW ARRIVALS</div>
           <h2 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px 0', lineHeight: '1.2' }}>FRESH DROPS<br/>EVERY WEEK</h2>
           <div style={{ fontSize: '10px', color: '#DDD', marginBottom: '24px', letterSpacing: '1px' }}>TRENDY • COMFY • AFFORDABLE</div>
-          <button onClick={() => navigateTo('shop')} style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', padding: '10px 16px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', width: 'fit-content' }}>EXPLORE NOW →</button>
+          
+          {/* 🚀 SHOP NOW BUTTON */}
+          <button onClick={() => navigateTo('shop')} style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', padding: '10px 16px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer', width: 'fit-content' }}>SHOP NOW →</button>
         </div>
         <div style={{ position: 'absolute', right: 0, top: 0, width: '60%', height: '100%', zIndex: 1 }}>
-          <img src="/dress2.png" alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={heroImages[heroImgIndex]} alt="Hero Carousel" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.8s ease-in-out' }} />
         </div>
       </div>
 
@@ -134,7 +148,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         </div>
       </div>
 
-      {/* BEST SELLERS (FIXED IMAGES, CART & UNDO BUTTON) */}
+      {/* 🚀 BEST SELLERS (FIXED IMAGES) */}
       <div style={{ margin: '50px 0', overflow: 'hidden' }}>
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '20px', padding: '8px 24px' }}>
@@ -143,7 +157,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         </div>
         
         <div style={{ position: 'relative', height: '420px', display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '1000px' }}>
-          {dbProducts.slice(0, 10).map((prod, idx) => {
+          {displayProducts.map((prod, idx) => {
             const isTop = idx === swipeIndex;
             const isSecond = idx === (swipeIndex + 1) % bestSellersCount;
             const isThird = idx === (swipeIndex + 2) % bestSellersCount;
@@ -180,17 +194,16 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
                 <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
                   <span style={{ position: 'absolute', top: '8px', left: '8px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: 'bold', padding: '4px 8px', borderRadius: '12px', zIndex: 2 }}>HOT</span>
                   
-                  {/* Heart & Cart Icons (Propagation Stopped so swipe doesn't happen on click) */}
                   <div style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', gap: '6px', zIndex: 2 }}>
                     <button onClick={(e) => { e.stopPropagation(); handleAddToCart({...prod, quantity: 1, selectedSize: 'M'}); }} style={{ background: 'rgba(0,0,0,0.6)', border: '1px solid #D4AF37', color: '#D4AF37', fontSize: '14px', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer' }}>🛒</button>
                     <button onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }} style={{ background: 'rgba(0,0,0,0.6)', border: 'none', color: '#FFF', fontSize: '14px', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer' }}>♡</button>
                   </div>
                   
-                  <img src={prod.image || (prod.images && prod.images[0]) || '/dress1.png'} alt={prod.name} style={{ width: '100%', height: '320px', objectFit: 'cover' }} />
+                  <img src={prod.image || (prod.images && prod.images[0]) || '/dress1.png'} alt={prod.name || 'Product'} style={{ width: '100%', height: '320px', objectFit: 'cover' }} />
                 </div>
                 {isTop && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
-                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>₹{prod.price}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>₹{prod.price || '999'}</div>
                     <div style={{ fontSize: '10px', color: '#888' }}>Tap to swipe ↺</div>
                   </div>
                 )}
@@ -222,7 +235,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
 
         <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '0 16px', scrollbarWidth: 'none' }} className="hide-scrollbar">
           
-          {/* Offer Card 1 */}
           <div onClick={() => navigateTo('shop', 'T-Shirts')} style={{ minWidth: '220px', background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
             <img src="/dress1.png" alt="Offer 1" style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
             <div style={{ padding: '16px', textAlign: 'center' }}>
@@ -233,7 +245,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             </div>
           </div>
 
-          {/* Offer Card 2 */}
           <div onClick={() => navigateTo('shop', 'Kurtis')} style={{ minWidth: '220px', background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
             <img src="/dress3.png" alt="Offer 2" style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
             <div style={{ padding: '16px', textAlign: 'center' }}>
@@ -244,7 +255,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             </div>
           </div>
           
-          {/* Offer Card 3 */}
           <div onClick={() => navigateTo('shop', 'One Pieces')} style={{ minWidth: '220px', background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
             <img src="/dress4.png" alt="Offer 3" style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
             <div style={{ padding: '16px', textAlign: 'center' }}>
@@ -257,7 +267,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
 
         </div>
         
-        {/* VIEW ALL FOR DROP */}
         <div style={{ textAlign: 'center', marginTop: '24px' }}>
           <button onClick={() => navigateTo('shop')} style={{ background: 'transparent', border: 'none', color: '#D4AF37', fontSize: '12px', fontWeight: 'bold', textDecoration: 'underline', cursor: 'pointer' }}>
             VIEW ALL OFFERS
@@ -265,7 +274,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         </div>
       </div>
 
-      {/* 🚀 NEW: PLAY & WIN SPINNER */}
+      {/* PLAY & WIN SPINNER */}
       <div style={{ margin: '60px 0', padding: '40px 0', backgroundColor: '#050505', borderTop: '1px solid #1A1A1A', borderBottom: '1px solid #1A1A1A' }}>
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <div style={{ display: 'inline-block', border: '1px solid #333', padding: '15px 40px', borderRadius: '4px', backgroundColor: '#000' }}>
@@ -274,12 +283,9 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
           </div>
         </div>
 
-        {/* Spinner UI */}
         <div style={{ position: 'relative', width: '280px', height: '280px', margin: '0 auto' }}>
-          {/* Arrow Pointer */}
           <div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', width: '0', height: '0', borderLeft: '15px solid transparent', borderRight: '15px solid transparent', borderTop: '25px solid #D4AF37', zIndex: 10 }}></div>
           
-          {/* The Wheel */}
           <div 
             style={{ 
               width: '100%', height: '100%', borderRadius: '50%', border: '6px solid #D4AF37',
@@ -290,7 +296,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             }}
           ></div>
 
-          {/* Center Spin Button */}
           <button 
             onClick={spinWheel}
             disabled={isSpinning}
@@ -322,7 +327,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         <p style={{ fontSize: '12px', color: '#888', margin: '0 0 24px 0', lineHeight: '1.6' }}>At SATRASHE60, we bring you the perfect blend of street style, comfort and confidence. Because your story deserves the best fit.</p>
         <button onClick={() => navigateTo('about')} style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '10px 24px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>KNOW OUR STORY ...</button>
         
-        {/* LOGO FIXED ALIGNMENT */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px', marginBottom: '10px' }}>
           <img src="/logo.png" alt="SATRASHE60" style={{ height: '50px' }} />
         </div>
