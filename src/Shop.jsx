@@ -31,38 +31,11 @@ export const MASTER_PRODUCTS = [
     netQuantity: 1,
     character: "Minimalist Aesthetic",
     countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Apparels Pvt Ltd, Sector 4, Pune, Maharashtra - 411045",
-    importerInformation: "Not Applicable (Directly Handcrafted in India)",
-    packerInformation: "SATRASHE60 Central Fulfillment Hub, Pune, Maharashtra",
-    netWeight: "190g",
-    supplierInformation: "Verified Street Fashion Curators Hub India",
-    contactInformation: "care@satrashe60.com | +91 98765 43210 (Mon-Sat, 10 AM - 7 PM)",
-    legalDisclaimer: "Product color may slightly vary due to photographic lighting sources or your monitor settings.",
-    createdAt: "2026-08-01",
     images: ["/dress1.png", "/dress2.png", "/dress3.png", "/dress4.png"],
     image: "/dress1.png",
-    collections: ["trending-now", "college-edit", "under-199"],
+    createdAt: "2026-08-01",
     reviews: [
-      {
-        reviewId: "rev-101",
-        productId: 1,
-        customerName: "Priya Sharma",
-        rating: 5,
-        reviewDate: "08 Aug 2026",
-        reviewText: "Material is 100% breathable pure linen! Fits exceptionally well for college and daily wear.",
-        images: ["/dress1.png", "/dress2.png"],
-        verifiedPurchase: true
-      },
-      {
-        reviewId: "rev-102",
-        productId: 1,
-        customerName: "Ananya Iyer",
-        rating: 4,
-        reviewDate: "02 Aug 2026",
-        reviewText: "Super comfortable cut and premium stitching. Delivery arrived in 3 days.",
-        images: ["/dress3.png"],
-        verifiedPurchase: true
-      }
+      { reviewId: "rev-101", rating: 5, customerName: "Priya Sharma", reviewText: "Material is 100% breathable pure linen!" }
     ]
   },
   {
@@ -82,50 +55,11 @@ export const MASTER_PRODUCTS = [
     colors: ["Black", "Beige", "Brown"],
     color: "Jet Black",
     fabric: "Ribbed Cotton Blend",
-    fitShape: "Slim Fit",
-    length: "Crop Length",
-    neckCollar: "Square Neck",
-    sleeveStyling: "Fitted Sleeves",
-    printPatternType: "Ribbed Texture",
-    occasion: "Streetwear / Party",
-    sleeveLength: "Short Sleeves",
-    pattern: "Self Design Ribbed",
-    surfaceStyling: "None",
-    netQuantity: 1,
-    character: "Y2K Streetwear",
-    countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Streetwear Studio, Mumbai, Maharashtra",
-    importerInformation: "Not Applicable (Made in India)",
-    packerInformation: "SATRASHE60 Logistics Center, Pune, Maharashtra",
-    netWeight: "160g",
-    supplierInformation: "SATRASHE60 Verified Vendors Network",
-    contactInformation: "care@satrashe60.com | +91 98765 43210",
-    legalDisclaimer: "Gentle machine wash in cold water with similar dark colors.",
-    createdAt: "2026-08-05",
     images: ["/dress2.png", "/dress1.png", "/dress3.png"],
     image: "/dress2.png",
-    collections: ["trending-now", "street-style", "under-199"],
+    createdAt: "2026-08-05",
     reviews: [
-      {
-        reviewId: "rev-201",
-        productId: 2,
-        customerName: "Rhea Deshmukh",
-        rating: 5,
-        reviewDate: "10 Aug 2026",
-        reviewText: "The stretch is incredible! Looks like an expensive luxury brand top.",
-        images: ["/dress2.png"],
-        verifiedPurchase: true
-      },
-      {
-        reviewId: "rev-202",
-        productId: 2,
-        customerName: "Tanvi Patel",
-        rating: 5,
-        reviewDate: "06 Aug 2026",
-        reviewText: "Exactly as pictured. The square neck is flattering.",
-        images: [],
-        verifiedPurchase: true
-      }
+      { reviewId: "rev-201", rating: 5, customerName: "Rhea Deshmukh", reviewText: "The stretch is incredible!" }
     ]
   },
   {
@@ -141,45 +75,12 @@ export const MASTER_PRODUCTS = [
     isNew: true,
     isBestSeller: false,
     sizes: ["S", "M", "L", "XL"],
-    sizeInventory: { "S": 0, "M": 1, "L": 1, "XL": 0 },
     colors: ["Black", "Beige"],
-    color: "Printed Earthy Brown",
     fabric: "Cotton Viscose",
-    fitShape: "Regular Fit",
-    length: "Crop with Front Knot",
-    neckCollar: "Spread Collar",
-    sleeveStyling: "Roll-up Sleeves",
-    printPatternType: "Ethnic Abstract",
-    occasion: "Brunch / Casual",
-    sleeveLength: "Full Sleeves",
-    pattern: "Printed",
-    surfaceStyling: "Tie-Up Front Knot",
-    netQuantity: 1,
-    character: "Boho Chic",
-    countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Apparels Pvt Ltd, Pune, India",
-    importerInformation: "Not Applicable",
-    packerInformation: "SATRASHE60 Central Fulfillment Hub, Pune",
-    netWeight: "180g",
-    supplierInformation: "Verified Artisans Network India",
-    contactInformation: "care@satrashe60.com",
-    legalDisclaimer: "Hand wash separately for initial washes.",
-    createdAt: "2026-08-03",
     images: ["/dress3.png", "/dress1.png", "/dress4.png"],
     image: "/dress3.png",
-    collections: ["street-style", "college-edit", "under-199"],
-    reviews: [
-      {
-        reviewId: "rev-301",
-        productId: 3,
-        customerName: "Kavya Menon",
-        rating: 5,
-        reviewDate: "05 Aug 2026",
-        reviewText: "Loved the front tie-knot detail. Paired it with baggy denim and got lots of compliments!",
-        images: ["/dress3.png"],
-        verifiedPurchase: true
-      }
-    ]
+    createdAt: "2026-08-03",
+    reviews: []
   },
   {
     id: 4,
@@ -194,45 +95,12 @@ export const MASTER_PRODUCTS = [
     isNew: true,
     isBestSeller: true,
     sizes: ["S", "M", "L", "XL"],
-    sizeInventory: { "S": 1, "M": 1, "L": 1, "XL": 1 },
     colors: ["White", "Beige", "Black"],
-    color: "Olive & Mustard Baroque",
     fabric: "Premium Rayon Blend",
-    fitShape: "Relaxed Fit Co-ord",
-    length: "Top + Flared Bottoms",
-    neckCollar: "Camp Collar",
-    sleeveStyling: "Drop Shoulder",
-    printPatternType: "Baroque Geometric",
-    occasion: "Resort Wear / Party",
-    sleeveLength: "Half Sleeves",
-    pattern: "All-Over Print",
-    surfaceStyling: "Elasticated Waistband Bottoms",
-    netQuantity: 2,
-    character: "Statement Co-ord",
-    countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Apparels Pvt Ltd, Mumbai",
-    importerInformation: "Not Applicable",
-    packerInformation: "SATRASHE60 Logistics Center, Pune",
-    netWeight: "340g",
-    supplierInformation: "Curated Indian Mills",
-    contactInformation: "care@satrashe60.com",
-    legalDisclaimer: "Iron on low heat.",
-    createdAt: "2026-08-06",
     images: ["/dress4.png", "/dress2.png", "/dress1.png"],
     image: "/dress4.png",
-    collections: ["trending-now", "party-edit"],
-    reviews: [
-      {
-        reviewId: "rev-401",
-        productId: 4,
-        customerName: "Simran Kaur",
-        rating: 5,
-        reviewDate: "11 Aug 2026",
-        reviewText: "Outstanding quality for ₹299! The print looks royal and fabric feels silky soft.",
-        images: ["/dress4.png"],
-        verifiedPurchase: true
-      }
-    ]
+    createdAt: "2026-08-06",
+    reviews: []
   },
   {
     id: 5,
@@ -247,45 +115,12 @@ export const MASTER_PRODUCTS = [
     isNew: true,
     isBestSeller: true,
     sizes: ["S", "M", "L", "XL"],
-    sizeInventory: { "S": 1, "M": 1, "L": 0, "XL": 1 },
     colors: ["Beige", "Black"],
-    color: "Washed Vintage Black",
-    fabric: "100% Heavyweight Cotton (220 GSM)",
-    fitShape: "Oversized Boxy Fit",
-    length: "Extended Length",
-    neckCollar: "Thick Ribbed Crew Neck",
-    sleeveStyling: "Drop Shoulder Extended Sleeves",
-    printPatternType: "Gothic Typography Graphic",
-    occasion: "Streetwear",
-    sleeveLength: "Half Sleeves",
-    pattern: "Graphic Printed Back & Chest",
-    surfaceStyling: "Distressed Raw Hem Effect",
-    netQuantity: 1,
-    character: "Underground Street Culture",
-    countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Streetwear Studio, Pune",
-    importerInformation: "Not Applicable",
-    packerInformation: "SATRASHE60 Central Fulfillment Hub",
-    netWeight: "250g",
-    supplierInformation: "Direct Cotton Mills Tirupur",
-    contactInformation: "care@satrashe60.com",
-    legalDisclaimer: "Do not iron directly on rubber graphic print.",
-    createdAt: "2026-08-02",
+    fabric: "100% Heavyweight Cotton",
     images: ["/dress1.png", "/dress3.png"],
     image: "/dress1.png",
-    collections: ["street-style", "college-edit", "under-199"],
-    reviews: [
-      {
-        reviewId: "rev-501",
-        productId: 5,
-        customerName: "Aakash M.",
-        rating: 5,
-        reviewDate: "09 Aug 2026",
-        reviewText: "Heavy GSM fabric, perfect boxy fit, graphic print did not wash off.",
-        images: ["/dress1.png"],
-        verifiedPurchase: true
-      }
-    ]
+    createdAt: "2026-08-02",
+    reviews: []
   },
   {
     id: 6,
@@ -300,45 +135,12 @@ export const MASTER_PRODUCTS = [
     isNew: true,
     isBestSeller: false,
     sizes: ["S", "M", "L", "XL"],
-    sizeInventory: { "S": 0, "M": 0, "L": 0, "XL": 0 },
     colors: ["Black", "Brown", "Red"],
-    color: "Wine Maroon / Rust",
     fabric: "Georgette with Soft Lining",
-    fitShape: "Peplum Flare",
-    length: "Hip Length",
-    neckCollar: "V-Neck with Ruffled Trim",
-    sleeveStyling: "Flared Bell Sleeves",
-    printPatternType: "Paisley Boho",
-    occasion: "Casual / Evening",
-    sleeveLength: "Three-Quarter",
-    pattern: "Paisley All-Over",
-    surfaceStyling: "Smocked Waist",
-    netQuantity: 1,
-    character: "Bohemian Gypsy",
-    countryOfOrigin: "India",
-    manufacturerInformation: "SATRASHE60 Apparels Pvt Ltd, Pune",
-    importerInformation: "Not Applicable",
-    packerInformation: "SATRASHE60 Logistics Center",
-    netWeight: "170g",
-    supplierInformation: "Verified Artisan Mills",
-    contactInformation: "care@satrashe60.com",
-    legalDisclaimer: "Dry clean or delicate cycle recommended.",
-    createdAt: "2026-08-04",
     images: ["/dress2.png", "/dress4.png"],
     image: "/dress2.png",
-    collections: ["daily-wear", "under-199"],
-    reviews: [
-      {
-        reviewId: "rev-601",
-        productId: 6,
-        customerName: "Sneha G.",
-        rating: 4,
-        reviewDate: "03 Aug 2026",
-        reviewText: "Very pretty wine shade. Hope SATRASHE60 restocks soon!",
-        images: [],
-        verifiedPurchase: true
-      }
-    ]
+    createdAt: "2026-08-04",
+    reviews: []
   }
 ];
 
@@ -363,23 +165,13 @@ export default function Shop({
 }) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedSizes, setSelectedSizes] = useState(initialSizes);
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
-  const [selectedColors, setSelectedColors] = useState([]);
-  const [selectedFabrics, setSelectedFabrics] = useState([]);
-  const [newThisWeekOnly, setNewThisWeekOnly] = useState(false);
-  const [onlyOneLeftOnly, setOnlyOneLeftOnly] = useState(false);
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
-  
   const [sortBy, setSortBy] = useState("Recommended"); 
   const [viewMode, setViewMode] = useState("grid");
-  
   const [showMobileFilter, setShowMobileFilter] = useState(false);
-
   const [quickAddProduct, setQuickAddProduct] = useState(null);
   const [selectedSizeForAdd, setSelectedSizeForAdd] = useState(null);
   const [sizeError, setSizeError] = useState("");
   const [addedNotice, setAddedNotice] = useState(false);
-
   const [liveProducts, setLiveProducts] = useState([]);
 
   useEffect(() => {
@@ -409,48 +201,15 @@ export default function Shop({
     if (initialSearchQuery) {
       const q = initialSearchQuery.toLowerCase();
       const matchesName = (product.name || "").toLowerCase().includes(q);
-      const matchesCat = (product.category || "").toLowerCase().includes(q);
-      const matchesFab = (product.fabric || "").toLowerCase().includes(q);
-      if (!matchesName && !matchesCat && !matchesFab) return false;
+      if (!matchesName) return false;
     }
-
-    if (selectedCategory === "Under ₹199" && product.price >= 199) return false;
-    if (selectedCategory !== "ALL" && selectedCategory !== "All Products" && selectedCategory !== "Under ₹199" && selectedCategory !== "New Arrivals" && selectedCategory !== "Best Sellers") {
+    if (selectedCategory !== "ALL" && selectedCategory !== "All Products") {
       if ((product.category || "").toLowerCase() !== selectedCategory.toLowerCase()) return false;
     }
-    
-    if (selectedCategory === "New Arrivals" && !product.isNew) return false;
-    if (selectedCategory === "Best Sellers" && !product.isBestSeller) return false;
-
     if (selectedSizes.length > 0) {
       const hasSize = (product.sizes || []).some(s => selectedSizes.includes(s));
       if (!hasSize) return false;
     }
-
-    if (selectedPriceRanges.length > 0) {
-      const matchesPrice = selectedPriceRanges.some(range => {
-        if (range === "Under ₹199") return product.price < 199;
-        if (range === "₹199–₹299") return product.price >= 199 && product.price <= 299;
-        if (range === "₹299–₹499") return product.price >= 299 && product.price <= 499;
-        if (range === "₹499+") return product.price > 499;
-        return true;
-      });
-      if (!matchesPrice) return false;
-    }
-
-    if (selectedColors.length > 0) {
-      const hasColor = (product.colors || []).some(c => selectedColors.includes(c));
-      if (!hasColor) return false;
-    }
-
-    if (selectedFabrics.length > 0) {
-      if (!selectedFabrics.includes(product.fabric)) return false;
-    }
-
-    if (newThisWeekOnly && !product.isNew) return false;
-    if (onlyOneLeftOnly && product.stock !== 1) return false;
-    if (selectedDiscount && product.discount < selectedDiscount) return false;
-
     return true;
   });
 
@@ -466,12 +225,6 @@ export default function Shop({
   const handleResetAll = () => {
     setSelectedCategory("ALL");
     setSelectedSizes([]);
-    setSelectedPriceRanges([]);
-    setSelectedColors([]);
-    setSelectedFabrics([]);
-    setNewThisWeekOnly(false);
-    setOnlyOneLeftOnly(false);
-    setSelectedDiscount(null);
     setSortBy("Recommended");
   };
 
@@ -491,42 +244,31 @@ export default function Shop({
   return (
     <div className="premium-shop-container" style={{ backgroundColor: '#000000', minHeight: '100vh', paddingBottom: '60px' }}>
       
-      {/* 🚀 1. LUXURY HEADER (Pill Nav & Center Logo) */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', backgroundColor: '#000000', position: 'relative', borderBottom: '1px solid #1A1A1A' }}>
+      {/* 🚀 1. SUPER CLEAN HEADER (Only Pill & Centered Logo) */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60px', backgroundColor: '#000000', position: 'relative', borderBottom: '1px solid #1A1A1A' }}>
         
-        {/* Left Side: Back & Pill */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', zIndex: 10 }}>
-          <button onClick={() => onNavigate('home')} style={{ background: 'transparent', border: '1px solid #D4AF37', borderRadius: '50%', width: '32px', height: '32px', color: '#D4AF37', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '18px' }}>
-            ←
-          </button>
-          
+        {/* Left Side: Pill Only (Position Absolute taaki logo hamesha center me rahe) */}
+        <div style={{ position: 'absolute', left: '15px', zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', background: '#111111', borderRadius: '24px', padding: '3px', border: '1px solid #222222' }}>
             <button 
               onClick={() => onNavigate('home')} 
-              style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', borderRadius: '20px', padding: '6px 14px', fontSize: '11px', fontWeight: '800', letterSpacing: '1px', cursor: 'pointer', transition: 'all 0.3s ease' }}
+              style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', borderRadius: '20px', padding: '5px 12px', fontSize: '10px', fontWeight: '800', letterSpacing: '1px', cursor: 'pointer' }}
             >
               HOME
             </button>
-            <button 
-              style={{ background: 'transparent', color: '#888888', border: 'none', padding: '6px 14px', fontSize: '11px', fontWeight: '800', letterSpacing: '1px', cursor: 'default' }}
-            >
+            <button style={{ background: 'transparent', color: '#888888', border: 'none', padding: '5px 12px', fontSize: '10px', fontWeight: '800', letterSpacing: '1px' }}>
               SHOP
             </button>
           </div>
         </div>
 
-        {/* Center: Small Fixed Logo */}
+        {/* Center: Perfectly Centered Logo */}
         <img 
           src="/logo.png" 
-          alt="1760 SATRASHE60" 
-          style={{ height: '38px', position: 'absolute', left: '50%', transform: 'translateX(-50%)', objectFit: 'contain', cursor: 'pointer', zIndex: 5 }} 
+          alt="SATRASHE60" 
+          style={{ height: '32px', objectFit: 'contain', cursor: 'pointer', zIndex: 5 }} 
           onClick={() => onNavigate('home')}
         />
-
-        {/* Right Side: Search Icon */}
-        <button style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: '20px', cursor: 'pointer', zIndex: 10 }}>
-          🔍
-        </button>
       </div>
 
       {/* 🚀 2. GOLD RING CATEGORIES SLIDER */}
@@ -540,17 +282,14 @@ export default function Shop({
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
             >
               <div style={{ 
-                width: '76px', 
-                height: '76px', 
-                borderRadius: '50%', 
+                width: '76px', height: '76px', borderRadius: '50%', 
                 border: isSelected ? '2px solid #D4AF37' : '2px solid #333333', 
-                padding: '3px',
-                transition: 'all 0.3s ease',
+                padding: '3px', transition: 'all 0.3s ease',
                 boxShadow: isSelected ? '0 0 10px rgba(212, 175, 55, 0.3)' : 'none'
               }}>
                 <img src={cat.img} alt={cat.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
               </div>
-              <span style={{ color: isSelected ? '#D4AF37' : '#FFFFFF', fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px', transition: 'color 0.3s ease' }}>
+              <span style={{ color: isSelected ? '#D4AF37' : '#FFFFFF', fontSize: '11px', fontWeight: '700', letterSpacing: '0.5px' }}>
                 {cat.name}
               </span>
             </div>
@@ -558,18 +297,8 @@ export default function Shop({
         })}
       </div>
 
-      {/* BANNER SECTION (Dark Theme) */}
-      <div className="shop-premium-banner" style={{ margin: '0 20px 20px 20px', borderRadius: '8px' }}>
-        <div className="banner-overlay" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%)' }}>
-          <span className="banner-eyebrow" style={{ color: '#D4AF37' }}>TRENDING NOW</span>
-          <h1 className="banner-title" style={{ color: '#FFF' }}>WOMEN'S<br/>COLLECTION</h1>
-          <p className="banner-subtitle" style={{ color: '#CCC' }}>STREET STYLE / COMFORT / AFFORDABLE</p>
-          <button className="banner-btn" style={{ borderColor: '#D4AF37', color: '#D4AF37' }} onClick={() => setSelectedCategory("ALL")}>EXPLORE NOW →</button>
-        </div>
-      </div>
-
-      {/* FILTER & SORT BAR */}
-      <div className="shop-controls-bar" style={{ backgroundColor: '#111111', borderBottom: '1px solid #222' }}>
+      {/* 🚀 3. FILTER & SORT BAR (Banner hata kar isko upar shift kar diya) */}
+      <div className="shop-controls-bar" style={{ backgroundColor: '#111111', borderBottom: '1px solid #222', borderTop: '1px solid #222', padding: '12px 20px' }}>
         <button className="filter-btn" onClick={() => setShowMobileFilter(true)} style={{ color: '#D4AF37' }}>
           <span className="filter-icon">⎚</span> Filter
         </button>
@@ -589,11 +318,11 @@ export default function Shop({
         </div>
       </div>
 
-      {/* PRODUCT GRID */}
+      {/* 🚀 4. PRODUCT GRID */}
       {totalProductsCount === 0 ? (
-        <div className="no-products-msg" style={{ color: '#FFF' }}>
+        <div className="no-products-msg" style={{ color: '#FFF', textAlign: 'center', padding: '40px 20px' }}>
           <h3>No products found for "{selectedCategory}"</h3>
-          <button onClick={handleResetAll} className="reset-btn-gold">View All Products</button>
+          <button onClick={handleResetAll} className="reset-btn-gold" style={{ marginTop: '15px', padding: '10px 20px', backgroundColor: '#D4AF37', color: '#000', border: 'none', borderRadius: '4px', fontWeight: 'bold' }}>View All Products</button>
         </div>
       ) : (
         <div className={`premium-product-grid ${viewMode}`} style={{ padding: '20px' }}>
@@ -750,7 +479,6 @@ export default function Shop({
           </div>
         </div>
       )}
-
     </div>
   );
 }
