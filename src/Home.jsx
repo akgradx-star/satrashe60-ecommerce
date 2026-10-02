@@ -1,217 +1,202 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // 🚀 Page badalne ke liye
+import React, { useState } from 'react';
 import './Home.css';
-import logo from './logo.png'; // 🚀 Aapka Upload kiya hua logo
+import logo from './logo.png'; 
 
-export default function Home() {
-  const navigate = useNavigate();
+export default function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
+  const [showSearchInput, setShowSearchInput] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [swipeIndex, setSwipeIndex] = useState(0);
 
-  // 🚀 Shop Page par bhejne wala function (Category ya Size ke saath)
-  const handleNavigateToShop = (category = "ALL", size = null) => {
-    // Agar future mein size filter bhejna ho, toh URL mein query pass kar sakte hain. 
-    // Abhi ke liye simple category bhej rahe hain.
-    navigate('/shop', { state: { selectedCategory: category, selectedSize: size } });
+  const handleSwipe = () => {
+    const bestSellersCount = dbProducts.slice(0, 5).length || 3;
+    setSwipeIndex((prev) => (prev + 1) % bestSellersCount);
   };
 
   return (
-    <div className="home-container">
+    <div style={{ backgroundColor: '#000', color: '#FFF', paddingBottom: '80px', fontFamily: "'Inter', sans-serif" }}>
       
-      {/* --- HEADER --- */}
-      <header className="home-header">
-        <button className="menu-btn">☰</button>
-        <img src={logo} alt="SATRASHE60 Logo" className="header-logo" />
-        <div className="header-icons">
-          <button>🔍</button>
-          <button>🛍️<span className="cart-badge">2</span></button>
-        </div>
-      </header>
-
-      {/* --- HERO SECTION --- */}
-      <section className="hero-section">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <span className="hero-subtitle">STYLE MEETS YOU</span>
-            <h1 className="hero-title">WEAR<br/>YOUR<br/>STORY</h1>
-            <p className="hero-desc">PREMIUM FASHION FOR<br/>MODERN YOU</p>
-            <button 
-              className="shop-now-btn"
-              onClick={() => handleNavigateToShop("ALL")}
-            >
-              SHOP NOW →
-            </button>
-          </div>
-          <div className="slider-indicator">01 / 03</div>
-        </div>
-      </section>
-
-      {/* --- 🚀 NAYA: SHOP BY SIZE SECTION --- */}
-      <section className="shop-by-size-section">
-        <div className="section-header">
-          <h2>SHOP BY SIZE</h2>
-        </div>
-        <div className="size-grid">
-          {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
-            <button 
-              key={size} 
-              className="size-box"
-              onClick={() => handleNavigateToShop("ALL", size)} // 🚀 Size click par shop page
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* --- SHOP BY CATEGORY --- */}
-      <section className="shop-by-category-section">
-        <div className="section-header">
-          <h2>SHOP BY CATEGORY</h2>
-          <button className="view-all-btn" onClick={() => handleNavigateToShop("ALL")}>VIEW ALL →</button>
-        </div>
-        
-        <div className="category-grid">
-          {[
-            { name: 'Tops', img: '/dress1.png' },
-            { name: 'T-Shirts', img: '/dress2.png' },
-            { name: 'Kurtis', img: '/dress3.png' },
-            { name: 'One Pieces', img: '/dress4.png' },
-            { name: 'Jeans', img: '/dress1.png' },
-            { name: 'Track Pants', img: '/dress2.png' },
-            { name: 'Dresses', img: '/dress3.png' },
-            { name: 'Co-ords', img: '/dress4.png' }
-          ].map((cat, index) => (
-            <div 
-              key={index} 
-              className="category-card"
-              onClick={() => handleNavigateToShop(cat.name)} // 🚀 Click par us category ke kapde khulenge
-            >
-              <div className="cat-img-box">
-                <img src={cat.img} alt={cat.name} />
-              </div>
-              <p>{cat.name}</p>
-            </div>
-          ))}
-          
-          <div className="category-card" onClick={() => handleNavigateToShop("New Arrivals")}>
-            <div className="cat-img-box new-drop-box">
-              <span style={{ color: '#FF0000', fontSize: '24px' }}>👑</span>
-              <span style={{ fontWeight: '800', marginTop: '5px' }}>NEW</span>
-            </div>
-            <p>New Drop</p>
-          </div>
-          
-          <div className="category-card" onClick={() => handleNavigateToShop("ALL")}>
-            <div className="cat-img-box more-box">
-              <span style={{ fontSize: '24px', color: '#fff' }}>🧥</span>
-            </div>
-            <p>More</p>
-          </div>
-        </div>
-      </section>
-
-      {/* --- PROMO BANNER --- */}
-      <section className="promo-banner">
-        <div className="promo-content">
-          <span className="promo-subtitle">NEW ARRIVALS</span>
-          <h2>FRESH DROPS<br/>EVERY WEEK</h2>
-          <p>TRENDY • COMFY • AFFORDABLE</p>
-          <button 
-            className="explore-btn"
-            onClick={() => handleNavigateToShop("New Arrivals")}
-          >
-            EXPLORE NOW →
+      {/* HEADER */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.95)' }}>
+        <button onClick={() => navigateTo('home')} style={{ background: 'transparent', color: '#FFF', border: '1px solid #D4AF37', borderRadius: '4px', padding: '6px 12px', fontSize: '10px', fontWeight: '800', cursor: 'pointer' }}>HOME</button>
+        <img src={logo} alt="1760 SATRASHE60" style={{ height: '30px', objectFit: 'contain' }} />
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button onClick={() => navigateTo('cart')} style={{ background: 'none', border: 'none', position: 'relative', cursor: 'pointer', fontSize: '18px' }}>
+            🛍️{cartItems.length > 0 && <span style={{ position: 'absolute', top: '-5px', right: '-8px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: '900', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
           </button>
         </div>
-      </section>
+      </div>
 
-      {/* --- BEST SELLERS --- */}
-      <section className="best-sellers-section">
-        <div className="section-header">
-          <h2>BEST SELLERS</h2>
-          <button className="view-all-btn" onClick={() => handleNavigateToShop("Best Sellers")}>VIEW ALL →</button>
+      {showSearchInput && (
+        <div style={{ padding: '16px', backgroundColor: '#111', display: 'flex', gap: '10px' }}>
+          <input type="text" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #333', background: '#000', color: '#FFF' }} />
+          <button onClick={() => { navigateTo('shop', 'ALL'); setShowSearchInput(false); }} style={{ background: '#D4AF37', color: '#000', border: 'none', padding: '0 16px', borderRadius: '4px', fontWeight: 'bold' }}>Go</button>
+          <button onClick={() => { setShowSearchInput(false); setSearchQuery(''); }} style={{ background: 'none', color: '#FFF', border: 'none' }}>✕</button>
         </div>
-        
-        <div className="products-scroller">
-          {[
-            { name: 'Oversized Graphic Tee', price: 249, old: 699, img: '/dress1.png' },
-            { name: 'Short Kurti', price: 249, old: 699, img: '/dress3.png' },
-            { name: 'One Piece Dress', price: 399, old: 1499, img: '/dress4.png' }
-          ].map((prod, i) => (
-            <div 
-              key={i} 
-              className="product-card"
-              onClick={() => handleNavigateToShop("ALL")} 
-            >
-              <div className="prod-img-box">
-                <img src={prod.img} alt={prod.name} />
-                <button className="wishlist-btn">♡</button>
-              </div>
-              <div className="prod-info">
-                <h3>{prod.name}</h3>
-                <div className="price-row">
-                  <span className="price">₹ {prod.price}</span>
-                  <span className="old-price">₹ {prod.old}</span>
+      )}
+
+      {/* HERO BANNER */}
+      <div style={{ margin: '16px', borderRadius: '12px', border: '1px solid #333', overflow: 'hidden', position: 'relative', backgroundColor: '#111', display: 'flex', alignItems: 'center' }}>
+        <div style={{ padding: '20px', flex: 1 }}>
+          <div style={{ color: '#D4AF37', fontSize: '10px', letterSpacing: '1px', marginBottom: '8px' }}>NEW ARRIVALS</div>
+          <h2 style={{ fontSize: '20px', fontWeight: '900', margin: '0 0 8px 0', lineHeight: '1.2' }}>FRESH DROPS<br/>EVERY WEEK</h2>
+          <div style={{ fontSize: '9px', color: '#AAA', marginBottom: '16px', letterSpacing: '1px' }}>TRENDY • COMFY • AFFORDABLE</div>
+          <button onClick={() => navigateTo('shop')} style={{ background: 'transparent', color: '#D4AF37', border: '1px solid #D4AF37', padding: '6px 12px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', cursor: 'pointer' }}>EXPLORE NOW →</button>
+        </div>
+        <div style={{ flex: 1, height: '100%' }}>
+          <img src="/dress2.png" alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
+      </div>
+
+      {/* SHOP BY SIZE */}
+      <div style={{ margin: '30px 16px' }}>
+        <div style={{ display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px', marginBottom: '16px' }}>
+          <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY SIZE</span>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none' }} className="hide-scrollbar">
+          {["XS", "S", "M", "L", "XL"].map(sz => (
+            <button key={sz} onClick={() => navigateTo('size-filter', sz)} style={{ flexShrink: 0, width: '48px', height: '48px', background: '#111', border: '1px solid #333', borderRadius: '4px', color: '#D4AF37', fontSize: '13px', fontWeight: '800', cursor: 'pointer' }}>{sz}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* SHOP BY CATEGORY */}
+      <div style={{ margin: '30px 16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={{ border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
+            <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY CATEGORY</span>
+          </div>
+          <button onClick={() => navigateTo('shop')} style={{ background: 'none', border: 'none', color: '#888', fontSize: '10px', fontWeight: 'bold' }}>VIEW ALL →</button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {[{n: 'Tops', i: '/dress1.png'}, {n: 'T-Shirts', i: '/dress2.png'}, {n: 'Kurtis', i: '/dress3.png'}, {n: 'One Pieces', i: '/dress4.png'}].map((cat, idx) => (
+            <div key={idx} onClick={() => navigateTo('shop', cat.n)} style={{ background: '#111', borderRadius: '8px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
+              <img src={cat.i} alt={cat.n} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
+              <div style={{ padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#FFF' }}>{cat.n}</div>
+                  <div style={{ fontSize: '9px', color: '#888' }}>Explore Now →</div>
                 </div>
-                <div className="rating">★★★★★ <span style={{color: '#666'}}>(124)</span></div>
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* --- FEATURES STRIP --- */}
-      <section className="features-strip">
-        <div className="feature"><span className="icon">🚚</span><p>Free Shipping<br/>Above ₹549</p></div>
-        <div className="feature"><span className="icon">💳</span><p>COD<br/>Available</p></div>
-        <div className="feature"><span className="icon">🛡️</span><p>Secure<br/>Payments</p></div>
-        <div className="feature"><span className="icon">🎧</span><p>24/7<br/>Support</p></div>
-      </section>
-
-      {/* --- LIFESTYLE BANNER --- */}
-      <section className="lifestyle-banner">
-        <div className="lifestyle-img">
-          {/* Using a placeholder background in CSS */}
-        </div>
-        <div className="lifestyle-content">
-          <span className="life-subtitle">MORE THAN JUST CLOTHES</span>
-          <h2>IT'S A LIFESTYLE</h2>
-          <p>At SATRASHE60, we bring you the perfect blend of street style, comfort and confidence. Because your story deserves the best fit.</p>
-          <button className="story-btn">KNOW OUR STORY →</button>
-        </div>
-      </section>
-
-      {/* --- FOOTER --- */}
-      <footer className="home-footer">
-        <div className="newsletter">
-          <span className="news-icon">📨</span>
-          <div className="news-text">
-            <h4>STAY IN THE LOOP</h4>
-            <p>Get exclusive offers, new drops and more.</p>
-          </div>
-          <div className="news-input">
-            <input type="email" placeholder="Enter your email address" />
-            <button>SUBSCRIBE</button>
-          </div>
+      {/* BEST SELLERS (TINDER SWIPE EFFECT) */}
+      <div style={{ margin: '40px 0', overflow: 'hidden' }}>
+        <div style={{ margin: '0 16px 20px', display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
+          <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>BEST SELLERS</span>
         </div>
         
-        <div className="footer-links">
-          <img src={logo} alt="SATRASHE60" className="footer-logo" />
-          <nav>
-            <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-          </nav>
-          <div className="social-icons">
-            <span>📷</span> <span>▶️</span> <span>📌</span> <span>💬</span>
+        <div style={{ position: 'relative', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '1000px' }}>
+          {dbProducts.slice(0, 4).map((prod, idx) => {
+            const isTop = idx === swipeIndex;
+            const isSecond = idx === (swipeIndex + 1) % 4;
+            const isThird = idx === (swipeIndex + 2) % 4;
+            
+            if (!isTop && !isSecond && !isThird) return null; 
+
+            let transform = '';
+            let zIndex = 0;
+            let opacity = 1;
+
+            if (isTop) {
+              transform = 'rotate(-4deg) scale(1) translateY(0)';
+              zIndex = 30;
+            } else if (isSecond) {
+              transform = 'rotate(6deg) scale(0.95) translateX(30px) translateY(20px)';
+              zIndex = 20;
+              opacity = 0.8;
+            } else if (isThird) {
+              transform = 'rotate(-2deg) scale(0.9) translateX(-20px) translateY(40px)';
+              zIndex = 10;
+              opacity = 0.5;
+            }
+
+            return (
+              <div 
+                key={prod.id} 
+                onClick={() => {
+                  if(isTop) handleSwipe(); 
+                  else handleOpenProduct(prod, 'home'); 
+                }}
+                style={{
+                  position: 'absolute', width: '260px', backgroundColor: '#111', border: '1px solid #333', borderRadius: '12px', padding: '12px',
+                  transition: 'all 0.4s ease-in-out', transform, zIndex, opacity, cursor: isTop ? 'grab' : 'pointer',
+                  boxShadow: isTop ? '0 15px 30px rgba(0,0,0,0.8)' : 'none'
+                }}
+              >
+                <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                  <span style={{ position: 'absolute', top: '8px', left: '8px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: 'bold', padding: '4px 8px', borderRadius: '12px', zIndex: 2 }}>New</span>
+                  <button style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#FFF', fontSize: '16px', width: '28px', height: '28px', borderRadius: '4px', zIndex: 2 }}>♡</button>
+                  <img src={prod.image || '/dress1.png'} alt={prod.name} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />
+                </div>
+                {isTop && <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '10px', color: '#888' }}>Tap to swipe ↺</div>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* THE 1760 DROP */}
+      <div style={{ margin: '40px 0' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #D4AF37', borderRadius: '24px', padding: '8px 20px', gap: '10px' }}>
+            <span style={{ color: '#FFF', fontSize: '14px', fontWeight: '400' }}>THE</span>
+            <img src={logo} alt="1760" style={{ height: '24px' }} />
+            <span style={{ color: '#FFF', fontSize: '14px', fontWeight: '400' }}>DROP</span>
           </div>
         </div>
-        
-        <div className="copyright">
-          © 2026 SATRASHE60. All rights reserved.
+
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '0 16px', scrollbarWidth: 'none' }} className="hide-scrollbar">
+          <div onClick={() => navigateTo('shop', 'T-Shirts')} style={{ minWidth: '220px', background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
+            <img src="/dress2.png" alt="Offer 1" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+            <div style={{ padding: '16px', textAlign: 'center' }}>
+              <div style={{ color: '#D4AF37', fontSize: '10px', fontWeight: 'bold', marginBottom: '4px' }}>BUY 2 GET</div>
+              <div style={{ color: '#FFF', fontSize: '20px', fontWeight: '900', marginBottom: '4px' }}>₹100 OFF</div>
+              <div style={{ color: '#888', fontSize: '9px', marginBottom: '12px' }}>ON KURTIS</div>
+              <button style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '6px 16px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold' }}>SHOP KURTIS →</button>
+            </div>
+          </div>
+          
+          <div onClick={() => navigateTo('shop', 'One Pieces')} style={{ minWidth: '220px', background: '#111', borderRadius: '12px', overflow: 'hidden', border: '1px solid #222', cursor: 'pointer' }}>
+            <img src="/dress4.png" alt="Offer 2" style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+            <div style={{ padding: '16px', textAlign: 'center' }}>
+              <div style={{ color: '#D4AF37', fontSize: '10px', fontWeight: 'bold', marginBottom: '4px' }}>FLAT</div>
+              <div style={{ color: '#FFF', fontSize: '20px', fontWeight: '900', marginBottom: '4px' }}>15% OFF</div>
+              <div style={{ color: '#888', fontSize: '9px', marginBottom: '12px' }}>ON ONE PIECES</div>
+              <button style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '6px 16px', borderRadius: '4px', fontSize: '10px', fontWeight: 'bold' }}>SHOP ONE PIECES →</button>
+            </div>
+          </div>
         </div>
-      </footer>
-      
+      </div>
+
+      {/* TRUST BAR */}
+      <div style={{ display: 'flex', justifyContent: 'space-around', borderTop: '1px solid #222', borderBottom: '1px solid #222', padding: '20px 0', margin: '30px 0' }}>
+        {[{i:'🚚', t:'Free Shipping'}, {i:'💳', t:'COD Available'}, {i:'🛡️', t:'Secure Payment'}, {i:'🎧', t:'24/7 Support'}].map((tb, idx) => (
+          <div key={idx} style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '20px', marginBottom: '4px' }}>{tb.i}</div>
+            <div style={{ fontSize: '8px', color: '#888', textTransform: 'uppercase' }}>{tb.t}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* LIFESTYLE & FOOTER */}
+      <div style={{ textAlign: 'center', padding: '40px 20px', backgroundColor: '#050505' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#FFF', margin: '0 0 16px 0', letterSpacing: '2px' }}>IT'S A LIFESTYLE</h3>
+        <p style={{ fontSize: '12px', color: '#888', margin: '0 0 24px 0', lineHeight: '1.6' }}>At SATRASHE60, we bring you the perfect blend of street style, comfort and confidence. Because your story deserves the best fit.</p>
+        <button onClick={() => navigateTo('about')} style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '10px 24px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>KNOW OUR STORY ...</button>
+        <img src={logo} alt="SATRASHE60" style={{ height: '40px', marginTop: '40px' }} />
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px', fontSize: '12px', color: '#FFF', fontWeight: 'bold' }}>
+          <span onClick={() => navigateTo('home')}>Home</span>
+          <span onClick={() => navigateTo('shop')}>Shop</span>
+          <span onClick={() => navigateTo('about')}>About</span>
+          <span onClick={() => navigateTo('about')}>Contact</span>
+        </div>
+      </div>
     </div>
   );
-}/Users/akashmuttewar/Downloads/satrashe60_files/logo.png
+}
