@@ -74,13 +74,13 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
         </div>
       </div>
 
-      {/* SHOP BY CATEGORY */}
+      {/* SHOP BY CATEGORY - Perfectly Aligned */}
       <div style={{ margin: '30px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
             <span style={{ color: '#FFF', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY CATEGORY</span>
           </div>
-          <button onClick={() => navigateTo('shop')} style={{ background: 'none', border: 'none', color: '#888', fontSize: '10px', fontWeight: 'bold', borderBottom: '1px solid #333', paddingBottom: '2px' }}>VIEW ALL →</button>
+          <button onClick={() => navigateTo('shop')} style={{ background: 'none', border: 'none', color: '#888', fontSize: '10px', fontWeight: 'bold', borderBottom: '1px solid #333', paddingBottom: '2px', cursor: 'pointer' }}>VIEW ALL →</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {[{n: 'Tops', i: '/dress1.png'}, {n: 'T-Shirts', i: '/dress2.png'}, {n: 'Kurtis', i: '/dress3.png'}, {n: 'One Pieces', i: '/dress4.png'}].map((cat, idx) => (
@@ -109,7 +109,6 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
             const isSecond = idx === (swipeIndex + 1) % 4;
             const isThird = idx === (swipeIndex + 2) % 4;
             
-            // Render all 3 images, but manage zIndex and opacity correctly
             if (!isTop && !isSecond && !isThird) return null; 
 
             let transform = '';
@@ -393,7 +392,7 @@ function App() {
       {currentPage === 'account' ? <Account currentUser={currentUser} orders={placedOrders} onLogin={setCurrentUser} onLogout={() => setCurrentUser(null)} onNavigateToShop={() => navigateTo('shop')} />
       : currentPage === 'community' ? <Community currentUser={currentUser} onNavigateToAbout={() => navigateTo('about')} onNavigateToAccount={() => navigateTo('account')} />
       : currentPage === 'about' ? <About onNavigateToShop={() => navigateTo('shop')} />
-      : currentPage === 'product-detail' ? (isMobile ? <MobileProductDetail product={selectedProduct} onBack={handleGoBack} onAddToCart={handleAddToCart} onNavigateToBag={() => navigateTo('cart')} /> : <ProductDetail product={selectedProduct} onBack={() => setCurrentPage(sourceBackPage)} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} sourceTitle={sourceBackPage.toUpperCase()} />)
+      : currentPage === 'product-detail' ? (isMobile ? <MobileProductDetail product={selectedProduct} onBack={handleGoBack} onAddToCart={handleAddToCart} onNavigateToBag={() => navigateTo('cart')} /> : <ProductDetail product={selectedProduct} onBack={() => navigateTo(sourceBackPage)} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} sourceTitle={sourceBackPage.toUpperCase()} />)
       : currentPage === 'category-plp' ? <CategoryPLP categoryName={selectedCategory || "ALL"} products={MASTER_PRODUCTS} onBack={() => navigateTo('home')} onProductClick={(prod) => handleOpenProduct(prod, 'category-plp')} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} navigateTo={navigateTo} />
       : currentPage === 'size-filter' || currentPage === 'shop' ? <Shop products={dbProducts} initialCategory={selectedCategory} initialSizes={currentPage === 'size-filter' ? [selectedCategory] : []} initialSearchQuery={searchQuery} onNavigate={navigateTo} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} onAddToCart={handleAddToCart} />
       : currentPage === 'cart' ? (
@@ -415,7 +414,7 @@ function App() {
           <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }} style={{ background: 'none', border: 'none', fontSize: '20px', color: '#888' }}>🔍</button>
           <button onClick={() => navigateTo('shop', 'New Arrivals')} style={{ background: 'none', border: 'none', fontSize: '10px', fontWeight: '900', color: '#888' }}>NEW</button>
           <button onClick={() => navigateTo('cart')} style={{ background: 'none', border: 'none', fontSize: '20px', color: currentPage === 'cart' ? '#D4AF37' : '#888', position: 'relative' }}>
-            🛍️{cartItems.length > 0 && <span style={{ position: 'absolute', top: '-4px', right: '-6px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: '900', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
+            🛍️️{cartItems.length > 0 && <span style={{ position: 'absolute', top: '-4px', right: '-6px', background: '#D4AF37', color: '#000', fontSize: '10px', fontWeight: '900', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
           </button>
           <button onClick={() => navigateTo('account')} style={{ background: 'none', border: 'none', fontSize: '20px', color: currentPage === 'account' ? '#D4AF37' : '#888' }}>👤</button>
         </div>
