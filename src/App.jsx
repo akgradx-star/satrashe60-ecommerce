@@ -1,5 +1,4 @@
 import SideMenu from './SideMenu';
-import MobileCheckout from './MobileCheckout';
 import { useState, useEffect, useContext } from 'react';
 import './App.css';
 import Shop, { MASTER_PRODUCTS } from './Shop';
@@ -14,7 +13,7 @@ import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
 import CategoryPLP from './CategoryPLP'; 
-import Home from './Home'; // 🚀 Home ko import kiya
+import Home from './Home'; 
 import { ShopContext } from './ShopContext'; 
 
 function App() {
@@ -194,7 +193,6 @@ function App() {
       : currentPage === 'cart' ? (
         isMobile ? <MobileBag cartItems={cartItems} onBack={handleGoBack} onUpdateQuantity={handleUpdateCartQuantity} onRemoveItem={handleRemoveFromCart} onProceedToAddress={handleProceedToAddress} /> : <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: '#FAFAFA' }}><h2 style={{ textAlign: 'center' }}>YOUR BAG</h2>{cartItems.length === 0 ? <div style={{ textAlign: 'center' }}><button onClick={() => navigateTo('shop')}>SHOP NOW</button></div> : <div><button onClick={() => setShowCheckout(true)}>PROCEED TO CHECKOUT</button></div>}</div>
       ) : (
-        // 🚀 HOME PAGE KO CALL KIYA HAI
         <Home 
           navigateTo={navigateTo} 
           cartItems={cartItems} 
@@ -205,7 +203,6 @@ function App() {
 
       <MobileAuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={(userData) => { setCurrentUser(userData); setShowAuthModal(false); setShowCheckout(true); }} />
 
-      {/* FIXED BOTTOM NAV BAR */}
       {currentPage !== 'product-detail' && (
         <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', backgroundColor: '#000', borderTop: '1px solid #222', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 100 }}>
           <button onClick={() => navigateTo('home')} style={{ background: 'none', border: 'none', fontSize: '20px', color: currentPage === 'home' ? '#D4AF37' : '#888' }}>🏠</button>
