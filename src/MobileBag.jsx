@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './MobileFlow.css';
 
 export default function MobileBag({ cartItems, onBack, onUpdateQuantity, onRemoveItem, onProceedToAddress }) {
   const [qtyError, setQtyError] = useState('');
@@ -10,92 +9,142 @@ export default function MobileBag({ cartItems, onBack, onUpdateQuantity, onRemov
   const grandTotal = bagTotal + deliveryCharge;
 
   const handleQtyChange = (item, newQty) => {
-    // Inventory Check existing structure se
-    const availableStock = item.stock || 1; 
+    const availableStock = item.stock || 5; 
     
     if (newQty > availableStock) {
       setQtyError(`Only ${availableStock} available for ${item.name}`);
       setTimeout(() => setQtyError(''), 3000);
       return;
     }
+    if (newQty < 1) return;
     onUpdateQuantity(item.id, item.selectedSize, newQty);
   };
 
   return (
-    <div className="mobile-page-container bg-light">
+    <div style={{ backgroundColor: '#050505', minHeight: '100vh', color: '#FFF', fontFamily: "'Inter', sans-serif", paddingBottom: '100px' }}>
+      
       {/* HEADER */}
-      <div className="mobile-header-premium sticky-top">
-        <button onClick={onBack} className="icon-btn" style={{fontSize: '24px'}}>‹</button>
-        <h2 className="header-title">BAG</h2>
-        <button className="icon-btn">♡</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(5,5,5,0.95)' }}>
+        <button onClick={onBack} style={{ background: 'transparent', color: '#FFF', border: '1px solid #D4AF37', borderRadius: '4px', padding: '6px 12px', fontSize: '10px', fontWeight: '800', cursor: 'pointer' }}>HOME</button>
+        <img src="/logo.png" alt="1760 SATRASHE60" style={{ height: '30px', objectFit: 'contain' }} />
+        <div style={{ width: '50px' }}></div> {/* Spacer for centering */}
+      </div>
+
+      {/* PAGE TITLE & BANNER */}
+      <div style={{ padding: '20px 16px 10px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222', paddingBottom: '16px' }}>
+            <div>
+                <h1 style={{ fontSize: '28px', fontFamily: "'Playfair Display', serif", color: '#D4AF37', margin: '0 0 5px 0' }}>My Cart</h1>
+                <p style={{ fontSize: '10px', color: '#888', letterSpacing: '1px', margin: 0, textTransform: 'uppercase' }}>Your style, one step closer</p>
+                <div style={{ height: '2px', width: '30px', backgroundColor: '#D4AF37', marginTop: '10px' }}></div>
+            </div>
+            <img src="/dress2.png" alt="Style Banner" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '4px', opacity: 0.6 }} />
+        </div>
       </div>
 
       {/* BAG ITEMS */}
-      <div className="bag-items-container" style={{padding: '16px'}}>
-        {qtyError && <div className="toast-error" style={{color: 'red', marginBottom: '10px', fontSize: '12px'}}>{qtyError}</div>}
+      <div style={{ padding: '16px' }}>
+        {qtyError && <div style={{ color: '#ff4d4d', marginBottom: '10px', fontSize: '12px', textAlign: 'center' }}>{qtyError}</div>}
         
         {cartItems.length === 0 ? (
-          <div className="empty-state text-center" style={{padding: '40px 0', color: '#888'}}>Your bag is empty</div>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: '#888' }}>Your bag is empty</div>
         ) : (
-          cartItems.map((item, idx) => (
-            <div key={idx} className="bag-item-card" style={{border: '1px solid #eee'}}>
-              <img src={item.image} alt={item.name} className="bag-item-img" />
-              <div className="bag-item-details" style={{padding: '0 10px'}}>
-                <h4 className="item-name" style={{margin: '0 0 4px 0', fontSize: '14px'}}>{item.name}</h4>
-                <p className="item-meta" style={{margin: '0 0 10px 0', fontSize: '12px', color: '#666'}}>
-                  Size: {item.selectedSize} | {item.color || 'Standard'}
-                </p>
-                <div className="item-controls">
-                  <div className="qty-selector" style={{fontSize: '12px'}}>
-                    QTY | 
-                    <select 
-                      value={item.quantity} 
-                      onChange={(e) => handleQtyChange(item, parseInt(e.target.value))}
-                      className="qty-dropdown"
-                    >
-                      {[1, 2, 3, 4, 5].map(num => (
-                        <option key={num} value={num}>{num}</option>
-                      ))}
-                    </select>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {cartItems.map((item, idx) => (
+              <div key={idx} style={{ border: '1px solid #333', borderRadius: '8px', padding: '12px', display: 'flex', gap: '16px', backgroundColor: '#0a0a0a' }}>
+                <img src={item.image} alt={item.name} style={{ width: '90px', height: '120px', objectFit: 'cover', borderRadius: '4px' }} />
+                
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{item.name}</h4>
+                      <button style={{ background: 'none', border: 'none', color: '#888', fontSize: '18px', cursor: 'pointer' }}>♡</button>
+                    </div>
+                    <p style={{ margin: '0 0 10px 0', fontSize: '12px', color: '#888' }}>
+                      Size: {item.selectedSize} <span style={{ margin: '0 5px' }}>|</span> {item.color || 'Standard'}
+                    </p>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#D4AF37', marginBottom: '12px' }}>₹{item.price}</div>
                   </div>
-                  <span className="item-price">₹{item.price * item.quantity}</span>
-                </div>
-                <div className="item-actions" style={{display: 'flex', justifyContent: 'space-between', marginTop: '12px'}}>
-                  <button className="text-btn" style={{background:'none', border:'none', fontSize:'11px', fontWeight:'bold'}}>MOVE TO WISHLIST</button>
-                  <button className="icon-btn remove-btn" onClick={() => onRemoveItem(idx)} style={{background:'none', border:'none'}}>🗑️</button>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #333', borderRadius: '20px', overflow: 'hidden' }}>
+                      <button onClick={() => handleQtyChange(item, item.quantity - 1)} style={{ background: 'transparent', border: 'none', color: '#FFF', padding: '4px 12px', fontSize: '16px', cursor: 'pointer' }}>-</button>
+                      <span style={{ fontSize: '14px', width: '20px', textAlign: 'center' }}>{item.quantity}</span>
+                      <button onClick={() => handleQtyChange(item, item.quantity + 1)} style={{ background: 'transparent', border: 'none', color: '#FFF', padding: '4px 12px', fontSize: '16px', cursor: 'pointer' }}>+</button>
+                    </div>
+                    
+                    <div style={{ width: '1px', height: '20px', backgroundColor: '#333' }}></div>
+                    
+                    <button onClick={() => onRemoveItem(idx)} style={{ background: 'none', border: 'none', color: '#888', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                      <span style={{ fontSize: '14px' }}>🗑</span> Remove
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
+      {/* COUPON SECTION */}
+      {cartItems.length > 0 && (
+          <div style={{ margin: '0 16px 20px', padding: '16px', border: '1px solid #333', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#0a0a0a', cursor: 'pointer' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ fontSize: '20px', color: '#D4AF37' }}>🏷️</span>
+                <div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#FFF' }}>Have a coupon code?</div>
+                    <div style={{ fontSize: '11px', color: '#888' }}>Apply and get exciting offers</div>
+                </div>
+            </div>
+            <span style={{ color: '#FFF', fontSize: '16px' }}>›</span>
+          </div>
+      )}
+
       {/* PRICE DETAILS */}
       {cartItems.length > 0 && (
-        <>
-          <div className="price-details-card">
-            <h3 className="section-title text-center mb-3" style={{fontSize:'14px', marginBottom: '16px'}}>PRICE DETAILS</h3>
-            <div className="price-row">
-              <span>Bag Total</span>
-              <span>₹{bagTotal}</span>
-            </div>
-            <div className="price-row">
-              <span>Delivery Charges</span>
-              <span>{deliveryCharge === 0 ? <span className="free-text">FREE</span> : `₹${deliveryCharge}`}</span>
-            </div>
-            <hr className="divider my-2" style={{margin: '12px 0'}} />
-            <div className="price-row grand-total">
-              <span>Grand Total <br/><span className="tax-note" style={{fontSize: '10px', fontWeight:'normal', color: '#666'}}>(incl. of all taxes)</span></span>
-              <span>₹{grandTotal}</span>
-            </div>
+        <div style={{ margin: '0 16px 20px', padding: '20px', border: '1px solid #333', borderRadius: '8px', backgroundColor: '#0a0a0a' }}>
+          <h3 style={{ fontSize: '18px', fontFamily: "'Playfair Display', serif", color: '#D4AF37', margin: '0 0 20px 0' }}>Price Details</h3>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '14px', color: '#CCC' }}>
+            <span>Bag Total</span>
+            <span>₹{bagTotal}</span>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', fontSize: '14px', color: '#CCC' }}>
+            <span>Delivery Charges</span>
+            <span>{deliveryCharge === 0 ? <span style={{ color: '#D4AF37' }}>FREE</span> : `₹${deliveryCharge}`}</span>
+          </div>
+          
+          <div style={{ height: '1px', backgroundColor: '#333', marginBottom: '20px' }}></div>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#D4AF37' }}>Grand Total</div>
+                <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>(incl. of all taxes)</div>
+            </div>
+            <div style={{ fontSize: '22px', fontWeight: 'bold', color: '#FFF' }}>₹{grandTotal}</div>
+          </div>
+        </div>
+      )}
 
-          <div className="sticky-bottom-cta bg-white">
-            <button className="black-btn full-width uppercase" onClick={onProceedToAddress}>
-              SELECT ADDRESS TO CONTINUE
-            </button>
+      {/* BOTTOM CHECKOUT BAR */}
+      {cartItems.length > 0 && (
+        <div style={{ position: 'fixed', bottom: '60px', left: 0, right: 0, padding: '16px', backgroundColor: '#050505', borderTop: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 90 }}>
+          <div>
+            <div style={{ fontSize: '12px', color: '#888' }}>Total</div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#FFF' }}>₹{grandTotal}</div>
           </div>
-        </>
+          
+          <button 
+            onClick={onProceedToAddress}
+            style={{ 
+              backgroundColor: '#D4AF37', color: '#000', border: 'none', padding: '14px 24px', 
+              borderRadius: '30px', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }}
+          >
+            Proceed to Checkout <span>→</span>
+          </button>
+        </div>
       )}
     </div>
   );
