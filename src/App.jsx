@@ -1,7 +1,6 @@
 import SideMenu from './SideMenu';
 import { useState, useEffect, useContext } from 'react';
 import './App.css';
-import './Home.css'; // 🚀 Home ka CSS yahan import kar liya
 import Shop, { MASTER_PRODUCTS } from './Shop';
 import CheckoutModal from './CheckoutModal';
 import MobileProductDetail from './MobileProductDetail';
@@ -16,10 +15,6 @@ import MobileAuthModal from './MobileAuthModal';
 import CategoryPLP from './CategoryPLP'; 
 import { ShopContext } from './ShopContext'; 
 
-// ==========================================
-// 🚀 DIRECTLY PASTED HOME COMPONENT HERE 
-// ISSE "MODULE NOT FOUND" ERROR ZINDAGI MEIN KABHI NAHI AAYEGA!
-// ==========================================
 function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,7 +65,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
       {/* SHOP BY SIZE */}
       <div style={{ margin: '30px 16px' }}>
         <div style={{ display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px', marginBottom: '16px' }}>
-          <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY SIZE</span>
+          <span style={{ color: '#FFF', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY SIZE</span>
         </div>
         <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollbarWidth: 'none' }} className="hide-scrollbar">
           {["XS", "S", "M", "L", "XL"].map(sz => (
@@ -82,10 +77,10 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
       {/* SHOP BY CATEGORY */}
       <div style={{ margin: '30px 16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div style={{ border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
-            <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY CATEGORY</span>
+          <div style={{ display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
+            <span style={{ color: '#FFF', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>SHOP BY CATEGORY</span>
           </div>
-          <button onClick={() => navigateTo('shop')} style={{ background: 'none', border: 'none', color: '#888', fontSize: '10px', fontWeight: 'bold' }}>VIEW ALL →</button>
+          <button onClick={() => navigateTo('shop')} style={{ background: 'none', border: 'none', color: '#888', fontSize: '10px', fontWeight: 'bold', borderBottom: '1px solid #333', paddingBottom: '2px' }}>VIEW ALL →</button>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {[{n: 'Tops', i: '/dress1.png'}, {n: 'T-Shirts', i: '/dress2.png'}, {n: 'Kurtis', i: '/dress3.png'}, {n: 'One Pieces', i: '/dress4.png'}].map((cat, idx) => (
@@ -105,7 +100,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
       {/* BEST SELLERS (TINDER SWIPE EFFECT) */}
       <div style={{ margin: '40px 0', overflow: 'hidden' }}>
         <div style={{ margin: '0 16px 20px', display: 'inline-block', border: '1px solid #D4AF37', borderRadius: '16px', padding: '6px 16px' }}>
-          <span style={{ color: '#D4AF37', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>BEST SELLERS</span>
+          <span style={{ color: '#FFF', fontSize: '12px', fontWeight: '800', letterSpacing: '1px' }}>BEST SELLERS</span>
         </div>
         
         <div style={{ position: 'relative', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '1000px' }}>
@@ -114,6 +109,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
             const isSecond = idx === (swipeIndex + 1) % 4;
             const isThird = idx === (swipeIndex + 2) % 4;
             
+            // Render all 3 images, but manage zIndex and opacity correctly
             if (!isTop && !isSecond && !isThird) return null; 
 
             let transform = '';
@@ -162,9 +158,9 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
       <div style={{ margin: '40px 0' }}>
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', border: '1px solid #D4AF37', borderRadius: '24px', padding: '8px 20px', gap: '10px' }}>
-            <span style={{ color: '#FFF', fontSize: '14px', fontWeight: '400' }}>THE</span>
+            <span style={{ color: '#FFF', fontFamily: "'Playfair Display', Georgia, serif", fontSize: '14px', fontWeight: '400', fontStyle: 'italic' }}>The</span>
             <img src="/logo.png" alt="1760" style={{ height: '24px' }} />
-            <span style={{ color: '#FFF', fontSize: '14px', fontWeight: '400' }}>DROP</span>
+            <span style={{ color: '#FFF', fontFamily: "'Playfair Display', Georgia, serif", fontSize: '14px', fontWeight: '400', fontStyle: 'italic' }}>Drop</span>
           </div>
         </div>
 
@@ -206,7 +202,12 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct }) {
         <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#FFF', margin: '0 0 16px 0', letterSpacing: '2px' }}>IT'S A LIFESTYLE</h3>
         <p style={{ fontSize: '12px', color: '#888', margin: '0 0 24px 0', lineHeight: '1.6' }}>At SATRASHE60, we bring you the perfect blend of street style, comfort and confidence. Because your story deserves the best fit.</p>
         <button onClick={() => navigateTo('about')} style={{ background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37', padding: '10px 24px', borderRadius: '4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>KNOW OUR STORY ...</button>
-        <img src="/logo.png" alt="SATRASHE60" style={{ height: '40px', marginTop: '40px' }} />
+        
+        {/* LOGO FIXED */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '40px' }}>
+          <img src="/logo.png" alt="SATRASHE60" style={{ height: '40px' }} />
+        </div>
+        
         <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '20px', fontSize: '12px', color: '#FFF', fontWeight: 'bold' }}>
           <span onClick={() => navigateTo('home')}>Home</span>
           <span onClick={() => navigateTo('shop')}>Shop</span>
@@ -244,8 +245,6 @@ function App() {
   const [sourceBackPage, setSourceBackPage] = useState('shop');
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchInput, setShowSearchInput] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
   
   const [dbProducts, setDbProducts] = useState(() => {
     const cached = localStorage.getItem('satrashe60_cached_products');
@@ -283,6 +282,8 @@ function App() {
 
   const [toastMessage, setToastMessage] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [showSearchInput, setShowSearchInput] = useState(false);
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
