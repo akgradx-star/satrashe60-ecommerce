@@ -14,10 +14,9 @@ import AdminDashboard from './AdminDashboard';
 import MobileHeaderNav from './MobileHeaderNav'; 
 import MobileAuthModal from './MobileAuthModal';
 import CategoryPLP from './CategoryPLP'; 
-import { ShopContext } from './ShopContext'; // 🚀 TANKI IMPORT HO GAYI
+import { ShopContext } from './ShopContext'; 
 
 function App() {
-  // 🚀 TANKI SE SAARA DATA DIRECT LE RAHE HAIN
   const { 
     currentUser, setCurrentUser,
     cartItems, handleAddToCart: contextAddToCart, handleRemoveFromCart: contextRemoveFromCart, handleUpdateCartQuantity, clearCart,
@@ -162,7 +161,6 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  // 🚀 TANKI WALE FUNCTIONS USE KAR RAHE HAIN
   const handleToggleWishlist = (id) => contextToggleWishlist(id, triggerToast);
   const handleAddToCart = (item) => contextAddToCart(item, triggerToast);
   const handleRemoveFromCart = (idx) => contextRemoveFromCart(idx, triggerToast);
@@ -214,7 +212,8 @@ function App() {
         </div>
       )}
 
-      {currentPage !== 'home' && (
+      {/* RENDER MOBILE HEADER NAV ONLY IF NOT ON SHOP OR PRODUCT DETAIL */}
+      {currentPage !== 'home' && currentPage !== 'shop' && currentPage !== 'product-detail' && (
         <MobileHeaderNav 
           cartCount={cartItems.length} 
           wishlistCount={wishlist.length} 
@@ -360,20 +359,6 @@ function App() {
         <div className="premium-home-container">
           <header className="premium-header">
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              {currentPage !== 'home' && (
-                <button 
-                  onClick={() => {
-                    if (currentPage === 'product' || currentPage === 'product-detail' || currentPage === 'cart') {
-                      navigateTo('shop', 'ALL');
-                    } else {
-                      navigateTo('home');
-                    }
-                  }} 
-                  style={{ background: 'none', border: 'none', color: '#FFF', fontSize: '24px', cursor: 'pointer', padding: 0, marginTop: '-4px' }}
-                >
-                  ←
-                </button>
-              )}
               <button className="menu-btn" onClick={() => setIsMenuOpen(true)}>☰</button>
             </div>
             <img src="/logo.png" alt="SATRASHE60" className="header-logo" onClick={() => navigateTo('home')} style={{ cursor: 'pointer' }} />
@@ -550,15 +535,18 @@ function App() {
         }}
       />
 
-      <div className="mobile-bottom-nav-bar">
-        <button onClick={() => navigateTo('home')}>🏠</button>
-        <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
-        <button onClick={() => navigateTo('shop', 'New Arrivals')} className="nav-new-text">NEW</button>
-        <button onClick={() => navigateTo('cart')} style={{ position: 'relative' }}>
-          🛍️{cartItems.length > 0 && <span className="bottom-nav-badge">{cartItems.length}</span>}
-        </button>
-        <button onClick={() => navigateTo('account')}>👤</button>
-      </div>
+      {/* RENDER BOTTOM NAV BAR ONLY IF NOT ON PRODUCT DETAIL */}
+      {currentPage !== 'product-detail' && (
+        <div className="mobile-bottom-nav-bar">
+          <button onClick={() => navigateTo('home')}>🏠</button>
+          <button onClick={() => { setShowSearchInput(true); window.scrollTo(0,0); }}>🔍</button>
+          <button onClick={() => navigateTo('shop', 'New Arrivals')} className="nav-new-text">NEW</button>
+          <button onClick={() => navigateTo('cart')} style={{ position: 'relative' }}>
+            🛍️{cartItems.length > 0 && <span className="bottom-nav-badge">{cartItems.length}</span>}
+          </button>
+          <button onClick={() => navigateTo('account')}>👤</button>
+        </div>
+      )}
 
       {showCheckout && (
         <CheckoutModal 

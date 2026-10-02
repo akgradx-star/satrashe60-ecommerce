@@ -225,7 +225,7 @@ export default function Shop({
   return (
     <div style={{ backgroundColor: '#000000', minHeight: '100vh', paddingBottom: '60px', fontFamily: "'Inter', sans-serif" }}>
       
-      {/* 🚀 1. EXACT MOCKUP HEADER */}
+     {/* 🚀 1. EXACT MOCKUP HEADER (With Premium Search Icon) */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', backgroundColor: '#000000', padding: '0 16px' }}>
         <button 
           onClick={() => onNavigate('home')} 
@@ -233,13 +233,21 @@ export default function Shop({
         >
           HOME
         </button>
+        
         <img 
           src="/logo.png" 
           alt="1760 SATRASHE60" 
           style={{ height: '34px', objectFit: 'contain', cursor: 'pointer' }} 
           onClick={() => onNavigate('home')}
         />
-        <div style={{ width: '12px', height: '12px', backgroundColor: '#FFFFFF', borderRadius: '50%' }}></div>
+        
+        {/* Sleek SVG Search Icon (Replaced the white dot) */}
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
       </div>
 
       {/* 🚀 2. GLOWING GOLD RING CATEGORIES */}
