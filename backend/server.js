@@ -1,3 +1,4 @@
+const cors = require('cors');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors'); // Frontend aur Backend ko jodne wala gate
@@ -8,7 +9,10 @@ const Order = require('./src/models/Order');
 const Product = require('./src/models/Product'); // 👕 Naya Product model
 
 const app = express();
-
+app.use(cors({
+    origin: ['https://satrashe60-web-ier.vercel.app', 'http://localhost:5173'], // Aapka Vercel aur Local link
+    credentials: true
+}));
 app.use(cors()); // CORS chalu kiya
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true })); // Frontend ka data padhne ke liye
