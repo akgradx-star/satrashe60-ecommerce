@@ -62,7 +62,7 @@ function DropOffers({ products, onBack, onAddToCart, navigateTo }) {
 
   return (
     <div style={{ backgroundColor: '#243637', minHeight: '100vh', color: '#FFF', paddingBottom: '80px', fontFamily: "'Inter', sans-serif" }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(36, 54, 55, 0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #3A5354' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#243637', borderBottom: '1px solid #3A5354' }}>
         <button onClick={onBack} style={{ background: 'transparent', color: '#FFF', border: '1px solid #D4AF37', borderRadius: '4px', padding: '6px 12px', fontSize: '10px', fontWeight: '800', cursor: 'pointer' }}>← HOME</button>
         <h1 style={{ fontSize: '16px', fontWeight: '900', color: '#D4AF37', margin: 0, letterSpacing: '1px' }}>THE 1760 DROP</h1>
         <div style={{ width: '50px' }}></div>
@@ -209,7 +209,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         }
       `}</style>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(36, 54, 55, 0.95)', backdropFilter: 'blur(10px)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#243637' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={onMenuClick} style={{ background: 'transparent', color: '#FFF', border: 'none', fontSize: '24px', cursor: 'pointer', padding: 0 }}>☰</button>
         </div>
@@ -231,7 +231,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
       )}
 
       <div style={{ margin: '16px', borderRadius: '8px', overflow: 'hidden', position: 'relative', backgroundColor: '#2D4243', display: 'flex', alignItems: 'center', height: '350px' }}>
-        <div style={{ padding: '24px', flex: 1, zIndex: 2, background: 'linear-gradient(90deg, rgba(36,54,55,0.95) 0%, rgba(36,54,55,0.3) 100%)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ padding: '24px', flex: 1, zIndex: 2, background: 'linear-gradient(90deg, #243637 0%, rgba(36,54,55,0.5) 100%)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div style={{ color: '#D4AF37', fontSize: '10px', letterSpacing: '2px', marginBottom: '8px', fontWeight: '800' }}>PREMIUM EDITION</div>
           <h2 style={{ fontSize: '28px', fontWeight: '900', margin: '0 0 12px 0', lineHeight: '1.2' }}>FRESH DROPS<br/>EVERY WEEK</h2>
           <div style={{ fontSize: '10px', color: '#BBD4D5', marginBottom: '24px', letterSpacing: '1px' }}>TRENDY • COMFY • AFFORDABLE</div>
@@ -277,7 +277,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
           <h2 style={{ fontSize: '18px', color: '#D4AF37', margin: '0 0 4px 0', fontWeight: '900', letterSpacing: '2px' }}>SPIN & WIN</h2>
           <div style={{ height: '30px', marginTop: '6px' }}>
             {cooldown > 0 ? (
-              <div style={{ display: 'inline-block', backgroundColor: 'rgba(212, 175, 55, 0.1)', border: '1px solid #D4AF37', color: '#D4AF37', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
+              <div style={{ display: 'inline-block', backgroundColor: '#243637', border: '1px solid #D4AF37', color: '#D4AF37', padding: '6px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: '800' }}>
                 ⏳ Next spin in {Math.floor(cooldown / 60)}:{(cooldown % 60).toString().padStart(2, '0')}
               </div>
             ) : (
@@ -390,11 +390,11 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             } else if (isSecond) {
               transform = 'rotate(5deg) scale(0.95) translateX(25px) translateY(15px)';
               zIndex = 20;
-              opacity = 0.8;
+              opacity = 1; 
             } else if (isThird) {
               transform = 'rotate(-2deg) scale(0.9) translateX(-15px) translateY(30px)';
               zIndex = 10;
-              opacity = 0.5;
+              opacity = 1; 
             }
 
             return (
@@ -411,8 +411,8 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
                   <span style={{ position: 'absolute', top: '8px', left: '8px', background: '#D4AF37', color: '#121212', fontSize: '9px', fontWeight: 'bold', padding: '4px 8px', borderRadius: '4px', zIndex: 2 }}>HOT</span>
                   
                   <div style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', gap: '6px', zIndex: 2 }}>
-                    <button onClick={(e) => { e.stopPropagation(); handleAddToCart({...prod, quantity: 1, selectedSize: 'M'}); }} style={{ background: 'rgba(36,54,55,0.7)', border: '1px solid #D4AF37', color: '#D4AF37', fontSize: '13px', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer' }}>🛍</button>
-                    <button onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }} style={{ background: 'rgba(36,54,55,0.7)', border: 'none', color: '#FFF', fontSize: '13px', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer' }}>♡</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleAddToCart({...prod, quantity: 1, selectedSize: 'M'}); }} style={{ background: '#243637', border: '1px solid #D4AF37', color: '#D4AF37', fontSize: '13px', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer' }}>🛍</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }} style={{ background: '#243637', border: 'none', color: '#FFF', fontSize: '13px', width: '28px', height: '28px', borderRadius: '50%', cursor: 'pointer' }}>♡</button>
                   </div>
                   
                   <img src={prod.image || (prod.images && prod.images[0]) || '/dress1.png'} alt={prod.name || 'Product'} style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top center' }} />
@@ -656,7 +656,7 @@ function App() {
       <MobileAuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={(userData) => { setCurrentUser(userData); setShowAuthModal(false); setShowCheckout(true); }} />
 
       {currentPage !== 'product-detail' && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', backgroundColor: 'rgba(36, 54, 55, 0.98)', borderTop: '1px solid #3A5354', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 100, backdropFilter: 'blur(10px)' }}>
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', backgroundColor: '#243637', borderTop: '1px solid #3A5354', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 100, backdropFilter: 'blur(10px)' }}>
           <button onClick={() => navigateTo('home')} style={{ background: 'none', border: 'none', fontSize: '20px', color: currentPage === 'home' ? '#D4AF37' : '#A0B8B9' }}>🏠</button>
           <button onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); navigateTo('shop'); }} style={{ background: 'none', border: 'none', fontSize: '20px', color: '#A0B8B9' }}>🔍</button>
           <button onClick={() => navigateTo('shop', 'New Arrivals')} style={{ background: 'none', border: 'none', fontSize: '10px', fontWeight: '900', color: '#A0B8B9' }}>NEW</button>
