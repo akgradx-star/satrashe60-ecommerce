@@ -17,18 +17,19 @@ import ShopYourSize from './ShopYourSize';
 import { ShopContext } from './ShopContext'; 
 
 // ==========================================
-// 🚀 LUXURY BRAND COLOURS (As per Image)
+// 🚀 LUXURY BRAND COLOURS (Strictly from reference)
 // ==========================================
-const BG_COLOR = '#061F1E'; // Premium dark green-black
-const GOLD_COLOR = '#D9B84F'; // Luxury golden yellow
-const DARK_CARD = '#041514'; // Slightly darker for cards
-const TEXT_LIGHT = '#F5F5F5'; // Soft white
+const BG_COLOR = '#061F1E'; 
+const GOLD_COLOR = '#D9B84F'; 
+const DARK_CARD = '#041514'; 
+const TEXT_LIGHT = '#F5F5F5';
+const GOLD_60 = 'rgba(217, 184, 79, 0.6)'; 
 
 // ==========================================
 // 🚀 REUSABLE SECTION HEADER BUTTON
 // ==========================================
 const SectionHeading = ({ title }) => (
-  <div style={{ textAlign: 'center', marginBottom: '24px', marginTop: '30px' }}>
+  <div style={{ textAlign: 'center', marginBottom: '24px', marginTop: '20px' }}>
     <div style={{ 
       display: 'inline-block', 
       border: `1px solid ${GOLD_COLOR}`, 
@@ -36,7 +37,7 @@ const SectionHeading = ({ title }) => (
       padding: '8px 24px', 
       color: GOLD_COLOR, 
       fontFamily: "'Bebas Neue', sans-serif",
-      fontSize: '16px', 
+      fontSize: '18px', 
       letterSpacing: '2px',
       textTransform: 'uppercase',
       backgroundColor: 'transparent'
@@ -51,6 +52,7 @@ const SectionHeading = ({ title }) => (
 // ==========================================
 const GiftPackagingSection = ({ onAddGiftPacking }) => {
   const [showOptions, setShowOptions] = useState(false);
+  
   const options = [
     { id: 'g1', name: 'Basic Wrap', price: 20 },
     { id: 'g2', name: 'Standard Box', price: 50 },
@@ -61,39 +63,125 @@ const GiftPackagingSection = ({ onAddGiftPacking }) => {
   ];
 
   return (
-    <div style={{ maxWidth: '400px', margin: '40px auto', padding: '16px', backgroundColor: DARK_CARD, borderRadius: '12px', border: `1px solid ${GOLD_COLOR}`, textAlign: 'center' }}>
-      <h3 style={{ fontFamily: "'Playfair Display', serif", color: GOLD_COLOR, margin: '0 0 6px 0', fontSize: '14px' }}>GIFT PACKAGING</h3>
-      <p style={{ fontFamily: "'Montserrat', sans-serif", color: '#E0E0E0', fontSize: '10px', marginBottom: '16px' }}>Make it special for your loved ones.</p>
+    <div style={{ 
+      maxWidth: '400px', 
+      margin: '40px auto', 
+      padding: '16px', 
+      backgroundColor: DARK_CARD, 
+      borderRadius: '12px', 
+      border: `1px solid ${GOLD_COLOR}`, 
+      textAlign: 'center' 
+    }}>
+      <h3 style={{ 
+        fontFamily: "'Playfair Display', serif", 
+        color: GOLD_COLOR, 
+        margin: '0 0 6px 0', 
+        fontSize: '14px' 
+      }}>
+        GIFT PACKAGING
+      </h3>
+      <p style={{ 
+        fontFamily: "'Montserrat', sans-serif", 
+        color: '#E0E0E0', 
+        fontSize: '10px', 
+        marginBottom: '16px' 
+      }}>
+        Make it special for your loved ones.
+      </p>
       
       <div style={{ 
-        width: '100%', height: '80px', backgroundColor: BG_COLOR, borderRadius: '8px', marginBottom: '16px', 
-        display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden',
+        width: '100%', 
+        height: '80px', 
+        backgroundColor: BG_COLOR, 
+        borderRadius: '8px', 
+        marginBottom: '16px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        position: 'relative', 
+        overflow: 'hidden',
         border: '1px dashed #333'
       }}>
         <div style={{ fontSize: '24px', animation: 'pulse 2s infinite' }}>🎁</div>
-        <div style={{ position: 'absolute', bottom: '6px', fontSize: '9px', color: GOLD_COLOR }}>Packing preview...</div>
+        <div style={{ position: 'absolute', bottom: '6px', fontSize: '9px', color: GOLD_COLOR }}>
+          Packing preview...
+        </div>
       </div>
 
-      <button onClick={() => setShowOptions(true)} style={{ backgroundColor: 'transparent', color: GOLD_COLOR, border: `1px solid ${GOLD_COLOR}`, fontFamily: "'Montserrat', sans-serif", fontWeight: '600', padding: '8px 16px', borderRadius: '20px', fontSize: '10px', cursor: 'pointer', letterSpacing: '1px' }}>
+      <button 
+        onClick={() => setShowOptions(true)} 
+        style={{ 
+          backgroundColor: 'transparent', 
+          color: GOLD_COLOR, 
+          border: `1px solid ${GOLD_COLOR}`, 
+          fontFamily: "'Montserrat', sans-serif", 
+          fontWeight: '600', 
+          padding: '8px 16px', 
+          borderRadius: '20px', 
+          fontSize: '10px', 
+          cursor: 'pointer', 
+          letterSpacing: '1px' 
+        }}>
         ADD GIFT PACKAGING
       </button>
 
       {showOptions && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.9)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ backgroundColor: BG_COLOR, border: `1px solid ${GOLD_COLOR}`, borderRadius: '12px', width: '100%', maxWidth: '280px', padding: '16px' }}>
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          backgroundColor: 'rgba(0,0,0,0.9)', 
+          zIndex: 9999, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '16px' 
+        }}>
+          <div style={{ 
+            backgroundColor: BG_COLOR, 
+            border: `1px solid ${GOLD_COLOR}`, 
+            borderRadius: '12px', 
+            width: '100%', 
+            maxWidth: '280px', 
+            padding: '16px' 
+          }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h3 style={{ color: GOLD_COLOR, fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', margin: 0, letterSpacing: '1px' }}>SELECT PACKAGING</h3>
-              <button onClick={() => setShowOptions(false)} style={{ background: 'none', border: 'none', color: '#E0E0E0', fontSize: '14px', cursor: 'pointer' }}>✕</button>
+              <h3 style={{ color: GOLD_COLOR, fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', margin: 0, letterSpacing: '1px' }}>
+                SELECT PACKAGING
+              </h3>
+              <button 
+                onClick={() => setShowOptions(false)} 
+                style={{ background: 'none', border: 'none', color: '#E0E0E0', fontSize: '14px', cursor: 'pointer' }}>
+                ✕
+              </button>
             </div>
+            
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               {options.map(opt => (
                 <button 
                   key={opt.id}
-                  onClick={() => { onAddGiftPacking(opt); setShowOptions(false); }}
-                  style={{ backgroundColor: DARK_CARD, border: '1px solid #1A2E2E', color: '#E0E0E0', padding: '10px', borderRadius: '8px', cursor: 'pointer', fontFamily: "'Montserrat', sans-serif", display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                  onClick={() => { 
+                    onAddGiftPacking(opt); 
+                    setShowOptions(false); 
+                  }}
+                  style={{ 
+                    backgroundColor: DARK_CARD, 
+                    border: '1px solid #1A2E2E', 
+                    color: '#E0E0E0', 
+                    padding: '10px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontFamily: "'Montserrat', sans-serif", 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center' 
+                  }}
                 >
-                  <span style={{ fontSize: '9px', fontWeight: '500', marginBottom: '4px', textAlign: 'center' }}>{opt.name}</span>
-                  <span style={{ fontSize: '12px', fontWeight: '700', color: GOLD_COLOR }}>₹{opt.price}</span>
+                  <span style={{ fontSize: '9px', fontWeight: '500', marginBottom: '4px', textAlign: 'center' }}>
+                    {opt.name}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: GOLD_COLOR }}>
+                    ₹{opt.price}
+                  </span>
                 </button>
               ))}
             </div>
@@ -127,38 +215,110 @@ function DropOffers({ products, onBack, onAddToCart, navigateTo }) {
   }).sort((a, b) => a.currentOffer.priority - b.currentOffer.priority);
 
   return (
-    <div style={{ backgroundColor: BG_COLOR, minHeight: '100vh', color: '#E0E0E0', paddingBottom: '80px', fontFamily: "'Montserrat', sans-serif" }}>
-       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '50px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: BG_COLOR, borderBottom: '1px solid #1A2E2E' }}>
-        <button onClick={onBack} style={{ background: 'transparent', color: GOLD_COLOR, border: 'none', fontSize: '10px', fontWeight: '600', cursor: 'pointer' }}>← BACK</button>
-        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', color: GOLD_COLOR, margin: 0, letterSpacing: '2px' }}>THE 1760 DROP</h1>
+    <div style={{ 
+      backgroundColor: BG_COLOR, 
+      minHeight: '100vh', 
+      color: '#E0E0E0', 
+      paddingBottom: '80px', 
+      fontFamily: "'Montserrat', sans-serif" 
+    }}>
+       <div style={{ 
+         display: 'flex', 
+         justifyContent: 'space-between', 
+         alignItems: 'center', 
+         height: '50px', 
+         padding: '0 16px', 
+         position: 'sticky', 
+         top: 0, 
+         zIndex: 100, 
+         backgroundColor: BG_COLOR, 
+         borderBottom: '1px solid #1A2E2E' 
+       }}>
+        <button 
+          onClick={onBack} 
+          style={{ background: 'transparent', color: GOLD_COLOR, border: 'none', fontSize: '10px', fontWeight: '600', cursor: 'pointer' }}>
+          ← BACK
+        </button>
+        <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', color: GOLD_COLOR, margin: 0, letterSpacing: '2px' }}>
+          THE 1760 DROP
+        </h1>
         <div style={{ width: '40px' }}></div>
       </div>
+      
       <div style={{ padding: '16px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', fontWeight: '900', margin: '0 0 6px 0', color: '#FFF' }}>EXCLUSIVE OFFERS</h2>
-        <p style={{ fontSize: '10px', color: '#A0B8B9', margin: 0 }}>Grab them before they disappear</p>
+        <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '16px', fontWeight: '900', margin: '0 0 6px 0', color: '#FFF' }}>
+          EXCLUSIVE OFFERS
+        </h2>
+        <p style={{ fontSize: '9px', color: '#A0B8B9', margin: 0 }}>Grab them before they disappear</p>
       </div>
+
       <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '600px', margin: '0 auto' }}>
         {dropProducts.map((prod, idx) => (
-          <div key={idx} style={{ backgroundColor: DARK_CARD, borderRadius: '8px', overflow: 'hidden', border: `1px solid ${GOLD_COLOR}`, display: 'flex', position: 'relative' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, backgroundColor: prod.currentOffer.color, color: BG_COLOR, fontSize: '8px', fontWeight: '800', padding: '4px 10px', borderBottomRightRadius: '6px', zIndex: 5, letterSpacing: '1px' }}>
+          <div key={idx} style={{ 
+            backgroundColor: DARK_CARD, 
+            borderRadius: '8px', 
+            overflow: 'hidden', 
+            border: `1px solid ${GOLD_COLOR}`, 
+            display: 'flex', 
+            position: 'relative' 
+          }}>
+            <div style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              backgroundColor: prod.currentOffer.color, 
+              color: BG_COLOR, 
+              fontSize: '8px', 
+              fontWeight: '800', 
+              padding: '3px 8px', 
+              borderBottomRightRadius: '6px', 
+              zIndex: 5, 
+              letterSpacing: '1px' 
+            }}>
               PRIORITY #{prod.currentOffer.priority}
             </div>
-            <div style={{ width: '100px', position: 'relative' }}>
+            
+            <div style={{ width: '90px', position: 'relative' }}>
               <img src={prod.image || '/dress1.png'} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <div style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ fontSize: '10px', color: '#A0B8B9', marginBottom: '4px', fontWeight: '500' }}>{prod.name}</div>
-              <div style={{ fontSize: '16px', fontWeight: '800', color: prod.currentOffer.color, marginBottom: '4px', lineHeight: '1.1' }}>{prod.currentOffer.text}</div>
-              <div style={{ fontSize: '9px', color: '#E0E0E0', marginBottom: '10px', lineHeight: '1.3' }}>{prod.currentOffer.desc}</div>
+            
+            <div style={{ flex: 1, padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#A0B8B9', marginBottom: '4px', fontWeight: '500' }}>
+                {prod.name}
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: '800', color: prod.currentOffer.color, marginBottom: '4px', lineHeight: '1.1' }}>
+                {prod.currentOffer.text}
+              </div>
+              <div style={{ fontSize: '8px', color: '#E0E0E0', marginBottom: '10px', lineHeight: '1.3' }}>
+                {prod.currentOffer.desc}
+              </div>
+              
               <button 
                 onClick={() => {
                   if (prod.currentOffer.priority === 1) setShowPopup(true);
                   else {
-                    onAddToCart({...prod, price: prod.currentOffer.priority === 4 ? Math.max(0, prod.price - 100) : prod.currentOffer.priority === 3 ? Math.round(prod.price * 0.6) : prod.price});
+                    onAddToCart({
+                      ...prod, 
+                      price: prod.currentOffer.priority === 4 
+                        ? Math.max(0, prod.price - 100) 
+                        : prod.currentOffer.priority === 3 
+                        ? Math.round(prod.price * 0.6) 
+                        : prod.price
+                    });
                     alert(`${prod.currentOffer.text} Claimed successfully!`);
                   }
                 }}
-                style={{ backgroundColor: 'transparent', color: GOLD_COLOR, border: `1px solid ${GOLD_COLOR}`, padding: '6px 12px', borderRadius: '4px', fontSize: '9px', fontWeight: '700', cursor: 'pointer', width: 'fit-content' }}
+                style={{ 
+                  backgroundColor: 'transparent', 
+                  color: GOLD_COLOR, 
+                  border: `1px solid ${GOLD_COLOR}`, 
+                  padding: '6px 10px', 
+                  borderRadius: '4px', 
+                  fontSize: '8px', 
+                  fontWeight: '700', 
+                  cursor: 'pointer', 
+                  width: 'fit-content' 
+                }}
               >
                 {prod.currentOffer.priority === 1 ? 'VIEW CONDITION →' : 'CLAIM OFFER →'}
               </button>
@@ -168,19 +328,57 @@ function DropOffers({ products, onBack, onAddToCart, navigateTo }) {
       </div>
 
       {showPopup && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.9)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ backgroundColor: BG_COLOR, border: `1px solid ${GOLD_COLOR}`, borderRadius: '12px', padding: '24px 16px', width: '100%', maxWidth: '300px', textAlign: 'center', position: 'relative' }}>
-            <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎁</div>
-            <h3 style={{ fontSize: '18px', color: '#FFF', fontWeight: '800', margin: '0 0 10px 0' }}>TAKE FOR ₹9</h3>
-            <div style={{ backgroundColor: DARK_CARD, padding: '12px', borderRadius: '6px', marginBottom: '16px', border: '1px solid #1A2E2E' }}>
-              <p style={{ fontSize: '11px', color: '#E0E0E0', lineHeight: '1.5', margin: 0 }}>
-                Shop for <strong style={{color: GOLD_COLOR, fontSize: '13px'}}>₹399</strong> to get anything 1 free 
-                <br/><br/><span style={{ fontSize: '9px', color: '#A0B8B9' }}>(Then you can claim this item for just ₹9)</span>
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          backgroundColor: 'rgba(0,0,0,0.9)', 
+          zIndex: 1000, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          padding: '20px' 
+        }}>
+          <div style={{ 
+            backgroundColor: BG_COLOR, 
+            border: `1px solid ${GOLD_COLOR}`, 
+            borderRadius: '12px', 
+            padding: '20px 16px', 
+            width: '100%', 
+            maxWidth: '280px', 
+            textAlign: 'center', 
+            position: 'relative' 
+          }}>
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>🎁</div>
+            <h3 style={{ fontSize: '16px', color: '#FFF', fontWeight: '800', margin: '0 0 10px 0' }}>TAKE FOR ₹9</h3>
+            
+            <div style={{ 
+              backgroundColor: DARK_CARD, 
+              padding: '10px', 
+              borderRadius: '6px', 
+              marginBottom: '16px', 
+              border: '1px solid #1A2E2E' 
+            }}>
+              <p style={{ fontSize: '10px', color: '#E0E0E0', lineHeight: '1.5', margin: 0 }}>
+                Shop for <strong style={{color: GOLD_COLOR, fontSize: '11px'}}>₹399</strong> to get anything 1 free 
+                <br/><br/>
+                <span style={{ fontSize: '8px', color: '#A0B8B9' }}>(Then you can claim this item for just ₹9)</span>
               </p>
             </div>
+            
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button onClick={() => setShowPopup(false)} style={{ flex: 1, padding: '10px', border: '1px solid #A0B8B9', background: 'transparent', color: '#E0E0E0', borderRadius: '4px', fontWeight: '600', cursor: 'pointer', fontSize: '10px' }}>Cancel</button>
-              <button onClick={() => { setShowPopup(false); navigateTo('shop'); }} style={{ flex: 1, padding: '10px', background: GOLD_COLOR, color: BG_COLOR, border: 'none', borderRadius: '4px', fontWeight: '700', cursor: 'pointer', fontSize: '10px' }}>Shop ₹399 Now</button>
+              <button 
+                onClick={() => setShowPopup(false)} 
+                style={{ flex: 1, padding: '8px', border: '1px solid #A0B8B9', background: 'transparent', color: '#E0E0E0', borderRadius: '4px', fontWeight: '600', cursor: 'pointer', fontSize: '9px' }}>
+                Cancel
+              </button>
+              <button 
+                onClick={() => { 
+                  setShowPopup(false); 
+                  navigateTo('shop'); 
+                }} 
+                style={{ flex: 1, padding: '8px', background: GOLD_COLOR, color: BG_COLOR, border: 'none', borderRadius: '4px', fontWeight: '700', cursor: 'pointer', fontSize: '9px' }}>
+                Shop ₹399 Now
+              </button>
             </div>
           </div>
         </div>
@@ -190,17 +388,19 @@ function DropOffers({ products, onBack, onAddToCart, navigateTo }) {
 }
 
 // ==========================================
-// 🚀 HOME COMPONENT
+// 🚀 MAIN HOME COMPONENT
 // ==========================================
 function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddToCart, handleToggleWishlist, onMenuClick, setActiveCoupon, isMobile }) {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
   const [heroImgIndex, setHeroImgIndex] = useState(0);
-  const heroImages = ['/noir-bg.jpg', '/dress2.png', '/dress1.png', '/dress3.png', '/dress4.png'];
+  const heroImages = ['/noir-bg.jpg', '/dress2.png', '/dress1.png', '/dress3.png'];
 
   useEffect(() => {
-    const interval = setInterval(() => setHeroImgIndex(prev => (prev + 1) % heroImages.length), 4000); 
+    const interval = setInterval(() => {
+      setHeroImgIndex(prev => (prev + 1) % heroImages.length);
+    }, 4000); 
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
@@ -214,27 +414,46 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
     setHeroImgIndex(prev => (prev - 1 + heroImages.length) % heroImages.length);
   };
 
-  const displayProducts = dbProducts && dbProducts.length > 0 ? dbProducts.slice(0, 10) : MASTER_PRODUCTS.slice(0, 5);
+  const displayProducts = dbProducts && dbProducts.length > 0 ? dbProducts.slice(0, 10) : MASTER_PRODUCTS.slice(0, 6);
   const dropProducts = displayProducts.slice(0, 4); 
+  
   const [swipeIndex, setSwipeIndex] = useState(0);
   const bestSellersCount = displayProducts.length || 1;
 
+  // 🚀 CRASH-PROOF MOBILE TOUCH HANDLERS
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   
-  const handleTouchStart = (e) => setTouchStart(e.targetTouches[0].clientX);
-  const handleTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      setTouchStart(e.touches[0].clientX);
+    }
+  };
+  
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches.length > 0) {
+      setTouchEnd(e.touches[0].clientX);
+    }
+  };
+  
   const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    if (touchStart === null || touchEnd === null) return;
     const distance = touchStart - touchEnd;
-    if (distance > 50) setSwipeIndex(prev => (prev + 1) % bestSellersCount);
-    if (distance < -50) setSwipeIndex(prev => (prev - 1 + bestSellersCount) % bestSellersCount);
-    setTouchStart(null); setTouchEnd(null);
+    if (distance > 50) {
+      setSwipeIndex(prev => (prev + 1) % bestSellersCount);
+    }
+    if (distance < -50) {
+      setSwipeIndex(prev => (prev - 1 + bestSellersCount) % bestSellersCount);
+    }
+    setTouchStart(null); 
+    setTouchEnd(null);
   };
 
-  const handleSwipe = () => setSwipeIndex(prev => (prev + 1) % bestSellersCount);
+  const handleSwipe = () => {
+    setSwipeIndex(prev => (prev + 1) % bestSellersCount);
+  };
 
-  // SPINNER LOGIC
+  // 🚀 SPINNER LOGIC
   const spinnerSegments = [
     { label: 'FLAT ₹200 OFF', value: 200, type: 'discount' },
     { label: 'MYSTERY GIFT', value: 'gift', type: 'gift' },
@@ -252,6 +471,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
   const spinWheel = () => {
     if (isSpinning) return;
     setIsSpinning(true);
+    
     const targetSlice = Math.floor(Math.random() * 6); 
     const spins = 5 * 360; 
     const extraDegrees = 360 - (targetSlice * 60) - 30; 
@@ -278,7 +498,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
   };
 
   return (
-    <div style={{ backgroundColor: BG_COLOR, color: TEXT_LIGHT, paddingBottom: '70px', fontFamily: "'Montserrat', sans-serif", overflowX: 'hidden' }}>
+    <div style={{ backgroundColor: BG_COLOR, color: TEXT_LIGHT, paddingBottom: isMobile ? '80px' : '20px', fontFamily: "'Montserrat', sans-serif", overflowX: 'hidden' }}>
       
       <style>{`
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -286,38 +506,84 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
-      {/* SECTION 1: HEADER (As per design: HOME pill | Logo | Search icon) */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '60px', padding: '0 16px', position: 'sticky', top: 0, zIndex: 100, backgroundColor: BG_COLOR }}>
-        <button onClick={onMenuClick} style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, borderRadius: '6px', padding: '4px 12px', color: TEXT_LIGHT, fontFamily: "'Bebas Neue', sans-serif", fontSize: '12px', cursor: 'pointer', letterSpacing: '1px' }}>HOME</button>
+      {/* HEADER SECTION */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        height: '60px', 
+        padding: '0 16px', 
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 100, 
+        backgroundColor: BG_COLOR,
+        borderBottom: `1px solid ${GOLD_60}`
+      }}>
+        <button 
+          onClick={onMenuClick} 
+          style={{ background: 'transparent', border: `1px solid ${GOLD_60}`, borderRadius: '6px', padding: '4px 12px', color: TEXT_LIGHT, fontFamily: "'Bebas Neue', sans-serif", fontSize: '12px', cursor: 'pointer', letterSpacing: '1px' }}>
+          HOME
+        </button>
         
-        <img src="/logo.png" alt="1760 SATRASHE60" style={{ height: '36px', objectFit: 'contain', cursor: 'pointer' }} onClick={() => navigateTo('home')} />
+        <img 
+          src="/logo.png" 
+          alt="1760 SATRASHE60" 
+          style={{ height: '36px', objectFit: 'contain', cursor: 'pointer' }} 
+          onClick={() => navigateTo('home')} 
+        />
         
-        <button onClick={() => { setShowSearchInput(!showSearchInput); window.scrollTo({top: 0, behavior: 'smooth'}); }} style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, borderRadius: '6px', padding: '4px 10px', color: TEXT_LIGHT, fontFamily: "'Bebas Neue', sans-serif", fontSize: '14px', cursor: 'pointer' }}>🔍</button>
+        <button 
+          onClick={() => { setShowSearchInput(!showSearchInput); window.scrollTo({top: 0, behavior: 'smooth'}); }} 
+          style={{ background: 'transparent', border: `1px solid ${GOLD_60}`, borderRadius: '6px', padding: '4px 10px', color: TEXT_LIGHT, fontFamily: "'Bebas Neue', sans-serif", fontSize: '14px', cursor: 'pointer' }}>
+          🔍
+        </button>
       </div>
 
       {showSearchInput && (
         <div style={{ padding: '16px', backgroundColor: DARK_CARD, display: 'flex', gap: '10px', borderBottom: '1px solid #1A2E2E' }}>
-          <input type="text" placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} autoFocus style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #4B6B6C', background: BG_COLOR, color: '#FFF' }} />
-          <button onClick={() => { navigateTo('shop', 'ALL'); setShowSearchInput(false); }} style={{ background: GOLD_COLOR, color: '#000', border: 'none', padding: '0 16px', borderRadius: '4px', fontWeight: 'bold' }}>Go</button>
-          <button onClick={() => { setShowSearchInput(false); setSearchQuery(''); }} style={{ background: 'none', color: '#FFF', border: 'none' }}>✕</button>
+          <input 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} 
+            autoFocus 
+            style={{ flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #4B6B6C', background: BG_COLOR, color: '#FFF' }} 
+          />
+          <button 
+            onClick={() => { navigateTo('shop', 'ALL'); setShowSearchInput(false); }} 
+            style={{ background: GOLD_COLOR, color: '#000', border: 'none', padding: '0 16px', borderRadius: '4px', fontWeight: 'bold' }}>
+            Go
+          </button>
+          <button 
+            onClick={() => { setShowSearchInput(false); setSearchQuery(''); }} 
+            style={{ background: 'none', color: '#FFF', border: 'none' }}>
+            ✕
+          </button>
         </div>
       )}
 
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         
-        {/* SECTION 2: HERO IMAGE SLIDER (With Arrows & Dots) */}
+        {/* HERO IMAGE SLIDER */}
         <div style={{ width: '100%', position: 'relative', backgroundColor: BG_COLOR, display: 'flex', alignItems: 'center', height: isMobile ? '400px' : '500px', overflow: 'hidden' }}>
           
           <img src={heroImages[heroImgIndex]} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: 0.6 }} />
+          
           <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, transparent 40%, ${BG_COLOR} 100%)` }}></div>
 
           <button onClick={handlePrevHero} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#FFF', fontSize: '32px', cursor: 'pointer', zIndex: 20 }}>‹</button>
           <button onClick={handleNextHero} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#FFF', fontSize: '32px', cursor: 'pointer', zIndex: 20 }}>›</button>
 
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '16px', zIndex: 10 }}>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '48px' : '64px', fontWeight: '400', color: '#FFF', margin: '0', letterSpacing: '2px', lineHeight: '1' }}>NOIR</h2>
-            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '32px' : '42px', fontWeight: '400', fontStyle: 'italic', color: '#FFF', margin: '0 0 20px 0', letterSpacing: '1px', lineHeight: '1' }}>Atelier</h3>
-            <button onClick={() => navigateTo('shop')} style={{ backgroundColor: GOLD_COLOR, border: 'none', color: BG_COLOR, padding: '10px 30px', fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', borderRadius: '30px', cursor: 'pointer', letterSpacing: '2px' }}>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '48px' : '64px', fontWeight: '400', color: '#FFF', margin: '0', letterSpacing: '2px', lineHeight: '1' }}>
+              NOIR
+            </h2>
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? '32px' : '42px', fontWeight: '400', fontStyle: 'italic', color: '#FFF', margin: '0 0 20px 0', letterSpacing: '1px', lineHeight: '1' }}>
+              Atelier
+            </h3>
+            <button 
+              onClick={() => navigateTo('shop')} 
+              style={{ backgroundColor: GOLD_COLOR, border: 'none', color: BG_COLOR, padding: '10px 30px', fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', borderRadius: '30px', cursor: 'pointer', letterSpacing: '2px' }}>
               SHOP NOW
             </button>
           </div>
@@ -329,19 +595,22 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
           </div>
         </div>
 
-        {/* SECTION 3: SHOP BY SIZE */}
+        {/* SHOP BY SIZE */}
         <div style={{ margin: '30px 16px' }}>
           <SectionHeading title="SHOP BY SIZE" />
-          <div style={{ display: 'flex', flexWrap: isMobile ? 'nowrap' : 'wrap', gap: '12px', justifyContent: 'center', overflowX: 'auto', paddingBottom: '5px' }} className="hide-scroll">
-            {["XS", "S", "M", "L", "XL", "XXL"].map(sz => (
-              <button key={sz} onClick={() => navigateTo('size-filter', sz)} style={{ flexShrink: 0, width: isMobile ? '40px' : '50px', height: isMobile ? '40px' : '50px', background: 'transparent', border: `1px solid ${GOLD_COLOR}`, borderRadius: '50%', color: TEXT_LIGHT, fontFamily: "'Montserrat', sans-serif", fontSize: '11px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: isMobile ? 'nowrap' : 'wrap', gap: '16px', justifyContent: 'center', overflowX: 'auto', paddingBottom: '10px' }} className="hide-scroll">
+            {["XS", "S", "M", "L", "XL", "XXL"].map((sz, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => navigateTo('size-filter', sz.split('/')[0])} 
+                style={{ flexShrink: 0, width: isMobile ? '40px' : '50px', height: isMobile ? '40px' : '50px', background: 'transparent', border: `1px solid ${GOLD_COLOR}`, borderRadius: '50%', color: TEXT_LIGHT, fontFamily: "'Montserrat', sans-serif", fontSize: '10px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {sz}
               </button>
             ))}
           </div>
         </div>
 
-        {/* SECTION 4: SHOP BY CATEGORY */}
+        {/* SHOP BY CATEGORY */}
         <div style={{ margin: '40px 0', padding: '10px 0' }}>
           <SectionHeading title="SHOP BY CATEGORY" />
           <div style={{ display: 'flex', flexWrap: isMobile ? 'nowrap' : 'wrap', gap: isMobile ? '16px' : '24px', overflowX: 'auto', padding: '0 16px 10px 16px', justifyContent: 'center' }} className="hide-scroll">
@@ -352,20 +621,27 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
               { n: 'T-SHIRTS', i: '/dress2.png' },
               { n: 'ALL', i: '/dress1.png' }
             ].map((cat, idx) => (
-              <div key={idx} onClick={() => navigateTo('shop', cat.n)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '45px', cursor: 'pointer' }}>
+              <div 
+                key={idx} 
+                onClick={() => navigateTo('shop', cat.n)} 
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '45px', cursor: 'pointer' }}>
                 <div style={{ width: isMobile ? '48px' : '64px', height: isMobile ? '48px' : '64px', borderRadius: '50%', border: '2px solid #FFF', padding: '2px', marginBottom: '8px', backgroundColor: BG_COLOR }}>
                   <img src={cat.i} alt={cat.n} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', objectPosition: 'top' }} />
                 </div>
-                <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? '8px' : '10px', color: TEXT_LIGHT, fontWeight: '600', textAlign: 'center', letterSpacing: '1px' }}>{cat.n}</span>
+                <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: isMobile ? '8px' : '10px', color: TEXT_LIGHT, fontWeight: '600', textAlign: 'center', letterSpacing: '1px' }}>
+                  {cat.n}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* SECTION 5: SPIN & WIN */}
+        {/* SPIN & WIN */}
         <div style={{ margin: '50px 0', padding: '16px', textAlign: 'center' }}>
           <SectionHeading title="SPIN & WIN" />
-          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '10px', color: '#A0B8B9', margin: '-12px 0 24px 0', letterSpacing: '0.5px' }}>Try your luck & unlock a special offer</p>
+          <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '10px', color: '#A0B8B9', margin: '-12px 0 24px 0', letterSpacing: '0.5px' }}>
+            Try your luck & unlock a special offer
+          </p>
 
           <div style={{ position: 'relative', width: isMobile ? '260px' : '320px', height: isMobile ? '260px' : '320px', margin: '0 auto', background: BG_COLOR, borderRadius: '50%', padding: '8px', border: `2px solid ${GOLD_COLOR}`, boxShadow: `0 0 20px rgba(217,184,79,0.1)` }}>
             <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', width: '0', height: '0', borderLeft: '12px solid transparent', borderRight: '12px solid transparent', borderTop: `18px solid ${GOLD_COLOR}`, zIndex: 10 }}></div>
@@ -395,7 +671,10 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
               })}
             </div>
 
-            <button onClick={spinWheel} disabled={isSpinning} style={{ 
+            <button 
+              onClick={spinWheel} 
+              disabled={isSpinning} 
+              style={{ 
                 position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', 
                 width: isMobile ? '60px' : '75px', height: isMobile ? '60px' : '75px', borderRadius: '50%', 
                 backgroundColor: GOLD_COLOR, color: BG_COLOR, 
@@ -417,7 +696,12 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
               <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', fontWeight: '700', color: TEXT_LIGHT, marginBottom: '16px' }}>
                 {wonPrize.label}
               </div>
-              <button onClick={claimOffer} style={{ backgroundColor: 'transparent', color: GOLD_COLOR, border: `1px solid ${GOLD_COLOR}`, padding: '10px 20px', fontFamily: "'Montserrat', sans-serif", fontSize: '10px', fontWeight: '700', borderRadius: '20px', cursor: 'pointer', width: '100%' }}>
+              {wonPrize.type !== 'retry' && (
+                <p style={{ fontSize: '10px', color: '#A0B8B9', marginBottom: '20px' }}>Your offer is added. Claim & Shop Now!</p>
+              )}
+              <button 
+                onClick={claimOffer} 
+                style={{ backgroundColor: 'transparent', color: GOLD_COLOR, border: `1px solid ${GOLD_COLOR}`, padding: '10px 20px', fontFamily: "'Montserrat', sans-serif", fontSize: '10px', fontWeight: '700', borderRadius: '20px', cursor: 'pointer', width: '100%' }}>
                 {wonPrize.type === 'retry' ? 'TRY AGAIN' : 'CLAIM NOW →'}
               </button>
             </div>
@@ -427,14 +711,24 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
         {/* SECTION 6: THE 1760 DROP */}
         <div style={{ margin: '50px 0', padding: '16px 0' }}>
           <SectionHeading title="THE 1760 DROP" />
+          
           <div style={{ display: 'flex', flexWrap: isMobile ? 'nowrap' : 'wrap', gap: '16px', overflowX: 'auto', padding: '0 16px', scrollbarWidth: 'none', justifyContent: 'center' }} className="hide-scroll">
             {dropProducts.slice(0, 2).map((drop, idx) => (
-               <div key={idx} onClick={() => navigateTo('drop-offers')} style={{ minWidth: isMobile ? '160px' : '200px', backgroundColor: DARK_CARD, border: `1px solid ${GOLD_COLOR}`, borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}>
-                 <div style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: GOLD_COLOR, color: DARK_CARD, fontFamily: "'Bebas Neue', sans-serif", fontSize: '10px', padding: '2px 8px', borderRadius: '4px', zIndex: 5 }}>NEW</div>
+               <div 
+                 key={idx} 
+                 onClick={() => navigateTo('drop-offers')} 
+                 style={{ minWidth: isMobile ? '160px' : '200px', backgroundColor: DARK_CARD, border: `1px solid ${GOLD_COLOR}`, borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}>
+                 <div style={{ position: 'absolute', top: '8px', left: '8px', backgroundColor: GOLD_COLOR, color: DARK_CARD, fontFamily: "'Bebas Neue', sans-serif", fontSize: '10px', padding: '2px 8px', borderRadius: '4px', zIndex: 5 }}>
+                   NEW
+                 </div>
                  <img src={drop.image || '/dress1.png'} alt={drop.name} style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
                  <div style={{ padding: '12px', textAlign: 'center' }}>
-                   <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '12px', color: TEXT_LIGHT, fontWeight: '700', marginBottom: '4px' }}>{drop.name}</div>
-                   <div style={{ fontSize: '14px', color: GOLD_COLOR, fontWeight: '800' }}>₹{drop.price}</div>
+                   <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '12px', color: TEXT_LIGHT, fontWeight: '700', marginBottom: '4px' }}>
+                     {drop.name}
+                   </div>
+                   <div style={{ fontSize: '14px', color: GOLD_COLOR, fontWeight: '800' }}>
+                     ₹{drop.price}
+                   </div>
                  </div>
                </div>
             ))}
@@ -445,17 +739,25 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             <div style={{ width: '4px', height: '4px', backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '50%' }}></div>
             <div style={{ width: '4px', height: '4px', backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: '50%' }}></div>
           </div>
+          
+          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+             <button 
+               onClick={() => navigateTo('drop-offers')} 
+               style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, color: GOLD_COLOR, padding: '8px 24px', borderRadius: '24px', fontSize: '11px', fontFamily: "'Montserrat', sans-serif", cursor: 'pointer', textTransform: 'uppercase', fontWeight: '600' }}>
+               VIEW ALL
+             </button>
+          </div>
         </div>
 
         {/* SECTION 7: BEST SELLER */}
-        <div style={{ margin: '60px 0', overflow: 'hidden' }}>
+        <div style={{ margin: '60px 0', overflow: 'hidden', paddingBottom: '30px' }}>
           <SectionHeading title="BEST SELLER" />
           
           <div 
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            style={{ position: 'relative', height: isMobile ? '380px' : '460px', display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '1000px' }}
+            style={{ position: 'relative', height: isMobile ? '420px' : '520px', display: 'flex', justifyContent: 'center', alignItems: 'center', perspective: '1000px' }}
           >
             {displayProducts.map((prod, idx) => {
               const isTop = idx === swipeIndex;
@@ -471,10 +773,10 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
                 transform = 'rotate(-2deg) scale(1) translateY(0)';
                 zIndex = 30;
               } else if (isSecond) {
-                transform = `rotate(8deg) scale(0.9) translateX(${isMobile ? '35px' : '50px'}) translateY(20px)`;
+                transform = `rotate(8deg) scale(0.9) translateX(${isMobile ? '35px' : '70px'}) translateY(20px)`;
                 zIndex = 20;
               } else if (isThird) {
-                transform = `rotate(-8deg) scale(0.85) translateX(-${isMobile ? '35px' : '50px'}) translateY(40px)`;
+                transform = `rotate(-8deg) scale(0.85) translateX(-${isMobile ? '35px' : '70px'}) translateY(40px)`;
                 zIndex = 10;
               }
 
@@ -483,23 +785,35 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
                   key={prod.id || idx} 
                   onClick={() => { if(isTop) handleSwipe(); else handleOpenProduct(prod, 'home'); }}
                   style={{
-                    position: 'absolute', width: isMobile ? '220px' : '280px', backgroundColor: DARK_CARD, border: `1px solid ${GOLD_COLOR}`, borderRadius: '12px', padding: '0', overflow: 'hidden',
+                    position: 'absolute', width: isMobile ? '240px' : '320px', backgroundColor: DARK_CARD, borderRadius: '8px', padding: '0', overflow: 'hidden',
                     transition: 'all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)', transform, zIndex, cursor: isTop ? 'grab' : 'pointer',
-                    boxShadow: isTop ? '0 10px 25px rgba(0,0,0,0.6)' : 'none'
+                    boxShadow: isTop ? '0 15px 35px rgba(0,0,0,0.6)' : 'none'
                   }}
                 >
-                  <div style={{ position: 'relative', height: isMobile ? '280px' : '360px' }}>
-                    <span style={{ position: 'absolute', top: '10px', left: '10px', background: GOLD_COLOR, color: DARK_CARD, fontFamily: "'Bebas Neue', sans-serif", fontSize: '12px', padding: '4px 10px', borderRadius: '4px', zIndex: 2 }}>NEW</span>
-                    <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 2 }}>
-                      <button onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }} style={{ background: 'transparent', border: '1px solid #E0E0E0', color: '#E0E0E0', fontSize: '14px', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>♡</button>
+                  <div style={{ position: 'relative', height: isMobile ? '320px' : '420px' }}>
+                    <span style={{ position: 'absolute', top: '12px', left: '12px', background: GOLD_COLOR, color: DARK_CARD, fontFamily: "'Bebas Neue', sans-serif", fontSize: '14px', padding: '4px 12px', borderRadius: '4px', zIndex: 2 }}>
+                      NEW
+                    </span>
+                    <div style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 2 }}>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleToggleWishlist(prod.id); }} 
+                        style={{ background: 'transparent', border: '1px solid #E0E0E0', color: '#E0E0E0', fontSize: '14px', width: '32px', height: '32px', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        ♡
+                      </button>
                     </div>
-                    <img src={prod.image || (prod.images && prod.images[0]) || '/dress1.png'} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
+                    <img src={prod.image || '/dress1.png'} alt={prod.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
                   </div>
                   {isTop && (
-                    <div style={{ padding: '12px', textAlign: 'center', backgroundColor: DARK_CARD }}>
-                      <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '12px', fontWeight: '700', color: TEXT_LIGHT, marginBottom: '4px' }}>{prod.name}</div>
-                      <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', fontWeight: '900', color: TEXT_LIGHT }}>₹{prod.price} <span style={{fontSize:'10px', color:'#888', textDecoration:'line-through', fontWeight:'400'}}>₹{Math.round(prod.price * 1.5)}</span></div>
-                      <div style={{ fontSize: '9px', color: GOLD_COLOR, marginTop: '4px' }}>★★★★★ (124)</div>
+                    <div style={{ padding: '16px', textAlign: 'center', backgroundColor: DARK_CARD }}>
+                      <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '14px', fontWeight: '700', color: TEXT_LIGHT, marginBottom: '6px' }}>
+                        {prod.name}
+                      </div>
+                      <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: '900', color: TEXT_LIGHT }}>
+                        ₹{prod.price} <span style={{fontSize:'12px', color:'#888', textDecoration:'line-through', fontWeight:'400'}}>₹{Math.round(prod.price * 1.5)}</span>
+                      </div>
+                      <div style={{ fontSize: '10px', color: GOLD_COLOR, marginTop: '6px' }}>
+                        ★★★★★ (124)
+                      </div>
                     </div>
                   )}
                 </div>
@@ -507,19 +821,39 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             })}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '16px' }}>
-            <button onClick={() => navigateTo('shop')} style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, color: GOLD_COLOR, padding: '6px 20px', borderRadius: '20px', fontSize: '10px', fontFamily: "'Montserrat', sans-serif", cursor: 'pointer', textTransform: 'uppercase', fontWeight: '600' }}>VIEW ALL</button>
+          <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            <button 
+              onClick={() => navigateTo('shop')} 
+              style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, color: GOLD_COLOR, padding: '8px 24px', borderRadius: '24px', fontSize: '11px', fontFamily: "'Montserrat', sans-serif", cursor: 'pointer', textTransform: 'uppercase', fontWeight: '600' }}>
+              VIEW ALL
+            </button>
           </div>
         </div>
 
-        {/* EXTRA: GIFT PACKING SECTION */}
+        {/* 🚀 EXTRA: GIFT PACKING SECTION */}
         <GiftPackagingSection onAddGiftPacking={(giftItem) => {
-          handleAddToCart({ id: `GIFT-${giftItem.id}`, name: `Gift Packaging: ${giftItem.name}`, price: giftItem.price, image: '/logo.png', selectedSize: 'Standard' });
+          handleAddToCart({ 
+            id: `GIFT-${giftItem.id}`, 
+            name: `Gift Packaging: ${giftItem.name}`, 
+            price: giftItem.price, 
+            image: '/logo.png', 
+            selectedSize: 'Standard' 
+          });
           alert(`${giftItem.name} added to cart for ₹${giftItem.price}!`);
         }} />
 
         {/* SECTION 8: TRUST / SERVICE INFORMATION STRIP */}
-        <div style={{ display: 'flex', overflowX: 'auto', justifyContent: isMobile ? 'flex-start' : 'space-around', alignItems: 'center', padding: '16px', margin: '40px 16px', backgroundColor: '#000000', borderRadius: '8px', gap: '20px' }} className="hide-scroll">
+        <div style={{ 
+          display: 'flex', 
+          overflowX: 'auto', 
+          justifyContent: isMobile ? 'flex-start' : 'space-around', 
+          alignItems: 'center', 
+          padding: '16px', 
+          margin: '40px 16px', 
+          backgroundColor: '#000000', 
+          borderRadius: '8px', 
+          gap: '20px' 
+        }} className="hide-scroll">
           {[
             {i:'🚚', t:'FREE SHIPPING', d:'ABOVE ₹549'}, 
             {i:'💳', t:'COD', d:'AVAILABLE'}, 
@@ -529,8 +863,12 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
             <div key={idx} style={{ textAlign: 'center', display: 'flex', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
               <div style={{ fontSize: '24px' }}>{tb.i}</div>
               <div style={{ textAlign: 'left' }}>
-                <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '10px', color: TEXT_LIGHT, fontWeight: '700' }}>{tb.t}</div>
-                <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '8px', color: '#A0B8B9', fontWeight: '500' }}>{tb.d}</div>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '10px', color: TEXT_LIGHT, fontWeight: '700' }}>
+                  {tb.t}
+                </div>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '9px', color: '#A0B8B9', fontWeight: '500' }}>
+                  {tb.d}
+                </div>
               </div>
             </div>
           ))}
@@ -538,50 +876,87 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
 
         {/* SECTION 9: BRAND STORY */}
         <div style={{ textAlign: 'center', padding: '20px', margin: '40px 16px' }}>
-          <div style={{ border: `1px solid ${GOLD_COLOR}`, padding: '32px 20px', borderRadius: '8px', backgroundColor: DARK_CARD, display: 'inline-block', maxWidth: '400px' }}>
-            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '16px', fontWeight: '900', color: TEXT_LIGHT, margin: '0 0 16px 0', letterSpacing: '2px' }}>IT'S A LIFESTYLE</h3>
-            <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '10px', color: '#A0B8B9', margin: '0 0 24px 0', lineHeight: '1.8' }}>
+          <div style={{ 
+            border: `1px solid ${GOLD_COLOR}`, 
+            padding: '32px 20px', 
+            borderRadius: '8px', 
+            backgroundColor: DARK_CARD, 
+            display: 'inline-block', 
+            maxWidth: '400px' 
+          }}>
+            <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', fontWeight: '900', color: TEXT_LIGHT, margin: '0 0 16px 0', letterSpacing: '2px' }}>
+              IT'S A LIFESTYLE
+            </h3>
+            <p style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '11px', color: '#A0B8B9', margin: '0 0 24px 0', lineHeight: '1.8' }}>
               AT SATRASHE60, WE BRING YOU THE PERFECT BLEND OF STREET STYLE, COMFORT AND CONFIDENCE. YOUR STYLE, ONE STEP CLOSER.
             </p>
-            <button onClick={() => navigateTo('about')} style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, color: GOLD_COLOR, padding: '8px 20px', borderRadius: '4px', fontSize: '10px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700', cursor: 'pointer', letterSpacing: '1px' }}>KNOW OUR STORY</button>
+            <button 
+              onClick={() => navigateTo('about')} 
+              style={{ background: 'transparent', border: `1px solid ${GOLD_COLOR}`, color: GOLD_COLOR, padding: '10px 24px', borderRadius: '4px', fontSize: '11px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700', cursor: 'pointer', letterSpacing: '1px' }}>
+              KNOW OUR STORY
+            </button>
           </div>
         </div>
 
       </div> {/* END OF DESKTOP MAX-WIDTH CONTAINER */}
 
       {/* SECTION 10: FOOTER BRAND LOGO */}
-      <div style={{ textAlign: 'center', padding: '30px 20px 60px 20px', backgroundColor: '#000000' }}>
+      <div style={{ textAlign: 'center', padding: '40px 20px 60px 20px', backgroundColor: '#000000' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <img src="/logo.png" alt="SATRASHE60" style={{ height: '40px', marginBottom: '8px' }} />
-          <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '9px', color: GOLD_COLOR, letterSpacing: '3px', fontWeight: '600' }}>STREET FASHION. ONE CHANCE.</div>
+          <img src="/logo.png" alt="SATRASHE60" style={{ height: '48px', marginBottom: '12px' }} />
+          <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '9px', color: GOLD_COLOR, letterSpacing: '3px', fontWeight: '600' }}>
+            STREET FASHION. ONE CHANCE.
+          </div>
         </div>
       </div>
 
       {/* SECTION 11: MOBILE BOTTOM NAVIGATION */}
       {isMobile && currentPage !== 'product-detail' && (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '60px', backgroundColor: '#000000', borderTop: '1px solid #1A2E2E', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 100 }}>
-          
-          <button onClick={() => navigateTo('home')} style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'home' ? GOLD_COLOR : '#A0B8B9', cursor: 'pointer' }}>
+        <div style={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          height: '60px', 
+          backgroundColor: '#000000', 
+          borderTop: '1px solid #1A2E2E', 
+          display: 'flex', 
+          justifyContent: 'space-around', 
+          alignItems: 'center', 
+          zIndex: 100 
+        }}>
+          <button 
+            onClick={() => navigateTo('home')} 
+            style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'home' ? GOLD_COLOR : '#A0B8B9', cursor: 'pointer' }}>
             <span style={{ fontSize: '20px' }}>🏠</span>
-            <span style={{ fontSize: '8px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>HOME</span>
+            <span style={{ fontSize: '9px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>HOME</span>
           </button>
           
-          <button onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); navigateTo('shop'); }} style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#A0B8B9', cursor: 'pointer' }}>
+          <button 
+            onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); navigateTo('shop'); }} 
+            style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#A0B8B9', cursor: 'pointer' }}>
             <span style={{ fontSize: '20px' }}>🔍</span>
-            <span style={{ fontSize: '8px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>SHOP</span>
+            <span style={{ fontSize: '9px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>SHOP</span>
           </button>
           
-          <button onClick={() => navigateTo('cart')} style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'cart' ? GOLD_COLOR : '#A0B8B9', position: 'relative', cursor: 'pointer' }}>
+          <button 
+            onClick={() => navigateTo('cart')} 
+            style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'cart' ? GOLD_COLOR : '#A0B8B9', position: 'relative', cursor: 'pointer' }}>
             <span style={{ fontSize: '20px' }}>🛒</span>
-            <span style={{ fontSize: '8px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>CART</span>
-            {cartItems.length > 0 && <span style={{ position: 'absolute', top: '-4px', right: '4px', background: GOLD_COLOR, color: '#000', fontSize: '8px', fontWeight: '900', width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{cartItems.length}</span>}
+            <span style={{ fontSize: '9px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>CART</span>
+            {cartItems.length > 0 && (
+              <span style={{ position: 'absolute', top: '-4px', right: '4px', background: GOLD_COLOR, color: '#000', fontSize: '9px', fontWeight: '800', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {cartItems.length}
+              </span>
+            )}
           </button>
           
-          <button onClick={() => navigateTo('account')} style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'account' ? GOLD_COLOR : '#A0B8B9', cursor: 'pointer' }}>
+          <button 
+            onClick={() => navigateTo('account')} 
+            style={{ background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: currentPage === 'account' ? GOLD_COLOR : '#A0B8B9', cursor: 'pointer' }}>
             <span style={{ fontSize: '20px' }}>👤</span>
-            <span style={{ fontSize: '8px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>ACCOUNT</span>
+            <span style={{ fontSize: '9px', fontFamily: "'Montserrat', sans-serif", fontWeight: '700' }}>ACCOUNT</span>
           </button>
-
         </div>
       )}
     </div>
@@ -589,7 +964,7 @@ function Home({ navigateTo, cartItems, dbProducts, handleOpenProduct, handleAddT
 }
 
 // ==========================================
-// 🚀 APP COMPONENT SETUP
+// 🚀 MAIN APP SETUP (Includes Routing & State)
 // ==========================================
 function App() {
   const { 
@@ -660,8 +1035,11 @@ function App() {
   };
 
   const handleProceedToAddress = () => {
-    if (currentUser) setShowCheckout(true);
-    else setShowAuthModal(true);
+    if (currentUser) {
+      setShowCheckout(true);
+    } else {
+      setShowAuthModal(true);
+    }
   };
 
   const handleGoBack = () => {
@@ -678,13 +1056,17 @@ function App() {
   const handleOpenProduct = (productOrSlug, source = 'shop') => {
     try {
       let foundProduct;
-      if (typeof productOrSlug === 'object' && productOrSlug !== null) foundProduct = productOrSlug;
-      else if (typeof productOrSlug === 'string') {
+      if (typeof productOrSlug === 'object' && productOrSlug !== null) {
+        foundProduct = productOrSlug;
+      } else if (typeof productOrSlug === 'string') {
         const searchSlug = productOrSlug.toLowerCase();
         foundProduct = dbProducts.find(p => p?.slug === productOrSlug || p?.name === productOrSlug || (p?.name && p.name.toLowerCase() === searchSlug) || p?._id === productOrSlug || p?.id === productOrSlug) || (MASTER_PRODUCTS || []).find(p => p?.slug === productOrSlug || p?.name === productOrSlug || (p?.name && p.name.toLowerCase() === searchSlug));
       }
+      
       let finalProduct = foundProduct || dbProducts[0] || (MASTER_PRODUCTS && MASTER_PRODUCTS[0]);
-      if (finalProduct) finalProduct = { ...finalProduct, sizes: finalProduct.sizes || ["S", "M", "L", "XL"], images: finalProduct.images || [finalProduct.image || '/dress1.png'] };
+      if (finalProduct) {
+        finalProduct = { ...finalProduct, sizes: finalProduct.sizes || ["S", "M", "L", "XL"], images: finalProduct.images || [finalProduct.image || '/dress1.png'] };
+      }
       
       setSelectedProduct(finalProduct);
       setSourceBackPage(source);
@@ -698,7 +1080,10 @@ function App() {
 
   const navigateTo = (pageName, category = "ALL") => {
     if (pageName === currentPage) return; 
-    if (pageName.startsWith('/product/')) return handleOpenProduct(pageName.replace('/product/', ''), currentPage);
+    
+    if (pageName.startsWith('/product/')) {
+      return handleOpenProduct(pageName.replace('/product/', ''), currentPage);
+    }
     
     setCurrentPage(pageName);
     setSelectedCategory(category);
@@ -716,7 +1101,9 @@ function App() {
   };
 
   const handleOrderPlacedSuccess = (newOrderDetails) => {
-    if(activeCoupon) setActiveCoupon(null);
+    if(activeCoupon) {
+      setActiveCoupon(null);
+    }
 
     const createdOrder = {
       id: `SATRA-${Math.floor(10000 + Math.random() * 90000)}`,
@@ -727,37 +1114,51 @@ function App() {
       status: 'Pending',
       ...newOrderDetails
     };
+    
     addOrder(createdOrder);
     clearCart();
     setShowCheckout(false);
     triggerToast(`🎉 Order Placed Successfully!`);
   };
 
-  if (currentPage === 'admin') return <AdminDashboard onLogout={() => navigateTo('home')} onNavigateToWebsite={() => navigateTo('home')} />;
+  if (currentPage === 'admin') {
+    return <AdminDashboard onLogout={() => navigateTo('home')} onNavigateToWebsite={() => navigateTo('home')} />;
+  }
 
   return (
     <div className="app" style={{ backgroundColor: BG_COLOR, minHeight: '100vh', fontFamily: "'Montserrat', sans-serif" }}>
+      
+      {/* Toast Notification */}
       {toastMessage && (
         <div style={{ position: 'fixed', bottom: '80px', right: '20px', backgroundColor: BG_COLOR, color: '#FFF', padding: '12px 20px', borderRadius: '6px', fontSize: '10px', fontWeight: '600', zIndex: 99999, borderLeft: `4px solid ${GOLD_COLOR}`, boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>
           {toastMessage}
         </div>
       )}
 
+      {/* Exclude standard header from specific pages */}
       {currentPage !== 'home' && currentPage !== 'shop' && currentPage !== 'product-detail' && currentPage !== 'cart' && currentPage !== 'size-filter' && currentPage !== 'drop-offers' && (
         <MobileHeaderNav cartCount={cartItems.length} wishlistCount={wishlist.length} isLoggedIn={!!currentUser} currentPage={currentPage} navigateTo={navigateTo} goBack={handleGoBack} historyLength={historyStack.length} />
       )}
 
+      {/* Pages Routing System */}
       {currentPage === 'account' ? <Account currentUser={currentUser} orders={placedOrders} onLogin={setCurrentUser} onLogout={() => setCurrentUser(null)} onNavigateToShop={() => navigateTo('shop')} />
       : currentPage === 'community' ? <Community currentUser={currentUser} onNavigateToAbout={() => navigateTo('about')} onNavigateToAccount={() => navigateTo('account')} />
       : currentPage === 'about' ? <About onNavigateToShop={() => navigateTo('shop')} />
-      : currentPage === 'product-detail' ? (isMobile ? <MobileProductDetail product={selectedProduct} onBack={handleGoBack} onAddToCart={handleAddToCart} onNavigateToBag={() => navigateTo('cart')} /> : <ProductDetail product={selectedProduct} onBack={() => navigateTo(sourceBackPage)} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} sourceTitle={sourceBackPage.toUpperCase()} />)
+      : currentPage === 'product-detail' ? (
+          isMobile 
+            ? <MobileProductDetail product={selectedProduct} onBack={handleGoBack} onAddToCart={handleAddToCart} onNavigateToBag={() => navigateTo('cart')} /> 
+            : <ProductDetail product={selectedProduct} onBack={() => navigateTo(sourceBackPage)} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} sourceTitle={sourceBackPage.toUpperCase()} />
+        )
       : currentPage === 'category-plp' ? <CategoryPLP categoryName={selectedCategory || "ALL"} products={MASTER_PRODUCTS} onBack={() => navigateTo('home')} onProductClick={(prod) => handleOpenProduct(prod, 'category-plp')} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} navigateTo={navigateTo} />
       : currentPage === 'size-filter' ? <ShopYourSize products={dbProducts} initialSizes={[selectedCategory]} navigateTo={navigateTo} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} onAddToCart={handleAddToCart} />
       : currentPage === 'drop-offers' ? <DropOffers products={dbProducts} onBack={handleGoBack} onAddToCart={handleAddToCart} navigateTo={navigateTo} />
       : currentPage === 'shop' ? <Shop products={dbProducts} initialCategory={selectedCategory} initialSearchQuery={""} onNavigate={navigateTo} wishlist={wishlist} onToggleWishlist={handleToggleWishlist} onAddToCart={handleAddToCart} />
       : currentPage === 'cart' ? (
-        isMobile ? <MobileBag cartItems={cartItems} onBack={handleGoBack} onUpdateQuantity={handleUpdateCartQuantity} onRemoveItem={handleRemoveFromCart} onProceedToAddress={handleProceedToAddress} activeCoupon={activeCoupon} /> : <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: BG_COLOR }}><h2 style={{ textAlign: 'center', color: '#FFF' }}>YOUR BAG</h2>{cartItems.length === 0 ? <div style={{ textAlign: 'center' }}><button onClick={() => navigateTo('shop')}>SHOP NOW</button></div> : <div><button onClick={() => setShowCheckout(true)}>PROCEED TO CHECKOUT</button></div>}</div>
-      ) : (
+          isMobile 
+            ? <MobileBag cartItems={cartItems} onBack={handleGoBack} onUpdateQuantity={handleUpdateCartQuantity} onRemoveItem={handleRemoveFromCart} onProceedToAddress={handleProceedToAddress} activeCoupon={activeCoupon} /> 
+            : <div style={{ padding: '60px 4%', minHeight: '60vh', backgroundColor: BG_COLOR }}><h2 style={{ textAlign: 'center', color: '#FFF' }}>YOUR BAG</h2>{cartItems.length === 0 ? <div style={{ textAlign: 'center' }}><button onClick={() => navigateTo('shop')}>SHOP NOW</button></div> : <div><button onClick={() => setShowCheckout(true)}>PROCEED TO CHECKOUT</button></div>}</div>
+        )
+      : (
         <Home 
           isMobile={isMobile}
           navigateTo={navigateTo} 
@@ -771,9 +1172,34 @@ function App() {
         />
       )}
 
-      <MobileAuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onLoginSuccess={(userData) => { setCurrentUser(userData); setShowAuthModal(false); setShowCheckout(true); }} />
-      {showCheckout && <CheckoutModal cartItems={cartItems} activeCoupon={activeCoupon} onClose={() => setShowCheckout(false)} onOrderSuccess={handleOrderPlacedSuccess} onClearCart={() => setCartItems([])} />}
-      <SideMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} navigateTo={navigateTo} currentUser={currentUser} />
+      {/* Global Modals */}
+      <MobileAuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        onLoginSuccess={(userData) => { 
+          setCurrentUser(userData); 
+          setShowAuthModal(false); 
+          setShowCheckout(true); 
+        }} 
+      />
+      
+      {showCheckout && (
+        <CheckoutModal 
+          cartItems={cartItems} 
+          activeCoupon={activeCoupon} 
+          onClose={() => setShowCheckout(false)} 
+          onOrderSuccess={handleOrderPlacedSuccess} 
+          onClearCart={() => setCartItems([])} 
+        />
+      )}
+      
+      <SideMenu 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        navigateTo={navigateTo} 
+        currentUser={currentUser} 
+      />
+      
     </div>
   );
 }
